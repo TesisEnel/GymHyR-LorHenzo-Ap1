@@ -1,4 +1,4 @@
-using GymHyR.Client.Pages;
+//using GymHyR.Client.Pages;
 using GymHyR.Components;
 using GymHyR.Components.Account;
 using GymHyR.Data;
@@ -38,6 +38,16 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 builder.Services.AddScoped<NotificationService>();
+
+
+builder.Services.AddScoped(c =>
+    new HttpClient
+    {
+        BaseAddress = new Uri(builder.Configuration["RutaApi"] ?? "https://localhost:7251")
+    }
+);
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
