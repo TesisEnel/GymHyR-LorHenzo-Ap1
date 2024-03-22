@@ -1,0 +1,20 @@
+﻿@page "/ProductoIndex"
+@using Library
+@using Microsoft.AspNetCore.Components.QuickGrid;
+
+<h3>Index</h3>
+<div>
+    <a href="/CreateProducto" class="btn btn-outline-primary">Crear Producto</a>
+</div>
+
+<QuickGrid ItemsProvider="@producto">
+    <PropertyColumn Property="@(p => p.ProductoId)" Title="Id"/>
+        <PropertyColumn Property="@(p => p.Nombre)" Title="Nombre"/>
+            <PropertyColumn Property="@(p => p.cantidad)" Title="Cantidad"/>
+</QuickGrid>
+
+@code {
+
+    GridItemsProvider<ProductoDto>? producto;
+
+}
