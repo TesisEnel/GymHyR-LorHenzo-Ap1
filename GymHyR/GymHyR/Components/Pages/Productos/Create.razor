@@ -1,0 +1,76 @@
+﻿@page "/CreateProducto"
+@using GymHyR.Services
+@using GymHyR.Models
+@using Microsoft.AspNetCore.Components.Forms
+@attribute [StreamRendering]
+
+@inject ProductosServices productosServices
+@inject NavigationManager navigationManager
+
+<PageTitle>Prioridades</PageTitle>
+
+<EditForm Model="@producto" OnValidSubmit="Guardar" FormName="Producto">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Prioridades</h3>
+            </div>
+            <div class="card-body">
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Nombre</label>
+                    <div class="input-group mb-3">
+                        <InputText @bind-Value="@producto.Nombre" class="form-control" />
+                        <ValidationMessage For="@(() => producto.Nombre)" />
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Cantidad</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="@producto.cantidad" class="form-control" />
+                        <ValidationMessage For="@(() => producto.cantidad)" />
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Precio</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="@producto.Precio" class="form-control" />
+                        <ValidationMessage For="@(() => producto.Precio)" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
+                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @mensaje
+</EditForm>
+
+@code {
+    private Producto producto = new Producto();
+    public string mensaje = "";
+
+    public async Task Guardar()
+    {
+        var response = await productosServices.PostProducto(producto);
+        if (response != null)
+        {
+            mensaje = "Se guardo";
+            navigationManager.NavigateTo("/ProductoIndex");
+        }
+        else
+        {
+            mensaje = "No se guardo";
+        }
+
+    }
+}
