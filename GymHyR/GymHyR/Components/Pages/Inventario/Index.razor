@@ -4,16 +4,16 @@
 @inject ProductosServices productoService
 @rendermode InteractiveServer
 
-<PageTitle>Productos</PageTitle>
+<PageTitle>Inventario</PageTitle>
 
 <div class="container">
     <div class="card shadow-lg">
         <div class="card-header">
 
 
-            <h3>Productos</h3>
+            <h3>Inventario</h3>
             <div>
-                <a href="/CreateProducto" class="btn btn-outline-primary">Crear Producto</a>
+                <a href="/CreateProducto" class="btn btn-outline-primary">Crear productos</a>
             </div>
 
             <div class="row justify-content-end">
@@ -96,6 +96,7 @@
                                     <td>@productos.Nombre</td>
                                     <td>@productos.Descripcion</td>
                                     <td>@productos.Categoria</td>
+                                    <td>@productos.Proveedores</td>
                                     <td>@productos.PrecioVenta.ToString("N2")</td>
                                     <td>@productos.Cantidad</td>
                                     <td>

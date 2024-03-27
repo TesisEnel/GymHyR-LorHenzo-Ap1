@@ -44,6 +44,7 @@ builder.Services.AddScoped<ProductosServices>();
 builder.Services.AddScoped<CategoriasServices>();
 builder.Services.AddScoped<ProveedoresServices>();
 builder.Services.AddScoped<ContactosServices>();
+builder.Services.AddScoped<ComprasServices>();
 
 
 

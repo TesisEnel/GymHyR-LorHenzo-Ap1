@@ -23,6 +23,9 @@ namespace Library
         public string Categoria { get; set; } = string.Empty;
         [Required(ErrorMessage = "Este campo es obligatorio.")]
         [Range(1, 100000, ErrorMessage = "El campo {0} debe ser mayor que 0 y menor que 100000.")]
+        public string Proveedores { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Este campo es obligatorio.")]
+        [Range(1, 100000, ErrorMessage = "El campo {0} debe ser mayor que 0 y menor que 100000.")]
         public float PrecioVenta { get; set; }
         [Required(ErrorMessage = "Este campo es obligatorio.")]
         [Range(1, 100000, ErrorMessage = "El campo {0} debe ser mayor que 0 y menor que 100000.")]
