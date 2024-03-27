@@ -1,0 +1,56 @@
+﻿@page "/DeleteCategorias/{Id:int}"
+@using Library
+@using GymHyR.Services
+@inject CategoriasServices CategoriasService
+@inject NavigationManager navigationManager
+@rendermode InteractiveAuto
+
+<PageTitle>Eliminar productos</PageTitle>
+
+<div class="container">
+    <div class="shadow-lg">
+        <h1>Eliminar Producto</h1>
+        <div class="card-body">
+            <h4><strong>Est&aacute;s seguro que quieres eliminar este producto?</strong></h4>
+            <div class="mb-1">
+                <p class="mb-0">Id: @Categorias.CategoriaNombre</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Nombre: @Categorias.fecha</p>
+            </div>
+
+
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
+                <a href="/CategoriaIndex" class="btn btn-secondary"><i class="bi bi-arrow-left" /> Cancelar</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Categorias Categorias { get; set; } = new Categorias();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            Categorias = await CategoriasService.GetCategoria(Id);
+        }
+    }
+
+
+    private async Task Eliminar()
+    {
+        if (Id != 0)
+        {
+            await CategoriasService.DeleteCategoria(Id);
+            navigationManager.NavigateTo("/CategoriaIndex");
+        }
+    }
+}

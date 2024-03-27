@@ -1,0 +1,230 @@
+﻿@page "/ProveedoresIndex"
+@using Library
+@using GymHyR.Services
+@inject ProveedoresServices proveedoresServices
+@rendermode InteractiveServer
+
+<PageTitle>Proveedores</PageTitle>
+
+
+
+<div class="container">
+
+	<div class="card shadow-lg">
+		<div class="card-header">
+			<h3>Index</h3>
+			<div>
+				<a href="/CreateProveedores" class="btn btn-outline-primary">Crear Proveedor</a>
+			</div>
+			<div class="row justify-content-end">
+				<div class="col-4">
+					<label>Cantidad de Proveedores:</label>
+					<span class="badge bg-secondary">@proveedores.Count()</span>
+				</div>
+			</div>
+		</div>
+		<div class="card-body">
+			<div class="justify-content-center">
+				@* Fechas *@
+				<div class="mb-3">
+					<div class="row">
+						<div class="col-3">
+							<label class="form-label" for="desde"><strong>Desde:</strong></label>
+							<InputDate id="desde" class="form-control" @bind-Value="desde"></InputDate>
+						</div>
+						<div class="col-3">
+							<label class="form-label" for="hasta"><strong>Hasta:</strong></label>
+							<InputDate id="hasta" class="form-control" @bind-Value="hasta"></InputDate>
+						</div>
+					</div>
+				</div>
+
+				@* Campos a Filtrar *@
+				<div class="mb-3">
+					<div class="row align-items-center">
+						<div class="col-4">
+							<label class="form-label" for="filtro"><strong>Campo a Filtrar:</strong></label>
+							<InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+								<option>Elije una opci&oacute;n</option>
+								<option value="id">Id</option>
+								<option value="nombre">Nombre</option>
+								<option value="direccion">Direcci&oacute;n</option>
+								<option value="email">Email</option>
+								<option value="rnc">RNC</option>
+							</InputSelect>
+						</div>
+						<div class="col-auto miFlecha">
+							<p>→</p>
+						</div>
+						<div class="col-4">
+							<div class="input-group">
+								<InputText class="form-control" @bind-Value="valorFiltro" placeholder="Ingrese un dato para filtrar"></InputText>
+								<button type="button" class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search" /></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Fecha de Creaci&oacute;n</th>
+						<th>Nombre</th>
+						<th>Descripci&oacute;n</th>
+						<th>Categoria</th>
+						<th>Precio Venta</th>
+						<th>Cantidad</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@if (proveedores.Count == 0)
+					{
+						@mensaje
+					}
+					else
+					{
+						@foreach (var proveedor in proveedores)
+						{
+							<tr>
+								<td>@proveedor.ProveedorId</td>
+								<td>@proveedor.FechaCreacion.ToShortDateString()</td>
+								<td>@proveedor.Nombre</td>
+								<td>@proveedor.Direccion</td>
+								<td>@proveedor.RNC</td>
+								<td>
+									<div>
+										<a href="/EditProducto/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
+										<a href="/ViewProductos/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
+										<a href="/DeleteProductos/@proveedor.ProveedorId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+									</div>
+								</td>
+							</tr>
+						}
+
+					}
+				</tbody>
+
+			</table>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	public List<Proveedores> proveedores = new List<Proveedores>();
+	public string filtro { get; set; }
+	public string valorFiltro { get; set; }
+	public string mensaje { get; set; }
+	public DateTime desde { get; set; } = DateTime.Today;
+	public DateTime hasta { get; set; } = DateTime.Today;
+
+	protected override async Task OnInitializedAsync()
+	{
+		proveedores = (await proveedoresServices.GetProveedores()).ToList();
+	}
+
+	public async Task Buscar()
+	{
+		if (desde > hasta)
+		{
+			mensaje = "La fecha inicial no puede ser mayor a la fecha final";
+			StateHasChanged();
+			await Nuevo();
+			return;
+		}
+
+		else if (filtro == null)
+		{
+			mensaje = "Debe elegir un método parar filtrar";
+			StateHasChanged();
+			await Nuevo();
+			return;
+		}
+
+		else if (valorFiltro == null)
+		{
+			mensaje = "Debe ingresar un dato";
+			StateHasChanged();
+			await Nuevo();
+			return;
+		}
+
+		List<Proveedores> listaFiltro = new List<Proveedores>();
+
+		switch (filtro)
+		{
+			case "id":
+				if (int.TryParse(valorFiltro, out int id))
+				{
+					var resultadoId = proveedores.FirstOrDefault(p => p.ProveedorId == id);
+					if (resultadoId != null &&
+						(resultadoId.FechaCreacion >= desde && resultadoId.FechaCreacion <= hasta))
+					{
+						proveedores.Clear();
+						proveedores.Add(resultadoId);
+					}
+					else
+						mensaje = "No se encontraron resultados";
+				}
+				else
+				{
+					mensaje = "El valor ingresado para TicketId no es válido";
+					await Task.Delay(3000);
+				}
+				break;
+
+			case "fecha":
+
+				break;
+
+			case "nombre":
+				var resultadoNombre = proveedores.FirstOrDefault(p => p.Nombre == valorFiltro);
+				if (resultadoNombre != null &&
+					(resultadoNombre.FechaCreacion >= desde && resultadoNombre.FechaCreacion <= hasta))
+				{
+					proveedores.Clear();
+					proveedores.Add(resultadoNombre);
+				}
+				break;
+
+			case "direccion":
+				var resultadoDireccion = proveedores.Where(p => p.Direccion == valorFiltro).ToList();
+				if (resultadoDireccion != null)
+				{
+					foreach (var result in resultadoDireccion)
+					{
+						if (result.FechaCreacion >= desde && result.FechaCreacion <= hasta)
+							listaFiltro.Add(result);
+					}
+
+					if (listaFiltro.Count > 0)
+						proveedores = listaFiltro;
+				}
+				break;
+
+			case "email":
+				var resultadoEmail = proveedores.FirstOrDefault(p => p.Email == valorFiltro);
+				if (resultadoEmail != null &&
+					(resultadoEmail.FechaCreacion >= desde && resultadoEmail.FechaCreacion <= hasta))
+				{
+					proveedores.Clear();
+					proveedores.Add(resultadoEmail);
+				}
+				break;
+
+		}
+
+		StateHasChanged();
+		await Nuevo();
+	}
+
+	public async Task Nuevo()
+	{
+		mensaje = string.Empty;
+	}
+
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Library;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.DAL
 {
@@ -7,5 +8,9 @@ namespace GymHyR.DAL
         public Context(DbContextOptions<Context> options) : base(options)
         {
         }
+        public DbSet<Productos> Productos { get; set; }
+        public DbSet<Categorias> Categorias { get; set; }
+        public DbSet<Proveedores> Proveedores { get; set; }
+        public DbSet<Contactos> Contactos { get; set; }
     }
 }

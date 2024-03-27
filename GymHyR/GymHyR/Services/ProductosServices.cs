@@ -1,37 +1,41 @@
-﻿using GymHyR.Data;
-using GymHyR.Models;
+﻿using GymHyR.DAL;
+using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.Services
 {
-    public class ProductosServices(ApplicationDbContext context)
+    public class ProductosServices(Context context)
     {
-        public async Task<IEnumerable<ProductoDto>> GetProductos()
+        public async Task<IEnumerable<Productos>> GetProductos()
         {
             return await context.Productos
-                .Select(d => new ProductoDto()
-                {
-                    ProductoId = d.ProductoId,
-                    Nombre = d.Nombre,
-                    Precio = d.Precio,
-                    cantidad = d.cantidad
-                }).ToListAsync();
+            .Select(d => new Productos()
+            {
+                ProductoId = d.ProductoId,
+                Nombre = d.Nombre,
+                Descripcion = d.Descripcion,
+                FechaCreacion = d.FechaCreacion,
+                Categoria = d.Categoria,
+                Cantidad = d.Cantidad,
+                PrecioVenta = d.PrecioVenta,
+                PrecioCompra = d.PrecioCompra,
+            }).ToListAsync();
         }
 
-        public async Task<Producto?> GetProducto(int id)
+        public async Task<Productos?> GetProducto(int id)
         {
             return await context.Productos.FindAsync(id);
         }
 
-        public async Task<Producto> PostProducto(Producto producto)
+        public async Task<Productos> PostProducto(Productos producto)
         {
             context.Productos.Add(producto);
             await context.SaveChangesAsync();
             return producto;
         }
-        public async Task<IActionResult> PutProducto(int id, Producto producto)
+        public async Task<IActionResult> PutProducto(int id, Productos producto)
         {
             if (id != producto.ProductoId)
             {
@@ -59,17 +63,21 @@ namespace GymHyR.Services
             return new NoContentResult();
         }
 
-        public async Task<bool> DeleteProducto(Producto producto)
+        public async Task DeleteProducto(int id)
         {
-            var cantidad = await context.Productos
-                .Where(c => c.ProductoId == producto.ProductoId)
-                .ExecuteDeleteAsync();
+            var Producto = await context.Productos
+                .FirstOrDefaultAsync(p => p.ProductoId == id);
 
-            return cantidad > 0;
+            if (Producto != null)
+            {
+                context.Productos.Remove(Producto);
+                await context.SaveChangesAsync();
+            }
         }
         public bool ProductoExists(int id)
         {
             return context.Productos.Any(e => e.ProductoId == id);
         }
+
     }
 }

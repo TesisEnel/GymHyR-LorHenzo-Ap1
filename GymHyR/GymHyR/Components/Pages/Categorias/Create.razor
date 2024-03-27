@@ -1,0 +1,72 @@
+﻿@page "/CreateCategoria"
+@using Library
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject CategoriasServices categoriasServices
+@inject NavigationManager navigationManager
+
+<PageTitle>Categorias</PageTitle>
+
+<EditForm Model="categorias" OnValidSubmit="Guardar" FormName="Categoria">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Categorias</h3>
+            </div>
+            <div class="row card-body">
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Nombre</label>
+                    <div class="input-group mb-3">
+                        <InputText id="nombre" class="form-control" @bind-Value="categorias.CategoriaNombre" placeholder="Ej: Proteina 200g"></InputText>
+                        <ValidationMessage For="@(() => categorias.CategoriaNombre)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    @*Fecha*@
+                    <label class="form-label" for="fecha"><strong>Fecha:</strong></label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="categorias.fecha"></InputDate>
+                    <ValidationMessage For="@(() => categorias.fecha)"></ValidationMessage>
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
+                    <a href="/CategoriaIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @mensaje
+</EditForm>
+
+@code {
+    public Categorias categorias = new Categorias();
+    public string mensaje = "";
+
+    public async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(categorias.CategoriaNombre))
+        {
+            mensaje = "El campo Nombre es obligatorio.";
+            return;
+        }
+
+        var response = await categoriasServices.PostCategoria(categorias);
+        if (response != null)
+        {
+            mensaje = "Se guardó correctamente.";
+            navigationManager.NavigateTo("/CategoriaIndex");
+        }
+        else
+        {
+            mensaje = "No se pudo guardar la categoria.";
+        }
+    }
+}

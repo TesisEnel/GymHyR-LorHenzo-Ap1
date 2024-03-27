@@ -1,0 +1,68 @@
+﻿@page "/CreateContactos"
+@using Library
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject ContactosServices contactosServices
+@inject NavigationManager navigationManager
+
+<PageTitle>Contactos</PageTitle>
+
+<EditForm Model="contactos" OnValidSubmit="Guardar" FormName="Contactos">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Contactos</h3>
+            </div>
+            <div class="row card-body">
+                <div class="col-4">
+                    @*Contacto Id*@
+                    <label class="form-label" for="ContactoId"><strong>Contacto Id:</strong></label>
+                    <InputNumber id="ContactoId" class="form-control" @bind-Value="contactos.ContactoId" readonly></InputNumber>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Nombre</label>
+                    <div class="input-group mb-3">
+                        <InputText id="nombre" class="form-control" @bind-Value="contactos.Descripcion" placeholder="Ej: Proteina 200g"></InputText>
+                        <ValidationMessage For="@(() => contactos.Descripcion)"></ValidationMessage>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
+                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @mensaje
+</EditForm>
+
+@code {
+    public Contactos contactos = new Contactos();
+    public string mensaje = "";
+
+    public async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(contactos.Descripcion))
+        {
+            mensaje = "El campo Descripcion es obligatorio.";
+            return;
+        }
+
+        var response = await contactosServices.PostContactos(contactos);
+        if (response != null)
+        {
+            mensaje = "Se guardó correctamente.";
+            // navigationManager.NavigateTo("/ProductoIndex");
+        }
+        else
+        {
+            mensaje = "No se pudo guardar el producto.";
+        }
+    }
+}
