@@ -1,0 +1,64 @@
+﻿@page "/ViewProductos/{Id:int}"
+@using Library
+@using GymHyR.Services
+@inject ProductosServices productosService
+@inject NavigationManager navigationManager
+@rendermode InteractiveAuto
+
+<PageTitle>View productos</PageTitle>
+
+<div class="container">
+    <div class="shadow-lg">
+        <h1>View Producto</h1>
+        <div class="card-body">
+            <div class="mb-1">
+                <p class="mb-0">Id: @productos.ProductoId</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Nombre: @productos.Nombre</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Fecha de creaci&oacute;n: @productos.FechaCreacion</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Descripci&oacute;n: @productos.Descripcion</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Precio del producto: @productos.PrecioVenta</p>
+            </div>
+
+            <div class="mb-1">
+                <p class="mb-0">Cantidad en almacen: @productos.Cantidad</p>
+            </div>
+
+
+
+
+            <div class="d-grid gap-2">
+                <a href="/ProductoIndex" class="btn btn-secondary"><i class="bi bi-arrow-left" /> Cancelar</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Productos productos { get; set; } = new Productos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            productos = await productosService.GetProducto(Id);
+        }
+    }
+
+
+}

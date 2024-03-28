@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymHyR", "GymHyR\GymHyR\Gym
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymHyR.Client", "GymHyR\GymHyR.Client\GymHyR.Client.csproj", "{D5F4F941-3ACA-49EE-9297-DB129C0641F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{EA7F3F1D-F980-4FC8-8008-07539AA83373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.csproj", "{EA7F3F1D-F980-4FC8-8008-07539AA83373}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

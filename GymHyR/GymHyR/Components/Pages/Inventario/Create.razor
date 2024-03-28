@@ -1,0 +1,149 @@
+﻿@page "/CreateProducto"
+@using Library
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject CategoriasServices categoriasServices
+@inject ProveedoresServices proveedoresServices
+@inject ProductosServices productoService
+@inject NavigationManager navigationManager
+
+<PageTitle>Productos</PageTitle>
+
+<EditForm Model="@producto" OnValidSubmit="Guardar" FormName="Productos">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Crear de Productos</h3>
+                <div>
+                    <a href="/CreateCategoria" class="btn btn-outline-primary">Crear Categoria</a>
+                </div>
+            </div>
+
+            <div class="row card-body">
+
+                <div class="row mb-3">
+                    <div class="col-4">
+                        @*Producto Id*@
+                        <label class="form-label" for="productoId"><strong>ProductoId:</strong></label>
+                        <InputNumber id="productoId" class="form-control" @bind-Value="producto.ProductoId" readonly></InputNumber>
+                    </div>
+                    <div class="col-4">
+                        @*FechaCreacion*@
+                        <label class="form-label" for="fechaCreacion"><strong>Fecha Creaci&oacute;n:</strong></label>
+                        <InputDate id="fechaCreacion" class="form-control" @bind-Value="producto.FechaCreacion" readonly></InputDate>
+                        <ValidationMessage For="@(() => producto.FechaCreacion)"></ValidationMessage>
+
+                    </div>
+                    <div class="col-4">
+                        @*Nombre*@
+                        <label class="form-label" for="nombre"><strong>Nombre:</strong></label>
+                        <InputText id="nombre" class="form-control" @bind-Value="producto.Nombre" placeholder="Ej: Proteina 200g"></InputText>
+                        <ValidationMessage For="@(() => producto.Nombre)"></ValidationMessage>
+                    </div>
+
+                    <div class="col-4">
+                        @*Descripcion*@
+                        <label class="form-label" for="descripcion"><strong>Descripci&oacute;n:</strong></label>
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="producto.Descripcion" placeholder="Ej: Proteina muscular"></InputTextArea>
+                        <ValidationMessage For="@(() => producto.Descripcion)"></ValidationMessage>
+                    </div>
+                    <div class="col-2">
+                        @*Precio*@
+                        <label class="form-label" for="precio"><strong>Precio compra:</strong></label>
+                        <InputNumber id="precio" class="form-control" @bind-Value="producto.PrecioVenta"></InputNumber>
+                        <ValidationMessage For="@(() => producto.PrecioVenta)"></ValidationMessage>
+                    </div>
+                    <div class="col-2">
+                        @*Cantidad*@
+                        <label class="form-label" for="Cantidad"><strong>Cantidad:</strong></label>
+                        <InputNumber id="Cantidad" class="form-control" @bind-Value="producto.Cantidad"></InputNumber>
+                        <ValidationMessage For="@(() => producto.Cantidad)"></ValidationMessage>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                        <label>Precio Venta</label>
+                        <div class="input-group mb-3">
+                            <InputNumber @bind-Value="@producto.PrecioCompra" class="form-control" />
+                            <ValidationMessage For="@(() => producto.PrecioCompra)" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Categoria:</label>
+                        <InputSelect id="categoria" class="form-select" @bind-Value="producto.Categoria">
+                            <option value="">Seleccionar Categoria</option>
+                            @foreach (var item in categorias)
+                            {
+                                <option value="@item.CategoriaId">@item.CategoriaNombre</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                    <div class="col-md-6">
+                        <label>Proveedores:</label>
+                        <InputSelect id="proveedores" class="form-select" @bind-Value="producto.Proveedores">
+                            <option value="">Seleccionar proveedor</option>
+                            @foreach (var item in proveedores)
+                            {
+                                <option value="@item.ProveedorId">@item.Nombre</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
+                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @mensaje
+</EditForm>
+
+@code {
+    public Productos producto = new Productos();
+    public IEnumerable<Categorias> categorias = new List<Categorias>();
+    public IEnumerable<Proveedores> proveedores = new List<Proveedores>();
+    public List<Proveedores> listaProveedores = new List<Proveedores>();
+    public string mensaje = "";
+    public int proveedor { get; set; }
+    public string categoria { get; set; } = string.Empty;
+    public float costo { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        categorias = await categoriasServices.GetCategorias();
+        proveedores = await proveedoresServices.GetProveedores();
+    }
+    public async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(producto.Nombre))
+        {
+            mensaje = "El campo Nombre es obligatorio.";
+            return;
+        }
+
+        var response = await productoService.PostProducto(producto);
+        if (response != null)
+        {
+            mensaje = "Se guardó correctamente.";
+            navigationManager.NavigateTo("/ProductoIndex");
+        }
+        else
+        {
+            mensaje = "No se pudo guardar el producto.";
+        }
+    }
+
+}

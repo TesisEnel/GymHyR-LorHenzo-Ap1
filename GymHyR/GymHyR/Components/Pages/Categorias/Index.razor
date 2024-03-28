@@ -1,0 +1,56 @@
+﻿@page "/CategoriaIndex"
+@using Library
+@using GymHyR.Services
+@inject CategoriasServices CategoriasService
+@inject NavigationManager NavigationManager
+
+<h3>Índice de Categorías</h3>
+<div>
+    <a href="/CreateCategoria" class="btn btn-outline-primary">Crear Categoría</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Fecha de Creación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (categorias == null || !categorias.Any())
+        {
+            <tr>
+                <td colspan="4">No hay categorías disponibles.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var categoria in categorias)
+            {
+                <tr>
+                    <td>@categoria.CategoriaId</td>
+                    <td>@categoria.CategoriaNombre</td>
+                    <td>@categoria.fecha.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <div>
+                            <a href="/DeleteCategorias/@categoria.CategoriaId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    public IEnumerable<Categorias> categorias = new List<Categorias>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        categorias = await CategoriasService.GetCategorias();
+    }
+
+
+}

@@ -1,75 +1,85 @@
-﻿using GymHyR.Data;
-using GymHyR.Models;
+﻿using GymHyR.DAL;
+using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GymHyR.Services
+namespace GymHyR.Services;
+
+public class ProductosServices(Context context)
 {
-    public class ProductosServices(ApplicationDbContext context)
+    public async Task<IEnumerable<Productos>> GetProductos()
     {
-        public async Task<IEnumerable<ProductoDto>> GetProductos()
+
+        var cantidad = new CompraDetalle();
+        return await context.Productos
+        .Select(d => new Productos()
         {
-            return await context.Productos
-                .Select(d => new ProductoDto()
-                {
-                    ProductoId = d.ProductoId,
-                    Nombre = d.Nombre,
-                    Precio = d.Precio,
-                    cantidad = d.cantidad
-                }).ToListAsync();
+            ProductoId = d.ProductoId,
+            Nombre = d.Nombre,
+            Descripcion = d.Descripcion,
+            FechaCreacion = d.FechaCreacion,
+            Categoria = d.Categoria,
+            Proveedores = d.Proveedores,
+            Cantidad = d.Cantidad + cantidad.Cantidad,
+            PrecioVenta = d.PrecioVenta,
+            PrecioCompra = d.PrecioCompra,
+        }).ToListAsync();
+    }
+
+    public async Task<Productos?> GetProducto(int id)
+    {
+        return await context.Productos.FindAsync(id);
+    }
+
+    public async Task<Productos> PostProducto(Productos producto)
+    {
+        context.Productos.Add(producto);
+        await context.SaveChangesAsync();
+        return producto;
+    }
+    public async Task<IActionResult> PutProducto(int id, Productos producto)
+    {
+        if (id != producto.ProductoId)
+        {
+            return new BadRequestResult();
         }
 
-        public async Task<Producto?> GetProducto(int id)
-        {
-            return await context.Productos.FindAsync(id);
-        }
+        context.Entry(producto).State = EntityState.Modified;
 
-        public async Task<Producto> PostProducto(Producto producto)
+        try
         {
-            context.Productos.Add(producto);
             await context.SaveChangesAsync();
-            return producto;
         }
-        public async Task<IActionResult> PutProducto(int id, Producto producto)
+        catch (DbUpdateConcurrencyException)
         {
-            if (id != producto.ProductoId)
+            if (!ProductoExists(id))
             {
-                return new BadRequestResult();
+                return new NotFoundResult();
             }
-
-            context.Entry(producto).State = EntityState.Modified;
-
-            try
+            else
             {
-                await context.SaveChangesAsync();
+                throw;
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductoExists(id))
-                {
-                    return new NotFoundResult();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return new NoContentResult();
         }
 
-        public async Task<bool> DeleteProducto(Producto producto)
-        {
-            var cantidad = await context.Productos
-                .Where(c => c.ProductoId == producto.ProductoId)
-                .ExecuteDeleteAsync();
+        return new NoContentResult();
+    }
 
-            return cantidad > 0;
-        }
-        public bool ProductoExists(int id)
+    public async Task DeleteProducto(int id)
+    {
+        var Producto = await context.Productos
+            .FirstOrDefaultAsync(p => p.ProductoId == id);
+
+        if (Producto != null)
         {
-            return context.Productos.Any(e => e.ProductoId == id);
+            context.Productos.Remove(Producto);
+            await context.SaveChangesAsync();
         }
     }
+    public bool ProductoExists(int id)
+    {
+        return context.Productos.Any(e => e.ProductoId == id);
+    }
+
 }

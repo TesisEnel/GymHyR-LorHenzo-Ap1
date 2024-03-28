@@ -1,0 +1,192 @@
+﻿@page "/CompraIndex"
+@using Library
+@using GymHyR.Services
+@inject ComprasServices comprasService
+@rendermode InteractiveServer
+
+
+<PageTitle>Compras</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+
+
+            <h3>Historial de compras</h3>
+            <div>
+                <a href="/CreateCompras" class="btn btn-outline-primary">Crear Compra</a>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-4">
+                    <label>Cantidad de compras:</label>
+                    <span class="badge bg-secondary">@Compras.Count()</span>
+                </div>
+            </div>
+
+
+            <div class="card-body">
+                <div class="justify-content-center">
+
+                    @* Fechas *@
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3">
+                                <label class="form-label" for="desde"><strong>Desde:</strong></label>
+                                <InputDate id="desde" class="form-control" @bind-Value="desde"></InputDate>
+                            </div>
+                            <div class="col-3">
+                                <label class="form-label" for="hasta"><strong>Hasta:</strong></label>
+                                <InputDate id="hasta" class="form-control" @bind-Value="hasta"></InputDate>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Campos a Filtrar *@
+                    <div class="mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <label class="form-label" for="filtro"><strong>Campo a Filtrar:</strong></label>
+                                <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                                    <option>Elije una opci&oacute;n</option>
+                                    <option value="id">Id</option>
+                                    <option value="Producto">Producto</option>
+                                </InputSelect>
+                            </div>
+                            <div class="col-auto miFlecha">
+                                <p>→</p>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <InputText class="form-control" @bind-Value="valorFiltro" placeholder="Ingrese un dato para filtrar"></InputText>
+                                    <button type="button" class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search" /></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Fecha de compra</th>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Compras.Count == 0)
+                        {
+                            @mensaje
+                        }
+                        else
+                        {
+                            @foreach (var Compras in Compras)
+                            {
+                                <tr>
+                                    <td>@Compras.CompraId</td>
+                                    <td>@Compras.FecheDeCompra.ToShortDateString()</td>
+                                    <td>
+                                        <div>
+                                            <a href="/EditProducto/@Compras.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
+                                            <a href="/ViewProductos/@Compras.CompraId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
+                                            <a href="/DeleteProductos/@Compras.CompraId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private List<Compra> Compras = new List<Compra>();
+    public string filtro { get; set; }
+    public string valorFiltro { get; set; }
+    public DateTime desde { get; set; } = DateTime.Today;
+    public DateTime hasta { get; set; } = DateTime.Today;
+    public string mensaje = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Compras == null || !Compras.Any())
+            mensaje = "No hay datos";
+
+        Compras = (await comprasService.GetCompras()).ToList();
+    }
+
+    public async Task Buscar()
+    {
+        if (desde > hasta)
+        {
+            mensaje = "La fecha inicial no puede ser mayor a la fecha final";
+            StateHasChanged();
+            await Nuevo();
+            return;
+        }
+
+        else if (filtro == null)
+        {
+            mensaje = "Debe elegir un método parar filtrar";
+            StateHasChanged();
+            await Nuevo();
+            return;
+        }
+
+        else if (valorFiltro == null)
+        {
+            mensaje = "Debe ingresar un dato";
+            StateHasChanged();
+            await Nuevo();
+            return;
+        }
+
+        List<Productos> listaFiltro = new List<Productos>();
+
+        switch (filtro)
+        {
+            case "id":
+                if (int.TryParse(valorFiltro, out int id))
+                {
+                    var resultadoId = Compras.FirstOrDefault(p => p.CompraId == id);
+                    if (resultadoId != null &&
+                        (resultadoId.FecheDeCompra >= desde && resultadoId.FecheDeCompra <= hasta))
+                    {
+                        Compras.Clear();
+                        Compras.Add(resultadoId);
+                    }
+                    else
+                        mensaje = "No se encontraron resultados";
+                }
+                else
+                {
+                    mensaje = "El valor ingresado para TicketId no es válido";
+                }
+                break;
+
+            case "fecha":
+
+                break;
+        }
+
+        StateHasChanged();
+        await Nuevo();
+    }
+
+    public async Task Nuevo()
+    {
+        mensaje = string.Empty;
+    }
+}
