@@ -75,7 +75,8 @@
                             <th>Nombre</th>
                             <th>Descripci&oacute;n</th>
                             <th>Categoria</th>
-                            <th>Precio Venta</th>
+                            <th>Proveedore</th>
+                            <th>Precio Compra</th>
                             <th>Cantidad</th>
                             <th>Acciones</th>
                         </tr>
@@ -97,7 +98,7 @@
                                     <td>@productos.Descripcion</td>
                                     <td>@productos.Categoria</td>
                                     <td>@productos.Proveedores</td>
-                                    <td>@productos.PrecioVenta.ToString("N2")</td>
+                                    <td>@productos.PrecioCompra.ToString("N2")</td>
                                     <td>@productos.Cantidad</td>
                                     <td>
                                         <div>
@@ -122,6 +123,7 @@
 
 @code {
     private List<Productos> productos = new List<Productos>();
+    private CompraDetalle Compras = new CompraDetalle();
     public string filtro { get; set; }
     public string valorFiltro { get; set; }
     public DateTime desde { get; set; } = DateTime.Today;

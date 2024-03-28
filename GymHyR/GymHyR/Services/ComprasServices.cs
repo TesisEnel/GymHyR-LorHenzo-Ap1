@@ -14,22 +14,30 @@ public class ComprasServices(Context context)
 		{
 			CompraId = d.CompraId,
 			FecheDeCompra = d.FecheDeCompra,
-			proveedor = d.proveedor,
-			Producto = d.Producto,
 			CompraDetalles = d.CompraDetalles
 		}).ToListAsync();
 	}
 
 	public async Task<Compra?> GetCompra(int id)
 	{
-		return await context.Compra.Include(p => p.CompraDetalles).FirstOrDefaultAsync(p => p.CompraId == id);
+		return await context.Compra.Include(c => c.CompraDetalles)
+			.Where(c => c.CompraId == id).FirstOrDefaultAsync();
 	}
 
 	public async Task<Compra> PostCompras(Compra Compra)
-	{
-		context.Compra.Add(Compra);
-		await context.SaveChangesAsync();
-		return Compra;
+    {
+        context.Compra.Add(Compra);
+        await context.SaveChangesAsync();
+        return Compra;
+
+		//if (!ComprasExists(Compra.CompraId))
+		//	context.Compra.Add(Compra);
+		//else
+		//	context.Compra.Update(Compra);
+
+		//await context.SaveChangesAsync();
+
+		//return new OkObjectResult(Compra);
 	}
 	public async Task<IActionResult> PutCompras(int id, Compra Compra)
 	{

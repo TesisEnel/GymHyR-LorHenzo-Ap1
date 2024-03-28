@@ -10,6 +10,8 @@ public class ProductosServices(Context context)
 {
     public async Task<IEnumerable<Productos>> GetProductos()
     {
+
+        var cantidad = new CompraDetalle();
         return await context.Productos
         .Select(d => new Productos()
         {
@@ -19,7 +21,7 @@ public class ProductosServices(Context context)
             FechaCreacion = d.FechaCreacion,
             Categoria = d.Categoria,
             Proveedores = d.Proveedores,
-            Cantidad = d.Cantidad,
+            Cantidad = d.Cantidad + cantidad.Cantidad,
             PrecioVenta = d.PrecioVenta,
             PrecioCompra = d.PrecioCompra,
         }).ToListAsync();

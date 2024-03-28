@@ -12,9 +12,9 @@
         <div class="card-header">
 
 
-            <h3>Hiztorial de compras</h3>
+            <h3>Historial de compras</h3>
             <div>
-                <a href="/CreateProducto" class="btn btn-outline-primary">Crear productos</a>
+                <a href="/CreateCompras" class="btn btn-outline-primary">Crear Compra</a>
             </div>
 
             <div class="row justify-content-end">
@@ -90,8 +90,6 @@
                                 <tr>
                                     <td>@Compras.CompraId</td>
                                     <td>@Compras.FecheDeCompra.ToShortDateString()</td>
-                                    <td>@Compras.Producto</td>
-                                    <td>@Compras.proveedor</td>
                                     <td>
                                         <div>
                                             <a href="/EditProducto/@Compras.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
@@ -180,16 +178,6 @@
 
             case "fecha":
 
-                break;
-
-            case "Producto":
-                var resultadoProucto = Compras.FirstOrDefault(p => p.Producto == valorFiltro);
-                if (resultadoProucto != null &&
-                    (resultadoProucto.FecheDeCompra >= desde && resultadoProucto.FecheDeCompra <= hasta))
-                {
-                    Compras.Clear();
-                    Compras.Add(resultadoProucto);
-                }
                 break;
         }
 

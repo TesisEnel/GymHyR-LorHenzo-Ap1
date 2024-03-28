@@ -9,6 +9,7 @@ namespace Library
 {
 	public class CompraDetalle
 	{
+		[Key]
 		public int CompraDetalleId { get; set; }
 		public int VentaId { get; set; }
 		public int ProductoId { get; set; }

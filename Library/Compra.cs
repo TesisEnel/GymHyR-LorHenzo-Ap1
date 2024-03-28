@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,9 @@ namespace Library
 {
     public class Compra
     {
+        [Key]
         public int CompraId { get; set; }
         public DateTime FecheDeCompra { get; set; } = DateTime.Now;
-        public string Producto { get; set; }
-        public string proveedor { get; set; }
 
 
 		[ForeignKey("CompraId")]
