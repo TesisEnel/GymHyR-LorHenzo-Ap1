@@ -1,0 +1,86 @@
+﻿@page "/Index"
+@inject MembresiasServices MembresiasServices
+@inject ClientesServices ClientesServices
+@inject TipoMembresiasServices TipoMembresiasServices
+@inject EstadoMembresiasServices EstadoMembresiasServices
+@inject NavigationManager NavigationManager
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Membresía ID</th>
+            <th>Cliente</th>
+            <th>Tipo de Membresía</th>
+            <th>Estado de Membresía</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var membresia in L_Membresias)
+        {
+            <tr>
+                <td>@membresia.MembresiaId</td>
+                <td>@ObtenerNombreCliente(membresia.ClienteId)</td>
+                <td>@ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)</td>
+                <td>@ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)</td>
+                <td>@membresia.FechaInicio.ToShortDateString()</td>
+                <td>@membresia.FechaFechaFin.ToShortDateString()</td>
+                <td><a href="/DeleteMembresia/@membresia.MembresiaId" class="btn btn-outline-danger"><i class="bi bi-file-earmark-x"></i></a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    public List<Membresias> L_Membresias { get; set; } = new List<Membresias>();
+    public List<Clientes> ClientesList { get; set; } = new List<Clientes>();
+    public List<TipoMembresias> TiposMembresiaList { get; set; } = new List<TipoMembresias>();
+    public List<EstadoMembresias> EstadosMembresiaList { get; set; } = new List<EstadoMembresias>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        L_Membresias = await MembresiasServices.GetList(m => m.FechaInicio > DateTime.Now.AddDays(-30));
+        ClientesList = await ClientesServices.GetList(c => true);
+        TiposMembresiaList = await TipoMembresiasServices.GetList(t => true);
+        EstadosMembresiaList = await EstadoMembresiasServices.GetList(e => true);
+        await ActualizarEstadosMembresias();
+    }
+
+    async Task ActualizarEstadosMembresias()
+    {
+        foreach (var membresia in L_Membresias)
+        {
+            if (membresia.FechaFechaFin < DateTime.Today)
+            {
+
+                membresia.EstadoMembresiaId = ObtenerEstadoVencidoId();
+                await MembresiasServices.Actualizar(membresia);
+            }
+        }
+    }
+
+    string ObtenerNombreCliente(int clienteId)
+    {
+        var cliente = ClientesList.FirstOrDefault(c => c.ClienteId == clienteId);
+        return cliente?.Nombre ?? "Cliente no encontrado";
+    }
+
+    string ObtenerDescripcionTipoMembresia(int tipoMembresiaId)
+    {
+        var tipoMembresia = TiposMembresiaList.FirstOrDefault(t => t.TipoMembresiaId == tipoMembresiaId);
+        return tipoMembresia?.Descripcion ?? "Tipo de membresía no encontrado";
+    }
+
+    string ObtenerDescripcionEstadoMembresia(int estadoMembresiaId)
+    {
+        var estadoMembresia = EstadosMembresiaList.FirstOrDefault(e => e.EstadoMembresiaId == estadoMembresiaId);
+        return estadoMembresia?.Descripcion ?? "Estado de membresía no encontrado";
+    }
+
+    int ObtenerEstadoVencidoId()
+    {
+
+        return 2;
+    }
+}
