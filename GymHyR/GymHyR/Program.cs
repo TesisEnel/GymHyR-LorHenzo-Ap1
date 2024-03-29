@@ -45,6 +45,10 @@ builder.Services.AddScoped<CategoriasServices>();
 builder.Services.AddScoped<ProveedoresServices>();
 builder.Services.AddScoped<ContactosServices>();
 builder.Services.AddScoped<ComprasServices>();
+builder.Services.AddScoped<ClientesServices>();
+builder.Services.AddScoped<EstadoMembresiasServices>();
+builder.Services.AddScoped<MembresiasServices>();
+builder.Services.AddScoped<TipoMembresiasServices>();
 
 
 
