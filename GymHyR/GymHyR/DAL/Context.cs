@@ -13,5 +13,6 @@ namespace GymHyR.DAL
         public DbSet<Proveedores> Proveedores { get; set; }
         public DbSet<Contactos> Contactos { get; set; }
         public DbSet<Compra> Compra { get; set; }
+        public DbSet<Clientes> Clientes { get; set; }
     }
 }
