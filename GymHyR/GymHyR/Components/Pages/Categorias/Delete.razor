@@ -4,6 +4,8 @@
 @inject CategoriasServices CategoriasService
 @inject NavigationManager navigationManager
 @rendermode InteractiveAuto
+@inject NotificationService notificationServices
+<RadzenNotification />
 
 <PageTitle>Eliminar productos</PageTitle>
 
@@ -50,6 +52,15 @@
         if (Id != 0)
         {
             await CategoriasService.DeleteCategoria(Id);
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Eliminacion exitosa",
+                    Detail = "Se a borrado el producto",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+            await Task.Delay(1000);
             navigationManager.NavigateTo("/CategoriaIndex");
         }
     }

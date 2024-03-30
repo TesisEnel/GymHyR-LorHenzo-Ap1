@@ -12,6 +12,7 @@
 
 <PageTitle>Productos</PageTitle>
 
+<RadzenNotification/>
 <EditForm Model="@producto" OnValidSubmit="Guardar" FormName="Productos">
     <DataAnnotationsValidator />
 
@@ -79,21 +80,27 @@
                             <option value="">Seleccionar Categoria</option>
                             @foreach (var item in categorias)
                             {
-                                <option value="@item.CategoriaId">@item.CategoriaNombre</option>
+                                <option value="@item.CategoriaNombre">@item.CategoriaNombre</option>
                             }
                         </InputSelect>
 
                     </div>
                     <div class="col-md-6">
                         <label>Proveedores:</label>
-                        <InputSelect id="proveedores" class="form-select" @bind-Value="producto.Proveedores">
+                        <InputSelect id="proveedores" class="form-select" @bind-Value="producto.Proveedores" >
                             <option value="">Seleccionar proveedor</option>
                             @foreach (var item in proveedores)
                             {
-                                <option value="@item.ProveedorId">@item.Nombre</option>
+                                <option value="@item.Nombre">@item.Nombre</option>
                             }
                         </InputSelect>
 
+                    </div>
+                    <div class="col-4">
+                        <label>Foto del producto:</label>
+                        <div class="input-group mb-3">
+                            <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
+                        </div>
                     </div>
                 </div>
 
@@ -103,12 +110,11 @@
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
                     <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
-                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <a href="/InventarioIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
                 </div>
             </div>
         </div>
     </div>
-    @mensaje
 </EditForm>
 
 @code {
@@ -116,7 +122,6 @@
     public IEnumerable<Categorias> categorias = new List<Categorias>();
     public IEnumerable<Proveedores> proveedores = new List<Proveedores>();
     public List<Proveedores> listaProveedores = new List<Proveedores>();
-    public string mensaje = "";
     public int proveedor { get; set; }
     public string categoria { get; set; } = string.Empty;
     public float costo { get; set; } = 0;
@@ -131,29 +136,52 @@
     {
         if (string.IsNullOrEmpty(producto.Nombre))
         {
-            mensaje = "El campo Nombre es obligatorio.";
+
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Error al guardar",
+                    Detail = "debe de llenar todos los campos",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
             return;
         }
 
         var response = await productoService.PostProducto(producto);
         if (response != null)
         {
-            mensaje = "Se guardó correctamente.";
-            var Mensaje = new NotificationMessage
+            var Mensaje1 = new NotificationMessage
                 {
-                    Severity = NotificationSeverity.Error,
-                        Summary = "Error al guardar",
-                    Detail = "Ha ocurrido un error",
-                    Duration = 5_000
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = "Contacto guardado con exito",
+                    Duration = 1000
                 };
-            notificationServices.Notify(Mensaje);
-            navigationManager.NavigateTo("/ProductoIndex");
+            notificationServices.Notify(Mensaje1);
+            await Task.Delay(1000);
+            navigationManager.NavigateTo("/InventarioIndex");
         }
         else
         {
-            mensaje = "No se pudo guardar el producto.";
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
         }
     }
 
+    public async Task CargarImagen(InputFileChangeEventArgs e)
+    {
+        var archivo = e.File;
+        var buffer = new byte[archivo.Size];
+
+        await archivo.OpenReadStream().ReadAsync(buffer);
+        producto.Foto = buffer;
+    }
 
 }

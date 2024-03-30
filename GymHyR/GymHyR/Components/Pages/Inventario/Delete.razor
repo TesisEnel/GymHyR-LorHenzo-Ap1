@@ -3,10 +3,12 @@
 @using GymHyR.Services
 @inject ProductosServices productosService
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
 @rendermode InteractiveAuto
 
 <PageTitle>Eliminar productos</PageTitle>
 
+<RadzenNotification />
 <div class="container">
     <div class="shadow-lg">
         <h1>Eliminar Producto</h1>
@@ -67,6 +69,15 @@
         if (Id != 0)
         {
             await productosService.DeleteProducto(Id);
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Eliminacion exitosa",
+                    Detail = "Se a borrado el producto",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+            await Task.Delay(1000);
             navigationManager.NavigateTo("/ProductoIndex");
         }
     }

@@ -1,13 +1,14 @@
 ﻿@page "/CreateContactos"
 @using Library
 @using GymHyR.Services
-@rendermode InteractiveServer
+@rendermode InteractiveAuto
 @inject ContactosServices contactosServices
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
 
 <PageTitle>Contactos</PageTitle>
 
+<RadzenNotification />
 <EditForm Model="contactos" OnValidSubmit="Guardar" FormName="Contactos">
     <DataAnnotationsValidator />
 
@@ -40,38 +41,51 @@
             </div>
         </div>
     </div>
-    @mensaje
 </EditForm>
 
 @code {
     public Contactos contactos = new Contactos();
-    public string mensaje = "";
 
     public async Task Guardar()
     {
         if (string.IsNullOrEmpty(contactos.Descripcion))
         {
-            mensaje = "El campo Descripcion es obligatorio.";
+
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Error al guardar",
+                    Detail = "debe de llenar todos los campos",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
             return;
         }
 
         var response = await contactosServices.PostContactos(contactos);
         if (response != null)
         {
-            mensaje = "Se guardó correctamente.";
             var Mensaje1 = new NotificationMessage
                 {
                     Severity = NotificationSeverity.Success,
-                        Summary = "Error al guardar",
-                    Detail = "Ha ocurrido un error",
-                    Duration = 5000
+                        Summary = "Guardado",
+                    Detail = "Contacto guardado con exito",
+                    Duration = 1000
                 };
             notificationServices.Notify(Mensaje1);
-            // navigationManager.NavigateTo("/ProductoIndex");
+            await Task.Delay(1000);
+            navigationManager.NavigateTo("/ProveedoresIndex");
         }
         else
         {
-            mensaje = "No se pudo guardar el producto.";
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Vuelva a intentarlo",
+                    Duration = 1000
+                };
+            notificationServices.Notify(Mensaje1);
         }
     }
 }

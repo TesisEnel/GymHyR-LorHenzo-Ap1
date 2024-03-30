@@ -5,10 +5,12 @@
 @inject CategoriasServices categoriasServices
 @inject ProductosServices productoService
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
 @rendermode InteractiveAuto
 
 <PageTitle>Editar Producto</PageTitle>
 
+<RadzenNotification />
 <EditForm Model="@producto" OnValidSubmit="Guardar" FormName="Productos">
     <DataAnnotationsValidator />
 
@@ -87,7 +89,6 @@
             </div>
         </div>
     </div>
-    @mensaje
 </EditForm>
 
 @code {
@@ -97,7 +98,6 @@
     public Productos producto = new Productos();
     public IEnumerable<Categorias> categorias = new List<Categorias>();
     public List<Proveedores> listaProveedores = new List<Proveedores>();
-    public string mensaje = "";
     public int proveedor { get; set; }
     public string categoria { get; set; } = string.Empty;
     public float costo { get; set; } = 0;
@@ -115,19 +115,42 @@
     {
         if (string.IsNullOrEmpty(producto.Nombre))
         {
-            mensaje = "El campo Nombre es obligatorio.";
+
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Error al guardar",
+                    Detail = "debe de llenar todos los campos",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
             return;
         }
 
         var response = await productoService.PutProducto(Id, producto);
         if (response != null)
         {
-            mensaje = "Se guardó correctamente.";
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = "Contacto guardado con exito",
+                    Duration = 1000
+                };
+            notificationServices.Notify(Mensaje1);
+            await Task.Delay(1000);
             navigationManager.NavigateTo("/ProductoIndex");
         }
         else
         {
-            mensaje = "No se pudo guardar el producto.";
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
         }
     }
 }

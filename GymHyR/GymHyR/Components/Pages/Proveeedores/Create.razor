@@ -6,9 +6,12 @@
 @inject ContactosServices contactosServices
 @inject ProveedoresServices proveedorService
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
 
 
 <PageTitle>Crear Nuevo Proveedor</PageTitle>
+<RadzenNotification />
+
 <EditForm Model="proveedor" OnValidSubmit="Crear" FormName="RegistroProveedores">
 	<DataAnnotationsValidator />
 	<div class="container">
@@ -134,8 +137,6 @@
 		</div>
 	</div>
 </EditForm>
-@mensaje
-@otro
 
 @code {
 
@@ -162,16 +163,39 @@
 			var response = await proveedorService.PostProveedores(proveedor);
 			if (response != null)
 			{
-				mensaje = "Se guardó correctamente.";
-				navigationManager.NavigateTo("/ProductoIndex");
+				var Mensaje1 = new NotificationMessage
+					{
+						Severity = NotificationSeverity.Success,
+						Summary = "Guardado",
+						Detail = "Proveedor guardado con exito",
+						Duration = 1000
+					};
+				notificationServices.Notify(Mensaje1);
+				await Task.Delay(1000);
+				navigationManager.NavigateTo("/ProveedoresIndex");
 			}
 			else
 			{
-				mensaje = "No se pudo guardar el producto.";
+				var Mensaje = new NotificationMessage
+					{
+						Severity = NotificationSeverity.Error,
+						Summary = "Error al guardar",
+						Detail = "Ha ocurrido un error",
+						Duration = 1_000
+					};
+				notificationServices.Notify(Mensaje);
 			}
 		}
-		else
-			mensaje = "Algunos datos ya existen en la base de datos.";
+		else{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al guardar",
+					Detail = "Algunos datos ya existen en la base de datos.",
+					Duration = 1_000
+				};
+			notificationServices.Notify(Mensaje);
+		}
 
 		StateHasChanged();
 	}
@@ -190,19 +214,40 @@
 		if (nombre != null)
 		{
 			nombreValido = false;
-			mensajeNombre = "Ya existe un proveedor con este nombre";
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Info,
+					Summary = "Error al guardar",
+					Detail = "Ya existe un proveedor con este nombre",
+					Duration = 1_000
+				};
+			notificationServices.Notify(Mensaje);
 		}
 
 		if (email != null)
 		{
 			emailValido = false;
-			mensajeEmail = "Ya existe un proveedor con este email";
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Info,
+					Summary = "Error al guardar",
+					Detail = "Ya existe un proveedor con este email",
+					Duration = 1_000
+				};
+			notificationServices.Notify(Mensaje);
 		}
 
 		if (rnc != null)
 		{
 			rncValido = false;
-			mensajeRNC = "Ya existe un proveedor con este número de RNC";
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Info,
+					Summary = "Error al guardar",
+					Detail = "Ya existe un proveedor con este número de RNC",
+					Duration = 1_000
+				};
+			notificationServices.Notify(Mensaje);
 		}
 
 		return nombreValido && emailValido && rncValido;
@@ -217,8 +262,16 @@
 				var nuevoDetalle = new ProveedorDetalle { ContactoId = tipo, Contacto = contacto };
 				proveedor.ProveedoresDetalle.Add(nuevoDetalle);
 			}
-			else
-				mensaje = "La longitud del contacto debe ser de 10 digitos";
+			else{
+				var Mensaje = new NotificationMessage
+					{
+						Severity = NotificationSeverity.Info,
+						Summary = "Error al guardar",
+						Detail = "La longitud del contacto debe ser de 10 digitos",
+						Duration = 1_000
+					};
+				notificationServices.Notify(Mensaje);
+			}
 		}
 	}
 
@@ -258,14 +311,13 @@
 	public async Task EliminarDetalle(ProveedorDetalle detalle)
 	{
 		proveedor.ProveedoresDetalle.Remove(detalle);
-	}
-
-	public async Task LimpiarPantalla()
-	{
-		mensaje = string.Empty;
-		mensajeNombre = string.Empty;
-		mensajeEmail = string.Empty;
-		mensajeRNC = string.Empty;
-		StateHasChanged();
+		var Mensaje = new NotificationMessage
+			{
+				Severity = NotificationSeverity.Info,
+				Summary = "Detalle eliminado",
+				Detail = "Detalle eliminado",
+				Duration = 1_000
+			};
+		notificationServices.Notify(Mensaje);
 	}
 }

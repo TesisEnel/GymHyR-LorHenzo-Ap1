@@ -4,46 +4,55 @@
 @inject CategoriasServices CategoriasService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+<PageTitle> Categorías</PageTitle>
 
-<h3>Índice de Categorías</h3>
-<div>
-    <a href="/CreateCategoria" class="btn btn-outline-primary">Crear Categoría</a>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>Categorías</h3>
+            <div>
+                <a href="/InventarioIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                <a href="/CreateCategoria" class="btn btn-outline-primary">Crear Categoría</a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Fecha de Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (categorias == null || !categorias.Any())
+                    {
+                        <tr>
+                            <td colspan="4">No hay categorías disponibles.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var categoria in categorias)
+                        {
+                            <tr>
+                                <td>@categoria.CategoriaId</td>
+                                <td>@categoria.CategoriaNombre</td>
+                                <td>@categoria.fecha.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div>
+                                        <a href="/DeleteCategorias/@categoria.CategoriaId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Fecha de Creación</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @if (categorias == null || !categorias.Any())
-        {
-            <tr>
-                <td colspan="4">No hay categorías disponibles.</td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var categoria in categorias)
-            {
-                <tr>
-                    <td>@categoria.CategoriaId</td>
-                    <td>@categoria.CategoriaNombre</td>
-                    <td>@categoria.fecha.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <div>
-                            <a href="/DeleteCategorias/@categoria.CategoriaId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
 
 @code {
     public IEnumerable<Categorias> categorias = new List<Categorias>();
