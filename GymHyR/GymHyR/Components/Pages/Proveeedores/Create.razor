@@ -34,6 +34,16 @@
 						<InputDate id="fecha" class="form-control" @bind-Value="proveedor.FechaCreacion" readonly></InputDate>
 						@* <ValidationMessage For="@(() => proveedor.FechaCreacion)"></ValidationMessage> *@
 					</div>
+
+					<div class="col-4">
+						<label>Foto del producto:</label>
+						<div class="input-group mb-3">
+							<InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
+						</div>
+					</div>
+				</div>
+				<div class="row mb-3">
+
 					<div class="col-4">
 						@*Nombre*@
 						<label class="form-label" for="nombre"><strong>Nombre:</strong></label>
@@ -41,8 +51,6 @@
 						<spam class="mensajeError">@mensajeNombre</spam>
 						<ValidationMessage For="@(() => proveedor.Nombre)"></ValidationMessage>
 					</div>
-				</div>
-				<div class="row mb-3">
 					<div class="col-4">
 						@*Direccion*@
 						<label class="form-label" for="direccion"><strong>Direcci&oacute;n:</strong></label>
@@ -319,5 +327,14 @@
 				Duration = 1_000
 			};
 		notificationServices.Notify(Mensaje);
+	}
+
+	public async Task CargarImagen(InputFileChangeEventArgs e)
+	{
+		var archivo = e.File;
+		var buffer = new byte[archivo.Size];
+
+		await archivo.OpenReadStream().ReadAsync(buffer);
+		proveedor.Foto = buffer;
 	}
 }
