@@ -4,6 +4,8 @@
 @inject ProductosServices productosService
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+
 @rendermode InteractiveAuto
 
 <PageTitle>Eliminar productos</PageTitle>
@@ -41,10 +43,9 @@
 
 
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
                 <a href="/ProductoIndex" class="btn btn-secondary"><i class="bi bi-arrow-left" /> Cancelar</a>
+                <button type="button" class="btn btn-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -79,6 +80,15 @@
             notificationServices.Notify(Mensaje);
             await Task.Delay(1000);
             navigationManager.NavigateTo("/ProductoIndex");
+        }
+    }
+
+    private async Task ConfirmarEliminar()
+    {
+        bool confirmacion = await JSRuntime.InvokeAsync<bool>("confirm", "¿Está seguro de que desea eliminar este proveedor?");
+        if (confirmacion)
+        {
+            await Eliminar();
         }
     }
 }
