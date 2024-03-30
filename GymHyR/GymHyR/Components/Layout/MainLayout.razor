@@ -1,14 +1,19 @@
 ﻿@inherits LayoutComponentBase
-<RadzenNotification />
 
 <div class="page">
-    <div class="sidebar">
+    @* <div class="sidebar">
         <NavMenu />
-    </div>
+    </div> *@
 
+    <RadzenNotification />
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div class="container-fluid d-flex align-items-center">
+                <a href="/">
+                    <img src="/Imagenes/Logo.png" alt="Gym" style="width: 60px; height: auto; margin-right: 10px;" />
+                    @*<a href="/"><h5 class="miMensaje"><strong>Gym</strong></h5></a>*@
+                </a>
+            </div>
         </div>
 
         <article class="content px-4">

@@ -8,6 +8,7 @@
 @inject ProveedoresServices proveedoresServices
 @inject ProductosServices productoService
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
 
 <PageTitle>Productos</PageTitle>
 
@@ -138,6 +139,14 @@
         if (response != null)
         {
             mensaje = "Se guardó correctamente.";
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 5_000
+                };
+            notificationServices.Notify(Mensaje);
             navigationManager.NavigateTo("/ProductoIndex");
         }
         else
@@ -145,5 +154,6 @@
             mensaje = "No se pudo guardar el producto.";
         }
     }
+
 
 }

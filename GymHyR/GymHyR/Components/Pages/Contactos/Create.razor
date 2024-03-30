@@ -4,6 +4,7 @@
 @rendermode InteractiveServer
 @inject ContactosServices contactosServices
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
 
 <PageTitle>Contactos</PageTitle>
 
@@ -34,7 +35,7 @@
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
                     <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
-                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <a href="/ProveedoresIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
                 </div>
             </div>
         </div>
@@ -58,6 +59,14 @@
         if (response != null)
         {
             mensaje = "Se guardó correctamente.";
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                        Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 5000
+                };
+            notificationServices.Notify(Mensaje1);
             // navigationManager.NavigateTo("/ProductoIndex");
         }
         else
