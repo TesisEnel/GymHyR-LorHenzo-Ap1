@@ -15,6 +15,7 @@ namespace Library
 
         [DisplayFormat(DataFormatString = "{dd/MM/yyyy}")]
         public DateTime FechaCreacion { get; set; } = DateTime.Today;
+        public byte[]? Foto { get; set; }
 
         [Required(ErrorMessage = "Debe ingresar un nombre.")]
         [RegularExpression(@"^[a-zA-ZñÑ\s]+$", ErrorMessage = "Este campo no acepta números ni caracteres especiales.")]
