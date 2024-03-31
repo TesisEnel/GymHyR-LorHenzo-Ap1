@@ -29,9 +29,6 @@ namespace GymHyR.DAL
 
             modelBuilder.Entity<EstadoMembresias>().HasData(new EstadoMembresias() { EstadoMembresiaId = 1, Descripcion = "Activa" });
             modelBuilder.Entity<EstadoMembresias>().HasData(new EstadoMembresias() { EstadoMembresiaId = 2, Descripcion = "Vencida" });
-
-            modelBuilder.Entity<Clientes>().HasData(new Clientes() { ClienteId = 1, Nombre = "Génerico", Cedula = "123", Gmail = "Vencida", Fecha = DateTime.Today, Telefono = "Diario", });
-
         }
     }
 }

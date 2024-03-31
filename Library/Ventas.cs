@@ -23,3 +23,4 @@ namespace Library
 		[ForeignKey("VentaId")]
 		public List<VentaDetalle> VentaDetalle { get; set; } = new List<VentaDetalle>();
 	}
+}
