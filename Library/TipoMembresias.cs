@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 
 namespace Library
 {
-    public class TipoMembresias
-    {
-        [Key]
-        public int TipoMembresiaId { get; set; }
+	public class TipoMembresias
+	{
+		[Key]
+		public int TipoMembresiaId { get; set; }
 
-        public string? Descripcion { get; set; }
+		public string? Descripcion { get; set; }
 
-        public int DiasDuracion { get; set; }
+		public int DiasDuracion { get; set; }
 
-        [ForeignKey("TipoMembresiaId")]
-        public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
-    }
+		public decimal Precio { get; set; }
+
+		[ForeignKey("TipoMembresiaId")]
+		public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
+	}
 }

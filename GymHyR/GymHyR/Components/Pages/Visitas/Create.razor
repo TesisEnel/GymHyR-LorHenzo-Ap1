@@ -1,0 +1,86 @@
+﻿@page "/Create_Visitas"
+@inject VisitasServices VisitasServices
+@inject MembresiasServices MembresiasServices
+@inject ClientesServices ClientesServices
+@using GymHyR.Services
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Visitas</PageTitle>
+
+<EditForm Model="visita" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Visitas</h1>
+        </div>
+        <div class="card-body">
+            <!-- Para la Cédula del Cliente -->
+            <label class="form-label">Cédula del Cliente</label>
+            <InputText @bind-Value="visita.Cedula" class="form-control" />
+            <ValidationMessage For="@(() => visita.Cedula)" />
+        </div> <!-- Cierre de card-body -->
+
+        <div class="card-footer d-flex justify-content-center">
+            <!-- Botón de guardar siempre activo, verificación al intentar guardar -->
+            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+        </div>
+    </div>
+
+    <!-- Elemento HTML para mostrar el mensaje de error -->
+    <p class="text-danger">@MensajeError</p>
+</EditForm>
+
+@code {
+    public Visitas visita { get; set; } = new Visitas();
+    public string MensajeError { get; set; } = "";
+
+    async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(visita.Cedula))
+        {
+            MostrarError("Debe ingresar la cédula del cliente.");
+            return;
+        }
+
+        // Obtener la membresía activa del cliente por su cédula
+        var clienteEncontrado = await ClientesServices.BuscarPorCedula(visita.Cedula);
+        if (clienteEncontrado != null)
+        {
+            var membresiaCliente = await MembresiasServices.GetList(m => m.Cedula == clienteEncontrado.Cedula && m.EstadoMembresiaId == 1);
+
+            if (membresiaCliente.Any())
+            {
+                // La membresía del cliente está activa, guardar la visita
+                visita.Cedula = clienteEncontrado.Cedula; // Asignar la cédula como ID del cliente en la visita
+                if (await VisitasServices.Guardar(visita))
+                {
+                    Nuevo();
+                }
+                else
+                {
+                    MostrarError("No se pudo guardar la visita.");
+                }
+            }
+            else
+            {
+                MostrarError("No se puede registrar una visita si la membresía del cliente no está activa.");
+            }
+        }
+        else
+        {
+            MostrarError("Cliente no encontrado.");
+        }
+    }
+
+    void Nuevo()
+    {
+        visita = new Visitas();
+    }
+
+    void MostrarError(string mensaje)
+    {
+        // Actualizar la propiedad MensajeError con el mensaje recibido
+        MensajeError = mensaje;
+    }
+}

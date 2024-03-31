@@ -1,0 +1,70 @@
+﻿@page "/DeleteClientes/{Cedula}"
+@inject ClientesServices ClientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@using GymHyR.Services
+
+
+<PageTitle>Eliminar Cliente</PageTitle>
+
+<EditForm Model="cliente">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2>¿Estás seguro de que quieres eliminar el cliente?</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                <strong>Cédula:</strong> @cliente.Cedula
+            </div>
+            <div>
+                <strong>Nombre:</strong> @cliente.Nombre
+            </div>
+            <div>
+                <strong>Fecha de Registro:</strong> @cliente.Fecha.ToShortDateString()
+            </div>
+            <div>
+                <strong>Correo Electrónico:</strong> @cliente.Gmail
+            </div>
+            <div>
+                <strong>Teléfono:</strong> @cliente.Telefono
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public string Cedula { get; set; }
+    private Clientes cliente;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await ClientesServices.BuscarPorCedula(Cedula);
+    }
+
+    void Volver()
+    {
+        NavigationManager.NavigateTo("/ClientesIndex");
+    }
+
+    async Task Eliminar()
+    {
+        var resultado = await ClientesServices.Eliminar(cliente);
+        if (resultado)
+        {
+            Volver();
+        }
+        else
+        {
+            // Manejar el error o mostrar un mensaje al usuario
+        }
+    }
+}

@@ -18,6 +18,8 @@ namespace GymHyR.DAL
         public DbSet<Membresias> Membresias { get; set; }
         public DbSet<TipoMembresias> TipoMembresias { get; set; }
         public DbSet<EstadoMembresias> EstadoMembresias { get; set; }
+        public DbSet<Visitas> Visitas { get; set; }
+        public DbSet<Ventas> Venta { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

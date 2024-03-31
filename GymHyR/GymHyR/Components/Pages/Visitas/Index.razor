@@ -1,0 +1,80 @@
+﻿@page "/VisitasIndex"
+@using GymHyR.Services
+@inject VisitasServices VisitasServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+<PageTitle>Índice de Visitas</PageTitle>
+
+<div class="card-header">
+    <h2>Filtrar Visitas</h2>
+    <div class='row'>
+        <div class='col-md-3'>
+            <label>Cédula</label>
+            <div class="input-group mb-3">
+                <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
+                <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search"></button>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <label>Desde</label>
+            <InputDate @bind-Value="FechaInicial" class="form-control"></InputDate>
+        </div>
+        <div class='col-md-3'>
+            <label>Hasta</label>
+            <InputDate @bind-Value="FechaFinal" class="form-control"></InputDate>
+        </div>
+        <div class='col-md-3'>
+            <label></label>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Visita ID</th>
+            <th>Cédula</th>
+            <th>Fecha de Visita</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var visita in VisitasList)
+        {
+            <tr>
+                <td>@visita.VisitaId</td>
+                <td>@visita.Cedula</td>
+                <td>@visita.Fecha.ToShortDateString()</td>
+                <td><a href="/DeleteVisita/@visita.VisitaId" class="btn btn-outline-danger"><i class="bi bi-file-earmark-x"></i></a></td>
+                <td><a href="/ViewVisitas/@visita.VisitaId" class="btn btn-outline-primary"><i class="bi bi-ticket-detailed"></i></a></td>
+            </tr>
+        }
+    </tbody>
+    <button type="button" @onclick="LimpiarFiltros" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
+</table>
+
+@code {
+    public List<Visitas> VisitasList { get; set; } = new List<Visitas>();
+    public string criterio { get; set; } = string.Empty;
+    public DateTime FechaInicial { get; set; } = DateTime.Today.AddDays(-7); // Default: 7 días atrás
+    public DateTime FechaFinal { get; set; } = DateTime.Today;
+
+    protected override void OnInitialized()
+    {
+        Filtrar(); // Filtrar al cargar la página
+    }
+
+    async Task Filtrar()
+    {
+        VisitasList = await VisitasServices.GetList(visita =>
+            (string.IsNullOrEmpty(criterio) || visita.Cedula.Contains(criterio)) &&
+            (visita.Fecha >= FechaInicial && visita.Fecha <= FechaFinal));
+    }
+
+    void LimpiarFiltros()
+    {
+        criterio = string.Empty;
+        FechaInicial = DateTime.Today.AddDays(-7);
+        FechaFinal = DateTime.Today;
+        Filtrar();
+    }
+}

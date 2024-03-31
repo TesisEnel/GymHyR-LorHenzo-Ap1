@@ -1,23 +1,24 @@
-﻿@page "/Create_Membresias"
+﻿@page "/EditMembresias/{MembresiaId:int}"
+@using GymHyR.Services
 @inject MembresiasServices MembresiasServices
 @inject ClientesServices ClientesServices
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
-@using Services
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Registro de Membresías</PageTitle>
+<PageTitle>Editar Membresía</PageTitle>
 
 <EditForm Model="membresia" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="card">
         <div class="card-header">
-            <h1>Registro de Membresías</h1>
+            <h1>Editar Membresía</h1>
         </div>
         <div class="card-body">
             <!-- Para el cliente -->
             <label class="form-label">Cliente</label>
-            <select @bind="membresia.Cedula" class="form-control">
+            <select @bind="membresia.Cedula" class="form-control" disabled>
                 <option value="">Seleccione un cliente</option>
                 @foreach (var cliente in clientesList)
                 {
@@ -28,7 +29,7 @@
 
             <!-- Para el tipo de membresía -->
             <label class="form-label">Tipo de Membresía</label>
-            <select @bind="membresia.TipoMembresiaId" class="form-control">
+            <select @bind="membresia.TipoMembresiaId" class="form-control" disabled>
                 <option value="">Seleccione un tipo de membresía</option>
                 @foreach (var tipoMembresia in tiposMembresiaList)
                 {
@@ -49,48 +50,38 @@
             <ValidationMessage For="@(() => membresia.EstadoMembresiaId)" />
         </div>
         <div class="card-footer d-flex justify-content-center">
-            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+            <button type="submit" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i> Guardar Cambios</button>
         </div>
     </div>
 </EditForm>
 
 @code {
-    public Membresias membresia { get; set; } = new Membresias();
+    [Parameter]
+    public int MembresiaId { get; set; }
     public List<Clientes> clientesList { get; set; } = new List<Clientes>();
     public List<TipoMembresias> tiposMembresiaList { get; set; } = new List<TipoMembresias>();
     public List<EstadoMembresias> estadosMembresiaList { get; set; } = new List<EstadoMembresias>();
-    public decimal valorMembresia { get; set; }
+    public Membresias membresia { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        membresia = await MembresiasServices.Buscar(MembresiaId);
         clientesList = await ClientesServices.GetList(c => true);
         tiposMembresiaList = await TipoMembresiasServices.GetList(c => true);
         estadosMembresiaList = await EstadoMembresiasServices.GetList(c => true);
     }
 
-    async Task Guardar()
+    public async Task Guardar()
     {
-        if (!EsClienteGenerico(membresia.Cedula) && await MembresiasServices.ClienteTieneMembresia(membresia.Cedula))
-        {
-            MostrarMensajeError("El cliente ya tiene una membresía asociada y no es el cliente genérico.");
-        }
-        else
-        {
-            var tipoMembresiaSeleccionado = tiposMembresiaList.FirstOrDefault(t => t.TipoMembresiaId == membresia.TipoMembresiaId);
 
-            membresia.valor += CalcularValorMembresia(tipoMembresiaSeleccionado);
-            membresia.FechaFechaFin = membresia.FechaInicio.AddDays(tipoMembresiaSeleccionado.DiasDuracion);
-
-            await MembresiasServices.Guardar(membresia);
-            Nuevo();
-        }
-    }
+        var tipoMembresiaSeleccionado = tiposMembresiaList.FirstOrDefault(t => t.TipoMembresiaId == membresia.TipoMembresiaId);
 
 
-    void Nuevo()
-    {
-        membresia = new Membresias();
-        valorMembresia = 0;
+        membresia.FechaFechaFin = membresia.FechaInicio.AddDays(tipoMembresiaSeleccionado.DiasDuracion);
+        membresia.valor += CalcularValorMembresia(tipoMembresiaSeleccionado);
+
+        await MembresiasServices.Guardar(membresia);
+        NavigationManager.NavigateTo("/IndexMembresia");
     }
 
     decimal CalcularValorMembresia(TipoMembresias tipoMembresia)
@@ -106,25 +97,5 @@
             default:
                 return 0;
         }
-    }
-
-    void ActualizarValorMembresia(ChangeEventArgs e)
-    {
-        var tipoMembresiaSeleccionado = tiposMembresiaList.FirstOrDefault(t => t.TipoMembresiaId.ToString() == membresia.TipoMembresiaId.ToString());
-        if (tipoMembresiaSeleccionado != null)
-        {
-            membresia.valor = CalcularValorMembresia(tipoMembresiaSeleccionado);
-        }
-    }
-
-    bool EsClienteGenerico(string cedula)
-    {
-        return cedula == "402-0054036-0";
-    }
-
-    void MostrarMensajeError(string mensaje)
-    {
-        // Implementa aquí la lógica para mostrar el mensaje de error
-        // Puede ser mediante una ventana emergente, un mensaje en la página, etc.
     }
 }

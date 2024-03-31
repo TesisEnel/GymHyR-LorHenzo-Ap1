@@ -1,0 +1,52 @@
+﻿@page "/ViewClientes/{Cedula}"
+@using GymHyR.Services
+@inject ClientesServices ClientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalle de Cliente</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Detalles</h2>
+    </div>
+    <div class="card-body">
+        <div>
+            <strong>Cédula:</strong> @ClienteSeleccionado.Cedula
+        </div>
+        <div>
+            <strong>Nombre:</strong> @ClienteSeleccionado.Nombre
+        </div>
+        <div>
+            <strong>Fecha de Registro:</strong> @ClienteSeleccionado.Fecha.ToShortDateString()
+        </div>
+        <div>
+            <strong>Correo Electrónico:</strong> @ClienteSeleccionado.Gmail
+        </div>
+        <div>
+            <strong>Teléfono:</strong> @ClienteSeleccionado.Telefono
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-center mt-3">
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left me-1"></i> Volver</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Cedula { get; set; }
+
+    public Clientes ClienteSeleccionado { get; set; } = new Clientes();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClienteSeleccionado = await ClientesServices.Buscar(Cedula);
+    }
+
+    void Volver()
+    {
+        NavigationManager.NavigateTo("/ClientesIndex");
+    }
+}

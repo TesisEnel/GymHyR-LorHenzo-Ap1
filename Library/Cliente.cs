@@ -8,28 +8,32 @@ using System.Threading.Tasks;
 
 namespace Library
 {
-    public class Clientes
-    {
-        [Key]
-        public int ClienteId { get; set; }
+	public class Clientes
+	{
+		[Key]
+		[Required(ErrorMessage = "La cédula es obligatoria")]
+		[StringLength(13, MinimumLength = 13, ErrorMessage = "La cédula debe tener 13 caracteres")]
+		[RegularExpression(@"^\d{3}-\d{7}-\d{1}$", ErrorMessage = "El formato de la cédula debe ser XXX-XXXXXXX-X")]
+		public string? Cedula { get; set; }
 
-        [Required(ErrorMessage = "Este campo es requerido")]
-        public string? Nombre { get; set; }
+		[Required(ErrorMessage = "Este campo es requerido")]
+		public string? Nombre { get; set; }
 
-        [Required(ErrorMessage = "Este campo es requerido")]
-        public DateTime Fecha { get; set; } = DateTime.Today;
+		[Required(ErrorMessage = "Este campo es requerido")]
+		public DateTime Fecha { get; set; } = DateTime.Today;
 
-        [Required(ErrorMessage = "Este campo es requerido")]
-        public string? Cedula { get; set; }
+		//[EmailAddress(ErrorMessage = "El correo electrónico no es válido")]
+		public string? Gmail { get; set; }
 
-        //[EmailAddress(ErrorMessage = "El correo electrónico no es válido")]
-        public string? Gmail { get; set; }
+		[Required(ErrorMessage = "Este campo es requerido")]
+		public string? Telefono { get; set; }
 
-        [Required(ErrorMessage = "Este campo es requerido")]
-        public string? Telefono { get; set; }
+		[ForeignKey("Cedula")]
+		public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
 
-        [ForeignKey("ClienteId")]
-        public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
-    }
+		[ForeignKey("Cedula")]
+		public ICollection<Visitas> Visitas { get; set; } = new List<Visitas>();
+	}
+
 
 }
