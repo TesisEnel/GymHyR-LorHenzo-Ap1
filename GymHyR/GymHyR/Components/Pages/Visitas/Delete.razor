@@ -1,0 +1,69 @@
+﻿@page "/DeleteVisita/{VisitaId:int}"
+@using GymHyR.Services
+@inject VisitasServices VisitasServices
+@inject ClientesServices ClientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Visita</PageTitle>
+
+<EditForm Model="visita">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2>¿Estás seguro de que quieres eliminar la visita?</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                <strong>Visita ID:</strong> @visita.VisitaId
+            </div>
+            <div>
+                <strong>Nombre del Cliente:</strong> @NombreCliente
+            </div>
+            <div>
+                <strong>Fecha de Visita:</strong> @visita.Fecha.ToShortDateString()
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int VisitaId { get; set; }
+
+    private Visitas visita;
+    private string NombreCliente;
+
+    protected override async Task OnInitializedAsync()
+    {
+        visita = await VisitasServices.Buscar(VisitaId);
+        NombreCliente = await ObtenerNombreCliente(visita.Cedula);
+    }
+
+    void Volver()
+    {
+        NavigationManager.NavigateTo("/VisitasIndex");
+    }
+
+    async Task Eliminar()
+    {
+        var resultado = await VisitasServices.Eliminar(visita);
+        if (resultado)
+        {
+            Volver();
+        }
+
+    }
+
+    async Task<string> ObtenerNombreCliente(string cedula)
+    {
+        var cliente = await ClientesServices.BuscarPorCedula(cedula);
+        return cliente != null ? cliente.Nombre : "Cliente no encontrado";
+    }
+}

@@ -1,0 +1,63 @@
+﻿@page "/DT_Visitas/{VisitaId:int}"
+@using GymHyR.Services
+@inject VisitasServices VisitasServices
+@inject ClientesServices ClientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalle de Visita</PageTitle>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Detalles</h2>
+    </div>
+    <div class="card-body">
+        @if (VisitaSeleccionada != null)
+        {
+            <div>
+                <strong>ID de Visita:</strong> @VisitaSeleccionada.VisitaId
+            </div>
+            <div>
+                <strong>Nombre del Cliente:</strong> @NombreCliente
+            </div>
+            <div>
+                <strong>Fecha de Visita:</strong> @VisitaSeleccionada.Fecha.ToShortDateString()
+            </div>
+        }
+        else
+        {
+            <p>La visita seleccionada no se encontró o no está disponible.</p>
+        }
+    </div>
+    <div class="card-footer d-flex justify-content-center mt-3">
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left me-1"></i> Volver</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int VisitaId { get; set; }
+
+    public Visitas VisitaSeleccionada { get; set; }
+
+    public string NombreCliente { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        VisitaSeleccionada = await VisitasServices.Buscar(VisitaId);
+        NombreCliente = await ObtenerNombreCliente(VisitaSeleccionada.Cedula);
+    }
+
+    void Volver()
+    {
+        NavigationManager.NavigateTo("/VisitasIndex");
+    }
+
+    async Task<string> ObtenerNombreCliente(string cedula)
+    {
+        var cliente = await ClientesServices.Buscar(cedula);
+        return cliente != null ? cliente.Nombre : "Cliente no encontrado";
+    }
+}
