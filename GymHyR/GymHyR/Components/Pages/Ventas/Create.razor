@@ -1,0 +1,63 @@
+﻿@page "/CreateVentas"
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject VentasServices VentasServices
+
+<h3>Create</h3>
+
+@code {
+    public Ventas ventas = new Ventas();
+    // public IEnumerable<Productos> Productos = new List<Productos>();
+    public int Producto { get; set; }
+    public int Cantidad { get; set; }
+    public float PrecioVenta { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        //Productos = await productosServices.GetProductos();
+
+    }
+
+    public async Task Guardar()
+    {
+        var response = await VentasServices.PostCompras(ventas);
+        if (response != null)
+        {
+            //  mensaje = "Se guardó correctamente.";
+            // navigationManager.NavigateTo("/ProductoIndex");
+        }
+        else
+        {
+            // mensaje = "No se pudo guardar el producto.";
+        }
+    }
+
+    /*  public string ObtenerProducto(int id)
+         {
+             var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+             return dato.Nombre;
+         }*/
+
+    public async Task AgregarDetalle()
+    {
+
+
+        var nuevoDetalle = new VentaDetalle
+            {
+                ProductoId = Producto,
+                Cantidad = Cantidad,
+                PrecioVenta = PrecioVenta
+            };
+        ventas.VentaDetalle.Add(nuevoDetalle);
+        StateHasChanged();
+
+    }
+
+    public async Task EliminarDetalle(VentaDetalle detalle)
+    {
+        ventas.VentaDetalle.Remove(detalle);
+    }
+
+
+
+}
