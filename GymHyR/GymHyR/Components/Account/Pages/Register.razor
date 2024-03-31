@@ -14,6 +14,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject NotificationService notificationServices
 
 <PageTitle>Register</PageTitle>
 <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
@@ -30,7 +31,7 @@
 
                     <div class="card-body p-5 text-center">
 
-                        <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                        <h2 class="fw-bold mb-2 text-uppercase">Registrar</h2>
 
                         <div class="tab-content">
                             <form>
@@ -55,6 +56,13 @@
                                 <div>
                                     <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
                                 </div>
+
+                                @if (errorMessage != null)
+                                {
+                                    <div class="alert alert-danger" role="alert">
+                                        @errorMessage
+                                    </div>
+                                }
                             </form>
                         </div>
                     </div>
@@ -76,6 +84,7 @@
     private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private string? errorMessage;
 
     public async Task RegisterUser(EditContext editContext)
     {
@@ -89,6 +98,13 @@
         if (!result.Succeeded)
         {
             identityErrors = result.Errors;
+
+            errorMessage = "Este correo ya esta registrado";
+            foreach (var error in result.Errors)
+            {
+                errorMessage += $" {error.Description}";
+            }
+
             return;
         }
 
