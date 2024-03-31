@@ -1,0 +1,107 @@
+﻿@page "/Calculadora"
+@rendermode InteractiveServer
+
+<div class="d-flex justify-content-center">
+    <div class="card w-75">
+        <div class="card-header">
+            <h3>Calculadora de Peso Ideal</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Columna izquierda para la calculadora -->
+                <div class="col-md-6">
+                    <div class='col-md-4'>
+                        <label>Altura (cm)</label>
+                        <input type="number" class="form-control form-control-sm" @bind="altura" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Género:</label>
+                        <select class="form-select form-select-sm" @bind="genero">
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Método:</label>
+                        <select class="form-select form-select-sm" @bind="metodo">
+                            <option value="oms">OMS</option>
+                            <option value="broca">Broca</option>
+                            <option value="devine">Devine</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <button class="btn btn-primary btn-sm" @onclick="Calcular">Calcular</button>
+                    </div>
+
+                    @if (pesoIdeal.HasValue)
+                    {
+                        <div>
+                            <h4>Tu peso ideal es:</h4>
+                            <p>@pesoIdeal.Value.ToString("F2") kg</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Columna derecha para la imagen -->
+                <div class="col-md-6">
+                    <img src="https://www.lavanguardia.com/files/og_thumbnail/uploads/2022/02/05/61fe1790c044e.jpeg" alt="Imagen del producto nuevo" class="item-imagen" width="500" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    double? altura;
+    string genero = "masculino";
+    string metodo = "oms";
+    double? pesoIdeal;
+
+    async Task Calcular()
+    {
+        if (altura.HasValue && altura.Value > 0)
+        {
+            if (genero == "masculino")
+            {
+                switch (metodo)
+                {
+                    case "oms":
+                        pesoIdeal = (altura.Value - 100) * 0.9;
+                        break;
+                    case "broca":
+                        pesoIdeal = (altura.Value - 100) - ((altura.Value - 150) / 4);
+                        break;
+                    case "devine":
+                        pesoIdeal = 50 + 0.91 * (altura.Value - 152.4);
+                        break;
+                    default:
+                        pesoIdeal = null;
+                        break;
+                }
+            }
+            else if (genero == "femenino")
+            {
+                switch (metodo)
+                {
+                    case "oms":
+                        pesoIdeal = (altura.Value - 100) * 0.85;
+                        break;
+                    case "broca":
+                        pesoIdeal = (altura.Value - 100) - ((altura.Value - 150) / 2.5);
+                        break;
+                    case "devine":
+                        pesoIdeal = 45.5 + 0.91 * (altura.Value - 152.4);
+                        break;
+                    default:
+                        pesoIdeal = null;
+                        break;
+                }
+            }
+
+            StateHasChanged();
+        }
+    }
+}
