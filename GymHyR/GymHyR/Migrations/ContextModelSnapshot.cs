@@ -254,8 +254,6 @@ namespace GymHyR.Migrations
 
                     b.HasKey("DetalleId");
 
-                    b.HasIndex("ContactoId");
-
                     b.HasIndex("ProveedorId");
 
                     b.ToTable("ProveedorDetalle");
@@ -364,12 +362,6 @@ namespace GymHyR.Migrations
 
             modelBuilder.Entity("Library.ProveedorDetalle", b =>
                 {
-                    b.HasOne("Library.Contactos", null)
-                        .WithMany("ProveedoresDetalleContactos")
-                        .HasForeignKey("ContactoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Library.Proveedores", null)
                         .WithMany("ProveedoresDetalle")
                         .HasForeignKey("ProveedorId")
@@ -385,11 +377,6 @@ namespace GymHyR.Migrations
             modelBuilder.Entity("Library.Compra", b =>
                 {
                     b.Navigation("CompraDetalles");
-                });
-
-            modelBuilder.Entity("Library.Contactos", b =>
-                {
-                    b.Navigation("ProveedoresDetalleContactos");
                 });
 
             modelBuilder.Entity("Library.EstadoMembresias", b =>

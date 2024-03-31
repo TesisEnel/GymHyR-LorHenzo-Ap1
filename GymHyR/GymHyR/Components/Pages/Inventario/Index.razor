@@ -73,13 +73,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Fecha de Creaci&oacute;n</th>
                             <th>Nombre</th>
                             <th>Descripci&oacute;n</th>
                             <th>Categoria</th>
                             <th>Proveedore</th>
                             <th>Precio Compra</th>
+                            <th>Precio Venta</th>
                             <th>Cantidad</th>
                             <th>Acciones</th>
                         </tr>
@@ -95,13 +94,12 @@
                             @foreach (var productos in productos)
                             {
                                 <tr>
-                                    <td>@productos.ProductoId</td>
-                                    <td>@productos.FechaCreacion.ToShortDateString()</td>
                                     <td>@productos.Nombre</td>
                                     <td>@productos.Descripcion</td>
                                     <td>@productos.Categoria</td>
                                     <td>@productos.Proveedores</td>
                                     <td>@productos.PrecioCompra.ToString("N2")</td>
+                                    <td>@productos.PrecioVenta.ToString("N2")</td>
                                     <td>@productos.Cantidad</td>
                                     <td>
                                         <div>
@@ -138,6 +136,7 @@
             mensaje = "No hay datos";
 
         productos = (await productoService.GetProductos()).ToList();
+        StateHasChanged();
     }
 
     public async Task Buscar()

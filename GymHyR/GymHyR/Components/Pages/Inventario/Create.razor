@@ -41,6 +41,13 @@
 
                     </div>
                     <div class="col-4">
+                        <label>Foto del producto:</label>
+                        <div class="input-group mb-3">
+                            <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
                         @*Nombre*@
                         <label class="form-label" for="nombre"><strong>Nombre:</strong></label>
                         <InputText id="nombre" class="form-control" @bind-Value="producto.Nombre" placeholder="Ej: Proteina 200g"></InputText>
@@ -55,7 +62,7 @@
                     </div>
                     <div class="col-2">
                         @*Precio*@
-                        <label class="form-label" for="precio"><strong>Precio compra:</strong></label>
+                        <label class="form-label" for="precio"><strong>Precio Venta:</strong></label>
                         <InputNumber id="precio" class="form-control" @bind-Value="producto.PrecioVenta"></InputNumber>
                         <ValidationMessage For="@(() => producto.PrecioVenta)"></ValidationMessage>
                     </div>
@@ -67,7 +74,7 @@
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                        <label>Precio Venta</label>
+                        <label>Precio Compra</label>
                         <div class="input-group mb-3">
                             <InputNumber @bind-Value="@producto.PrecioCompra" class="form-control" />
                             <ValidationMessage For="@(() => producto.PrecioCompra)" />
@@ -91,16 +98,10 @@
                             <option value="">Seleccionar proveedor</option>
                             @foreach (var item in proveedores)
                             {
-                                <option value="@item.Nombre">@item.Nombre</option>
+                                <option value="@item.ProveedorId">@item.Nombre</option>
                             }
                         </InputSelect>
 
-                    </div>
-                    <div class="col-4">
-                        <label>Foto del producto:</label>
-                        <div class="input-group mb-3">
-                            <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
-                        </div>
                     </div>
                 </div>
 

@@ -83,8 +83,8 @@
 
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
+                    <a href="/InventarioIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
                     <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
-                    <a href="/ProductoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
                 </div>
             </div>
         </div>
@@ -139,7 +139,7 @@
                 };
             notificationServices.Notify(Mensaje1);
             await Task.Delay(1000);
-            navigationManager.NavigateTo("/ProductoIndex");
+            navigationManager.NavigateTo("/InventarioIndex");
         }
         else
         {

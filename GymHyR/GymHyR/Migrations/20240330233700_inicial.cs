@@ -173,12 +173,6 @@ namespace GymHyR.Migrations
                 {
                     table.PrimaryKey("PK_ProveedorDetalle", x => x.DetalleId);
                     table.ForeignKey(
-                        name: "FK_ProveedorDetalle_Contactos_ContactoId",
-                        column: x => x.ContactoId,
-                        principalTable: "Contactos",
-                        principalColumn: "ContactoId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_ProveedorDetalle_Proveedores_ProveedorId",
                         column: x => x.ProveedorId,
                         principalTable: "Proveedores",
@@ -266,11 +260,6 @@ namespace GymHyR.Migrations
                 column: "TipoMembresiaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProveedorDetalle_ContactoId",
-                table: "ProveedorDetalle",
-                column: "ContactoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProveedorDetalle_ProveedorId",
                 table: "ProveedorDetalle",
                 column: "ProveedorId");
@@ -284,6 +273,9 @@ namespace GymHyR.Migrations
 
             migrationBuilder.DropTable(
                 name: "CompraDetalle");
+
+            migrationBuilder.DropTable(
+                name: "Contactos");
 
             migrationBuilder.DropTable(
                 name: "Membresias");
@@ -305,9 +297,6 @@ namespace GymHyR.Migrations
 
             migrationBuilder.DropTable(
                 name: "TipoMembresias");
-
-            migrationBuilder.DropTable(
-                name: "Contactos");
 
             migrationBuilder.DropTable(
                 name: "Proveedores");

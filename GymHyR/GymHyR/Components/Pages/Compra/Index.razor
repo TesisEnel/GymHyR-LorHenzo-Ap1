@@ -2,6 +2,7 @@
 @using Library
 @using GymHyR.Services
 @inject ComprasServices comprasService
+@inject ProductosServices productosServices
 @rendermode InteractiveServer
 
 
@@ -14,6 +15,7 @@
 
             <h3>Historial de compras</h3>
             <div>
+                <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
                 <a href="/CreateCompras" class="btn btn-outline-primary">Crear Compra</a>
             </div>
 
@@ -72,8 +74,6 @@
                         <tr>
                             <th>Id</th>
                             <th>Fecha de compra</th>
-                            <th>Producto</th>
-                            <th>Proveedor</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -85,22 +85,21 @@
                         }
                         else
                         {
-                            @foreach (var Compras in Compras)
+                            @foreach (var compra in Compras)
                             {
                                 <tr>
-                                    <td>@Compras.CompraId</td>
-                                    <td>@Compras.FecheDeCompra.ToShortDateString()</td>
-                                    <td>@Compras.CompraDetalles</td>
-                                    <td>@Compras.FecheDeCompra.ToShortDateString()</td>
+                                    <td>@compra.CompraId</td>
+                                    <td>@compra.FecheDeCompra.ToShortDateString()</td>
                                     <td>
                                         <div>
-                                            <a href="/EditProducto/@Compras.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
-                                            <a href="/ViewProductos/@Compras.CompraId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
-                                            <a href="/DeleteProductos/@Compras.CompraId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+                                            <a href="/EditProducto/@compra.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
+                                            <a href="/ViewCompra/@compra.CompraId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
+                                            <a href="/DeleteCompra/@compra.CompraId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
                                         </div>
                                     </td>
                                 </tr>
-                            }
+        }
+
 
                         }
                     </tbody>
@@ -115,6 +114,7 @@
 
 @code {
     private List<Compra> Compras = new List<Compra>();
+    public IEnumerable<Productos> Productos = new List<Productos>();
     public string filtro { get; set; }
     public string valorFiltro { get; set; }
     public DateTime desde { get; set; } = DateTime.Today;
@@ -127,6 +127,7 @@
             mensaje = "No hay datos";
 
         Compras = (await comprasService.GetCompras()).ToList();
+        Productos = await productosServices.GetProductos();
     }
 
     public async Task Buscar()
@@ -191,4 +192,5 @@
     {
         mensaje = string.Empty;
     }
+
 }

@@ -19,10 +19,7 @@
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header">
-                <h3>Crear de Productos</h3>
-                <div>
-                    <a href="/CreateCategoria" class="btn btn-outline-primary">Crear Categoria</a>
-                </div>
+                <h3>Crear de Compra</h3>
             </div>
 
             <div class="row card-body">
@@ -132,7 +129,6 @@
         </div>
     </div>
 </EditForm>
-
 @code {
     public Compra Compras = new Compra();
     public IEnumerable<Productos> Productos = new List<Productos>();
@@ -148,9 +144,23 @@
     {
         Productos = await productosServices.GetProductos();
         proveedores = await proveedoresServices.GetProveedores();
+
     }
     public async Task Guardar()
     {
+        // Agregar detalles de compra a la compra
+        foreach (var detalle in Compras.CompraDetalles)
+        {
+            var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+            if (producto != null)
+            {
+                producto.Cantidad += detalle.Cantidad;
+                producto.PrecioCompra = detalle.PrecioCompra;
+                await productosServices.PutProducto(producto.ProductoId, producto);
+            }
+        }
+
+        // Guardar la compra
         var response = await comprasServices.PostCompras(Compras);
         if (response != null)
         {
@@ -163,7 +173,7 @@
                 };
             notificationServices.Notify(Mensaje1);
             await Task.Delay(1000);
-            navigationManager.NavigateTo("/ProductoIndex");
+            navigationManager.NavigateTo("/CompraIndex");
         }
         else
         {
@@ -188,15 +198,15 @@
 
     public async Task AgregarDetalle()
     {
-
         if (await ValidarDetalle())
         {
-            var nuevoDetalle = new CompraDetalle 
-            { 
-                ProductoId = Producto, 
-                Proveedor = proveedor, 
-                Cantidad = Cantidad, 
-                PrecioCompra = PrecioCompra };
+            var nuevoDetalle = new CompraDetalle
+                {
+                    ProductoId = Producto,
+                    Proveedor = proveedor,
+                    Cantidad = Cantidad,
+                    PrecioCompra = PrecioCompra
+                };
             Compras.CompraDetalles.Add(nuevoDetalle);
             StateHasChanged();
         }
@@ -210,7 +220,7 @@
                     Duration = 1_000
                 };
             notificationServices.Notify(Mensaje);
-            
+
         }
     }
 
@@ -251,6 +261,4 @@
             };
         notificationServices.Notify(Mensaje);
     }
-
-
 }

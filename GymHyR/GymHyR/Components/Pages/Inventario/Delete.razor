@@ -7,48 +7,59 @@
 @inject IJSRuntime JSRuntime
 
 @rendermode InteractiveAuto
-
-<PageTitle>Eliminar productos</PageTitle>
-
-<RadzenNotification />
+<RadzenNotification/>
+<PageTitle>Detalles del producto</PageTitle>
 <div class="container">
-    <div class="shadow-lg">
-        <h1>Eliminar Producto</h1>
-        <div class="card-body">
-            <h4><strong>Est&aacute;s seguro que quieres eliminar este producto?</strong></h4>
-            <div class="mb-1">
-                <p class="mb-0">Id: @productos.ProductoId</p>
-            </div>
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header">
+            <h3><strong>Detalles del producto</strong></h3>
+            <a href="/InventarioIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left" /></a>
+        </div>
+        @*Cuerpo*@
+        <div class="card-body justify-content-center">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="col-md-11 justify-content-center">
+                        <h3 class="text-center"><strong>Datos del producto</strong></h3>
+                        <div class="border-primmary border border-2 borde">
+                            <div class="card-body">
+                                <div class="row">
+                                    @*Imagen*@
+                                    <div class="col-5 justify-content-center">
+                                        <div class="text-center">
+                                            <img src="@GetImageSource()" alt="Imagen" class="img-fluid img-thumbnail" style="width: auto; height: auto;">
+                                        </div>
+                                    </div>
+                                    @*Datos del proveedor*@
+                                    <div class="col-7">
+                                        <ul class="list-unstyled" style="margin-top: 50px; margin-bottom: 50px;">
+                                            <li><strong>ProveedorId:</strong> @productos.ProductoId</li>
+                                            <li><strong>FechaCreaci&oacute;n:</strong> @productos.FechaCreacion.ToShortDateString()</li>
+                                            <li><strong>Nombre:</strong> @productos.Nombre</li>
+                                            <li><strong>Descripci&oacute;n:</strong> @productos.Descripcion</li>
+                                            <li><strong>Precio de Venta:</strong> @productos.PrecioVenta</li>
+                                            <li><strong>Precio de Compra:</strong> @productos.PrecioCompra</li>
+                                            <li><strong>Cantidad en almacen:</strong> @productos.Cantidad</li>
+                                        </ul>
+                                    </div>
+                                </div>
 
-            <div class="mb-1">
-                <p class="mb-0">Nombre: @productos.Nombre</p>
-            </div>
-
-            <div class="mb-1">
-                <p class="mb-0">Fecha de creaci&oacute;n: @productos.FechaCreacion</p>
-            </div>
-
-            <div class="mb-1">
-                <p class="mb-0">Descripci&oacute;n: @productos.Descripcion</p>
-            </div>
-
-            <div class="mb-1">
-                <p class="mb-0">Precio del producto: @productos.PrecioVenta</p>
-            </div>
-
-            <div class="mb-1">
-                <p class="mb-0">Cantidad en almacen: @productos.Cantidad</p>
-            </div>
-
-
-
-            <div class="d-grid gap-2">
-                <a href="/ProductoIndex" class="btn btn-secondary"><i class="bi bi-arrow-left" /> Cancelar</a>
-                <button type="button" class="btn btn-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
+                                <div class="card-footer d-flex justify-content-center mt-3">
+                                    <div class="btn-group">
+                                        <a href="/InventarioIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left" />Volver</a>
+                                        <button type="button" class="btn btn-outline-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @code {
@@ -79,7 +90,7 @@
                 };
             notificationServices.Notify(Mensaje);
             await Task.Delay(1000);
-            navigationManager.NavigateTo("/ProductoIndex");
+            navigationManager.NavigateTo("/InventarioIndex");
         }
     }
 
@@ -90,5 +101,14 @@
         {
             await Eliminar();
         }
+    }
+
+    public string GetImageSource()
+    {
+        if (productos.Foto != null && productos.Foto.Length > 0)
+        {
+            return $"data:image;base64,{Convert.ToBase64String(productos.Foto)}";
+        }
+        return null;
     }
 }
