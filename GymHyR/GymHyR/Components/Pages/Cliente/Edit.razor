@@ -1,14 +1,16 @@
-﻿@page "/CreateClientes"
+﻿@page "/EditClientes/{Cedula}"
 @inject ClientesServices ClientesServices
 @using Services
 @rendermode InteractiveServer
-<PageTitle>Registro de Clientes</PageTitle>
+@inject NavigationManager NavigationManager
 
-<EditForm Model="cliente" OnValidSubmit="Guardar">
+<PageTitle>Editar Cliente</PageTitle>
+
+<EditForm Model="cliente" FormName="EditClienteForm">
     <DataAnnotationsValidator />
     <div class="card">
         <div class="card-header">
-            <h1>Registro de Clientes</h1>
+            <h1>Editar Cliente</h1>
         </div>
         <div class="card-body">
             <!-- Para la fecha -->
@@ -21,11 +23,6 @@
             <InputText @bind-Value="cliente.Nombre" class="form-control" />
             <ValidationMessage For="@(() => cliente.Nombre)" />
 
-            <!-- Para la cédula -->
-            <label class="form-label">Cédula</label>
-            <InputText @bind-Value="cliente.Cedula" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Cedula)" />
-
             <!-- Para el correo electrónico -->
             <label class="form-label">Correo Electrónico</label>
             <InputText @bind-Value="cliente.Gmail" class="form-control" />
@@ -37,31 +34,38 @@
             <ValidationMessage For="@(() => cliente.Telefono)" />
         </div>
         <div class="card-footer d-flex justify-content-center">
-            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+            <button type="submit" @onclick="Guardar" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i> Guardar Cambios</button>
         </div>
     </div>
 </EditForm>
 
 @code {
-    public Clientes cliente { get; set; } = new Clientes();
+    [Parameter]
+    public string Cedula { get; set; }
 
-    async Task Guardar()
+    public Clientes cliente = new Clientes();
+
+    protected override async Task OnInitializedAsync()
     {
-        if (await ClientesServices.Existe(cliente.Cedula))
+        cliente = await ClientesServices.BuscarPorCedula(Cedula);
+    }
+
+    public async Task Guardar()
+    {
+        bool cedulaExistente = await ClientesServices.Existe(cliente.Cedula);
+
+        if (cedulaExistente)
         {
-            // Aquí puedes manejar el mensaje de error si la cédula ya existe
+            await ClientesServices.Modificar(cliente);
         }
         else
         {
-            if (await ClientesServices.Guardar(cliente))
-            {
-                Nuevo();
-            }
+            await ClientesServices.Insertar(cliente);
         }
+        Volver();
     }
-
-    void Nuevo()
+    void Volver()
     {
-        cliente = new Clientes();
+        NavigationManager.NavigateTo("/ClientesIndex");
     }
 }

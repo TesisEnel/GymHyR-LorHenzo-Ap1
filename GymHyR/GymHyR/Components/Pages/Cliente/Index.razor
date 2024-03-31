@@ -1,0 +1,85 @@
+﻿@page "/ClientesIndex"
+@using GymHyR.Services
+@inject ClientesServices ClientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+<PageTitle>Índice de Clientes</PageTitle>
+
+<div class="card-header">
+    <h2>Filtrar Clientes</h2>
+    <div class='row'>
+        <div class='col-md-3'>
+            <label>Criterio de Búsqueda (Cédula)</label>
+            <div class="input-group mb-3">
+                <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
+                <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search"></button>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <label>Fecha de Registro Desde</label>
+            <InputDate @bind-Value="FechaInicial" class="form-control"></InputDate>
+        </div>
+        <div class='col-md-3'>
+            <label>Fecha de Registro Hasta</label>
+            <InputDate @bind-Value="FechaFinal" class="form-control"></InputDate>
+        </div>
+
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Cédula</th>
+            <th>Nombre</th>
+            <th>Fecha de Registro</th>
+            <th>Correo Electrónico</th>
+            <th>Teléfono</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in ClientesList.Where(c => (string.IsNullOrEmpty(criterio) || c.Cedula.Contains(criterio)) && (c.Fecha >= FechaInicial && c.Fecha <= FechaFinal)))
+        {
+            <tr>
+                <td>@cliente.Cedula</td>
+                <td>@cliente.Nombre</td>
+                <td>@cliente.Fecha.ToShortDateString()</td>
+                <td>@cliente.Gmail</td>
+                <td>@cliente.Telefono</td>
+                <td><a href="/Ed_Clientes/@cliente.Cedula" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a></td>
+                <td><a href="/DeleteClientes/@cliente.Cedula" class="btn btn-outline-danger"><i class="bi bi-file-earmark-x"></i></a></td>
+                <td><a href="/DT_Clientes/@cliente.Cedula" class="btn btn-outline-primary"><i class="bi bi-ticket-detailed"></i></a></td>
+            </tr>
+        }
+    </tbody>
+    <button type="button" @onclick="ReiniciarFiltro" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
+</table>
+
+@code {
+    public List<Clientes> ClientesList { get; set; } = new List<Clientes>();
+    public string criterio { get; set; } = string.Empty;
+    public DateTime FechaInicial { get; set; } = DateTime.Today.AddDays(-7); // Default: 7 días atrás
+    public DateTime FechaFinal { get; set; } = DateTime.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Filtrar(); // Mostrar todos los clientes al cargar la página
+    }
+
+    async Task Filtrar()
+    {
+        ClientesList = await ClientesServices.GetList(cliente =>
+            (string.IsNullOrEmpty(criterio) || cliente.Cedula.Contains(criterio)) &&
+            (cliente.Fecha >= FechaInicial && cliente.Fecha <= FechaFinal));
+    }
+
+    void ReiniciarFiltro()
+    {
+        criterio = string.Empty;
+        FechaInicial = DateTime.Today.AddDays(-7); // Default: 7 días atrás
+        FechaFinal = DateTime.Today;
+        Filtrar(); // Aplicar el filtro reiniciado
+    }
+}
