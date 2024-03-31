@@ -9,47 +9,39 @@
 
 <PageTitle>Eliminar Membresía</PageTitle>
 
-@if (membresia != null)
-{
-    <EditForm Model="membresia" OnValidSubmit="Eliminar" FormName="DeleteMembresiaForm">
-        <DataAnnotationsValidator />
-        <div class="card">
-            <div class="card-header bg-danger text-white">
-                <h2>¿Estás seguro de que quieres eliminar la membresía?</h2>
+<EditForm Model="membresia">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2>¿Estás seguro de que quieres eliminar la membresía?</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                <strong>Membresía ID:</strong> @membresia.MembresiaId
             </div>
-            <div class="card-body">
-                <div>
-                    <strong>Membresía ID:</strong> @membresia.MembresiaId
-                </div>
-                <div>
-                    <strong>Cliente:</strong> @ObtenerNombreCliente(membresia.ClienteId)
-                </div>
-                <div>
-                    <strong>Tipo de Membresía:</strong> @ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)
-                </div>
-                <div>
-                    <strong>Estado de Membresía:</strong> @ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)
-                </div>
-                <div>
-                    <strong>Fecha de Inicio:</strong> @membresia.FechaInicio.ToShortDateString()
-                </div>
-                <div>
-                    <strong>Fecha de Fin:</strong> @membresia.FechaFechaFin.ToShortDateString()
-                </div>
+            <div>
             </div>
-            <div class="card-footer d-flex justify-content-center mt-3">
-                <div class="btn-group">
-                    <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
-                    <button type="submit" class="btn btn-outline-danger ms-2"><i class="bi bi-trash"></i> Eliminar</button>
-                </div>
+            <div>
+                <strong>Tipo de Membresía:</strong> @ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)
+            </div>
+            <div>
+                <strong>Estado de Membresía:</strong> @ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)
+            </div>
+            <div>
+                <strong>Fecha de Inicio:</strong> @membresia.FechaInicio.ToShortDateString()
+            </div>
+            <div>
+                <strong>Fecha de Fin:</strong> @membresia.FechaFechaFin.ToShortDateString()
             </div>
         </div>
-    </EditForm>
-}
-else
-{
-    <p>Cargando...</p>
-}
+        <div class="card-footer d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
 
@@ -65,7 +57,7 @@ else
         membresia = await MembresiasServices.Buscar(MembresiaId);
         if (membresia != null)
         {
-            cliente = await ClientesServices.Buscar(membresia.ClienteId);
+            cliente = await ClientesServices.BuscarPorCedula(membresia.Cedula);
             tipoMembresia = await TipoMembresiasServices.Buscar(membresia.TipoMembresiaId);
             estadoMembresia = await EstadoMembresiasServices.Buscar(membresia.EstadoMembresiaId);
         }
@@ -73,7 +65,7 @@ else
 
     void Volver()
     {
-        NavigationManager.NavigateTo("/Index");
+        NavigationManager.NavigateTo("/IndexMembresia");
     }
 
     async Task Eliminar()
@@ -81,7 +73,7 @@ else
         var resultado = await MembresiasServices.Eliminar(membresia);
         if (resultado)
         {
-            NavigationManager.NavigateTo("/Index");
+            NavigationManager.NavigateTo("/IndexMembresia");
         }
         else
         {
@@ -89,7 +81,7 @@ else
         }
     }
 
-    string ObtenerNombreCliente(int clienteId)
+    string ObtenerNombreCliente(string cedula)
     {
         return cliente != null ? cliente.Nombre : "Cliente no encontrado";
     }
