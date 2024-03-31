@@ -148,7 +148,33 @@
     }
     public async Task Guardar()
     {
-        // Agregar detalles de compra a la compra
+        if (Compras.CompraDetalles.Count == 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "No se han agregado detalles de compra",
+                    Duration = 4000
+                };
+            notificationServices.Notify(mensaje);
+            return;
+        }
+
+        if (Compras.CompraDetalles.Any(detalle =>
+            detalle.ProductoId == 0 || string.IsNullOrEmpty(detalle.Proveedor) || detalle.Cantidad <= 0 || detalle.PrecioCompra <= 0))
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Se han ingresado detalles de compra incompletos o inválidos",
+                    Duration = 1000
+                };
+            notificationServices.Notify(mensaje);
+            return;
+        }
+
         foreach (var detalle in Compras.CompraDetalles)
         {
             var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
@@ -160,7 +186,6 @@
             }
         }
 
-        // Guardar la compra
         var response = await comprasServices.PostCompras(Compras);
         if (response != null)
         {
