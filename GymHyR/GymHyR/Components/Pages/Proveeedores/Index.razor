@@ -12,14 +12,16 @@
 
 	<div class="card shadow-lg">
 		<div class="card-header">
-			<h3>Index</h3>
+			<h3>Proveedores</h3>
 			<div>
+				<a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
 				<a href="/CreateProveedores" class="btn btn-outline-primary">Crear Proveedor</a>
-			</div>
-			<div class="row justify-content-end">
-				<div class="col-4">
-					<label>Cantidad de Proveedores:</label>
-					<span class="badge bg-secondary">@proveedores.Count()</span>
+				<a href="/CreateContactos" class="btn btn-outline-primary">Crear Contacto</a>
+				<div class="row justify-content-end">
+					<div class="col-4">
+						<label>Cantidad de Proveedores:</label>
+						<span class="badge bg-secondary">@proveedores.Count()</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -72,10 +74,8 @@
 						<th>Id</th>
 						<th>Fecha de Creaci&oacute;n</th>
 						<th>Nombre</th>
-						<th>Descripci&oacute;n</th>
-						<th>Categoria</th>
-						<th>Precio Venta</th>
-						<th>Cantidad</th>
+						<th>Direcci&oacute;n</th>
+						<th>RNC</th>
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -97,9 +97,9 @@
 								<td>@proveedor.RNC</td>
 								<td>
 									<div>
-										<a href="/EditProducto/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
-										<a href="/ViewProductos/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
-										<a href="/DeleteProductos/@proveedor.ProveedorId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+										<a href="/EditProveedor/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> </a>
+										<a href="/ViewProveedor/@proveedor.ProveedorId" class="btn btn-outline-primary"><i class="bi bi-eye-fill" /> </a>
+										<a href="/DeleteProveedor/@proveedor.ProveedorId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> </a>
 									</div>
 								</td>
 							</tr>

@@ -6,6 +6,8 @@
 @rendermode InteractiveServer
 @inject CategoriasServices categoriasServices
 @inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+<RadzenNotification />
 
 <PageTitle>Categorias</PageTitle>
 
@@ -17,7 +19,7 @@
             <div class="card-header">
                 <h3>Registro de Categorias</h3>
             </div>
-            <div class="row card-body">
+            <div class="row card-body justify-content-center">
 
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
                     <label>Nombre</label>
@@ -43,30 +45,50 @@
             </div>
         </div>
     </div>
-    @mensaje
 </EditForm>
 
 @code {
     public Categorias categorias = new Categorias();
-    public string mensaje = "";
 
     public async Task Guardar()
     {
         if (string.IsNullOrEmpty(categorias.CategoriaNombre))
         {
-            mensaje = "El campo Nombre es obligatorio.";
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "debe de llenar todos los campos",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
             return;
         }
 
         var response = await categoriasServices.PostCategoria(categorias);
         if (response != null)
         {
-            mensaje = "Se guardó correctamente.";
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = "Contacto guardado con exito",
+                    Duration = 1000
+                };
+            notificationServices.Notify(Mensaje1);
+            await Task.Delay(1000);
             navigationManager.NavigateTo("/CategoriaIndex");
         }
         else
         {
-            mensaje = "No se pudo guardar la categoria.";
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
         }
     }
 }

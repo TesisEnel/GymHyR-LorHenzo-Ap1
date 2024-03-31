@@ -1,7 +1,9 @@
-﻿@page "/ProductoIndex"
+﻿@page "/InventarioIndex"
 @using Library
 @using GymHyR.Services
 @inject ProductosServices productoService
+@inject CategoriasServices categoriasServices
+@inject ProveedoresServices proveedoresServices
 @rendermode InteractiveServer
 
 <PageTitle>Inventario</PageTitle>
@@ -10,19 +12,20 @@
     <div class="card shadow-lg">
         <div class="card-header">
 
-
             <h3>Inventario</h3>
             <div>
+                <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
                 <a href="/CreateProducto" class="btn btn-outline-primary">Crear productos</a>
-            </div>
-
-            <div class="row justify-content-end">
-                <div class="col-4">
-                    <label>Cantidad de productos:</label>
-                    <span class="badge bg-secondary">@productos.Count()</span>
+                <a href="/CategoriaIndex" class="btn btn-outline-primary">Index categoria</a>
+                <div class="row justify-content-end">
+                    <div class="col-4">
+                        <label>Cantidad de productos:</label>
+                        <span class="badge bg-secondary">@productos.Count()</span>
+                    </div>
                 </div>
             </div>
 
+        </div>
 
             <div class="card-body">
                 <div class="justify-content-center">
@@ -70,13 +73,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Fecha de Creaci&oacute;n</th>
                             <th>Nombre</th>
                             <th>Descripci&oacute;n</th>
                             <th>Categoria</th>
                             <th>Proveedore</th>
                             <th>Precio Compra</th>
+                            <th>Precio Venta</th>
                             <th>Cantidad</th>
                             <th>Acciones</th>
                         </tr>
@@ -92,19 +94,18 @@
                             @foreach (var productos in productos)
                             {
                                 <tr>
-                                    <td>@productos.ProductoId</td>
-                                    <td>@productos.FechaCreacion.ToShortDateString()</td>
                                     <td>@productos.Nombre</td>
                                     <td>@productos.Descripcion</td>
                                     <td>@productos.Categoria</td>
                                     <td>@productos.Proveedores</td>
                                     <td>@productos.PrecioCompra.ToString("N2")</td>
+                                    <td>@productos.PrecioVenta.ToString("N2")</td>
                                     <td>@productos.Cantidad</td>
                                     <td>
                                         <div>
-                                            <a href="/EditProducto/@productos.ProductoId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a>
-                                            <a href="/ViewProductos/@productos.ProductoId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
-                                            <a href="/DeleteProductos/@productos.ProductoId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+                                            <a href="/EditProducto/@productos.ProductoId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /></a>
+                                            <a href="/ViewProductos/@productos.ProductoId" class="btn btn-outline-primary"><i class="bi bi-eye-fill" /></a>
+                                            <a href="/DeleteProductos/@productos.ProductoId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -116,7 +117,6 @@
                 </table>
 
             </div>
-        </div>
     </div>
 </div>
 
@@ -136,6 +136,7 @@
             mensaje = "No hay datos";
 
         productos = (await productoService.GetProductos()).ToList();
+        StateHasChanged();
     }
 
     public async Task Buscar()

@@ -1,4 +1,4 @@
-﻿@page "/CreateProveedores"
+﻿@page "/EditProveedor/{Id:int}"
 @using GymHyR.Services
 @using Library
 @rendermode InteractiveAuto
@@ -147,7 +147,8 @@
 </EditForm>
 
 @code {
-
+	[Parameter]
+	public int Id { get; set; }
 	public Proveedores proveedor { get; set; } = new Proveedores();
 	public IEnumerable<Contactos> contactos = new List<Contactos>();
 	public int tipo { get; set; }
@@ -160,6 +161,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		proveedor = await proveedorService.GetProveedor(Id);
 		contactos = await contactosServices.GetContactos();
 	}
 
@@ -194,7 +196,8 @@
 				notificationServices.Notify(Mensaje);
 			}
 		}
-		else{
+		else
+		{
 			var Mensaje = new NotificationMessage
 				{
 					Severity = NotificationSeverity.Error,
@@ -270,7 +273,8 @@
 				var nuevoDetalle = new ProveedorDetalle { ContactoId = tipo, Contacto = contacto };
 				proveedor.ProveedoresDetalle.Add(nuevoDetalle);
 			}
-			else{
+			else
+			{
 				var Mensaje = new NotificationMessage
 					{
 						Severity = NotificationSeverity.Info,

@@ -1,0 +1,121 @@
+﻿@page "/ViewProveedor/{Id:int}"
+@using Library
+@using GymHyR.Services
+@inject ProveedoresServices ProveedoresServices
+@inject NavigationManager navigationManager
+@inject ContactosServices contactosServices
+@rendermode InteractiveAuto
+
+
+<PageTitle>Detalles de Proveedor</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Detalles de Proveedor</strong></h3>
+			<a href="/ProveedoresIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left" /></a>
+		</div>
+		@*Cuerpo*@
+		<div class="card-body">
+			<div class="row">
+				<div class="col-8">
+					<div class="col-md-11">
+						<h3 class="text-center"><strong>Datos del Proveedor</strong></h3>
+						<div class="border-primmary border border-2 borde">
+							<div class="card-body">
+								<div class="row">
+									@*Imagen*@
+									<div class="col-5">
+										<div class="text-center">
+											<img src="@GetImageSource()" alt="Imagen" class="img-fluid img-thumbnail" style="width: auto; height: auto;">
+										</div>
+									</div>
+
+									@*Datos del proveedor*@
+									<div class="col-7">
+										<ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+											<li><strong>ProveedorId:</strong> @proveedor.ProveedorId</li>
+											<li><strong>FechaCreacion:</strong> @proveedor.FechaCreacion.ToShortDateString()</li>
+											<li><strong>Nombre:</strong> @proveedor.Nombre</li>
+											<li><strong>Dirección:</strong> @proveedor.Direccion</li>
+											<li><strong>Email:</strong> @proveedor.Email</li>
+											<li><strong>RNC:</strong> @proveedor.RNC</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				@*Detalles del proveedor*@
+				<div class="col-4">
+					<h3 class="text-center"><strong>Contactos</strong></h3>
+					<fieldset class="border-primmary border border-2 borde">
+						<div class="card-body">
+							<section>
+								<section>
+									@if (proveedor.ProveedoresDetalle.Count > 0)
+									{
+										@*Table Detalles*@
+										<table class="table table-bordered miTabla">
+											<thead>
+												<tr>
+													<th>Tipo de Contacto</th>
+													<th>Contacto</th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach (var detalle in proveedor.ProveedoresDetalle)
+												{
+													<tr>
+														<td>@ObtenerTipoContacto(detalle.ContactoId)</td>
+														<td>@detalle.Contacto</td>
+													</tr>
+												}
+											</tbody>
+										</table>
+										<p><strong>Total de Detalles: </strong>@proveedor.ProveedoresDetalle.Count</p>
+									}
+								</section>
+							</section>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	private Proveedores proveedor { get; set; } = new Proveedores();
+	public IEnumerable<Contactos> contactos = new List<Contactos>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Id > 0)
+		{
+			proveedor = await ProveedoresServices.GetProveedor(Id);
+			contactos = await contactosServices.GetContactos();
+		
+		}
+	}
+	public string ObtenerTipoContacto(int id)
+	{
+		var dato = contactos.FirstOrDefault(c => c.ContactoId == id);
+
+		return dato.Descripcion;
+	}
+
+
+	public string GetImageSource()
+	{
+		if (proveedor.Foto != null && proveedor.Foto.Length > 0)
+		{
+			return $"data:image;base64,{Convert.ToBase64String(proveedor.Foto)}";
+		}
+		return null;
+	}
+}

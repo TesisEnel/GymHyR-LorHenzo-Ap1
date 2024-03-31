@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="BD\" />
+    <Folder Include="wwwroot\Imagenes\" />
   </ItemGroup>
 
 </Project>

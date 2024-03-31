@@ -33,5 +33,6 @@ namespace Library
         [Required(ErrorMessage = "Este campo es obligatorio.")]
         [Range(1, 100000, ErrorMessage = "El campo {0} debe ser mayor que 0 y menor que 100000.")]
         public int Cantidad { get; set; }
+        public byte[]? Foto { get; set; }
     }
 }

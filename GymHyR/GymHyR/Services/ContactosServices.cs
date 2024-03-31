@@ -17,7 +17,7 @@ namespace GymHyR.Services
             }).ToListAsync();
         }
 
-        public async Task<Contactos?> GetContactos(int id)
+        public async Task<Contactos?> GetContacto(int id)
         {
             return await context.Contactos.FindAsync(id);
         }

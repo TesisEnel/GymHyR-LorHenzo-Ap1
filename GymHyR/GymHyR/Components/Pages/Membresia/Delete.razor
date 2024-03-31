@@ -1,0 +1,106 @@
+﻿@page "/DeleteMembresia/{MembresiaId:int}"
+@using GymHyR.Services
+@inject MembresiasServices MembresiasServices
+@inject ClientesServices ClientesServices
+@inject TipoMembresiasServices TipoMembresiasServices
+@inject EstadoMembresiasServices EstadoMembresiasServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Membresía</PageTitle>
+
+@if (membresia != null)
+{
+    <EditForm Model="membresia" OnValidSubmit="Eliminar" FormName="DeleteMembresiaForm">
+        <DataAnnotationsValidator />
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h2>¿Estás seguro de que quieres eliminar la membresía?</h2>
+            </div>
+            <div class="card-body">
+                <div>
+                    <strong>Membresía ID:</strong> @membresia.MembresiaId
+                </div>
+                <div>
+                    <strong>Cliente:</strong> @ObtenerNombreCliente(membresia.ClienteId)
+                </div>
+                <div>
+                    <strong>Tipo de Membresía:</strong> @ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)
+                </div>
+                <div>
+                    <strong>Estado de Membresía:</strong> @ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)
+                </div>
+                <div>
+                    <strong>Fecha de Inicio:</strong> @membresia.FechaInicio.ToShortDateString()
+                </div>
+                <div>
+                    <strong>Fecha de Fin:</strong> @membresia.FechaFechaFin.ToShortDateString()
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center mt-3">
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                    <button type="submit" class="btn btn-outline-danger ms-2"><i class="bi bi-trash"></i> Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+
+    [Parameter]
+    public int MembresiaId { get; set; }
+    private Membresias membresia;
+    private Clientes cliente;
+    private TipoMembresias tipoMembresia;
+    private EstadoMembresias estadoMembresia;
+
+    protected override async Task OnInitializedAsync()
+    {
+        membresia = await MembresiasServices.Buscar(MembresiaId);
+        if (membresia != null)
+        {
+            cliente = await ClientesServices.Buscar(membresia.ClienteId);
+            tipoMembresia = await TipoMembresiasServices.Buscar(membresia.TipoMembresiaId);
+            estadoMembresia = await EstadoMembresiasServices.Buscar(membresia.EstadoMembresiaId);
+        }
+    }
+
+    void Volver()
+    {
+        NavigationManager.NavigateTo("/Index");
+    }
+
+    async Task Eliminar()
+    {
+        var resultado = await MembresiasServices.Eliminar(membresia);
+        if (resultado)
+        {
+            NavigationManager.NavigateTo("/Index");
+        }
+        else
+        {
+            // Manejar el error o mostrar un mensaje al usuario
+        }
+    }
+
+    string ObtenerNombreCliente(int clienteId)
+    {
+        return cliente != null ? cliente.Nombre : "Cliente no encontrado";
+    }
+
+    string ObtenerDescripcionTipoMembresia(int tipoMembresiaId)
+    {
+        return tipoMembresia != null ? tipoMembresia.Descripcion : "Tipo de membresía no encontrado";
+    }
+
+    string ObtenerDescripcionEstadoMembresia(int estadoMembresiaId)
+    {
+        return estadoMembresia != null ? estadoMembresia.Descripcion : "Estado de membresía no encontrado";
+    }
+}

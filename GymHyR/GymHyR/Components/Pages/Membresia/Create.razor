@@ -1,0 +1,90 @@
+﻿@page "/Create_Membresias"
+@inject MembresiasServices MembresiasServices
+@inject ClientesServices ClientesServices
+@inject TipoMembresiasServices TipoMembresiasServices
+@inject EstadoMembresiasServices EstadoMembresiasServices
+@using Library
+@using GymHyR.Services
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Membresías</PageTitle>
+
+<EditForm Model="membresia" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Membresías</h1>
+        </div>
+        <div class="card-body">
+            <!-- Para el cliente -->
+            <label class="form-label">Cliente</label>
+            <select @bind="membresia.ClienteId" class="form-control">
+                <option value="">Seleccione un cliente</option>
+                @foreach (var cliente in clientesList)
+                {
+                    <option value="@cliente.ClienteId">@cliente.Nombre</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => membresia.ClienteId)" />
+
+            <!-- Para el tipo de membresía -->
+            <label class="form-label">Tipo de Membresía</label>
+            <select @bind="membresia.TipoMembresiaId" class="form-control">
+                <option value="">Seleccione un tipo de membresía</option>
+                @foreach (var tipoMembresia in tiposMembresiaList)
+                {
+                    <option value="@tipoMembresia.TipoMembresiaId">@tipoMembresia.Descripcion</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => membresia.TipoMembresiaId)" />
+
+            <!-- Para el estado de membresía -->
+            <label class="form-label">Estado de Membresía</label>
+            <select @bind="membresia.EstadoMembresiaId" class="form-control">
+                <option value="">Seleccione un estado de membresía</option>
+                @foreach (var estadoMembresia in estadosMembresiaList)
+                {
+                    <option value="@estadoMembresia.EstadoMembresiaId">@estadoMembresia.Descripcion</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => membresia.EstadoMembresiaId)" />
+
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Membresias membresia { get; set; } = new Membresias();
+    public List<Clientes> clientesList { get; set; } = new List<Clientes>();
+    public List<TipoMembresias> tiposMembresiaList { get; set; } = new List<TipoMembresias>();
+    public List<EstadoMembresias> estadosMembresiaList { get; set; } = new List<EstadoMembresias>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientesList = await ClientesServices.GetList(c => true);
+        tiposMembresiaList = await TipoMembresiasServices.GetList(c => true);
+        estadosMembresiaList = await EstadoMembresiasServices.GetList(c => true);
+    }
+
+    async Task Guardar()
+    {
+        var tipoMembresiaSeleccionado = tiposMembresiaList.FirstOrDefault(t => t.TipoMembresiaId == membresia.TipoMembresiaId);
+
+        if (tipoMembresiaSeleccionado != null)
+        {
+            membresia.FechaFechaFin = membresia.FechaInicio.AddDays(tipoMembresiaSeleccionado.DiasDuracion);
+        }
+
+        await MembresiasServices.Guardar(membresia);
+        Nuevo();
+    }
+
+    void Nuevo()
+    {
+        membresia = new Membresias();
+    }
+
+}
