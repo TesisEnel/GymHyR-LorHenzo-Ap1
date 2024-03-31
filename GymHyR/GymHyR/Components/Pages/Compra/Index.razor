@@ -1,9 +1,11 @@
 ﻿@page "/CompraIndex"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ComprasServices comprasService
 @inject ProductosServices productosServices
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
 
 
 <PageTitle>Compras</PageTitle>

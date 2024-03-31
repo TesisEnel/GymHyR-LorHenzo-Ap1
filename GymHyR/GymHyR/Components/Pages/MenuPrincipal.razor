@@ -18,29 +18,35 @@
             </div> *@
             <div class="card-body">
                 @*Fila #1*@
-                <div class="row justify-content-center mb-5">
-                    @*Clientes*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrAClientes">
-                            <h6><strong>Clientes</strong></h6>
-                            <img src="Imagenes/Cliente1.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Proveedores*@
-                    <div class="col-md-3 text-center">
-                        <button class="d-block mx-auto borde" @onclick="IrAProveedores">
-                            <h6><strong>Proveedores</strong></h6>
-                            <img src="Imagenes/Proveedores.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Inventario*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrAProductos">
-                            <h6><strong>Inventario</strong></h6>
-                            <img src="Imagenes/Inventario.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                </div>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+
+                        <div class="row justify-content-center mb-5">
+                            @*Clientes*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAClientes">
+                                    <h6><strong>Clientes</strong></h6>
+                                    <img src="Imagenes/Cliente1.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                            @*Proveedores*@
+                            <div class="col-md-3 text-center">
+                                <button class="d-block mx-auto borde" @onclick="IrAProveedores">
+                                    <h6><strong>Proveedores</strong></h6>
+                                    <img src="Imagenes/Proveedores.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                            @*Inventario*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAProductos">
+                                    <h6><strong>Inventario</strong></h6>
+                                    <img src="Imagenes/Inventario.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                        </div>
+
+                    </Authorized>
+                </AuthorizeView>
                 @*Fila #2*@
                 <div class="row justify-content-center mb-5">
                     @*Ventas*@
