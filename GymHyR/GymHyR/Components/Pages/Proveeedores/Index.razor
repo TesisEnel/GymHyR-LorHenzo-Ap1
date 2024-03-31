@@ -1,8 +1,10 @@
 ﻿@page "/ProveedoresIndex"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ProveedoresServices proveedoresServices
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Proveedores</PageTitle>
 

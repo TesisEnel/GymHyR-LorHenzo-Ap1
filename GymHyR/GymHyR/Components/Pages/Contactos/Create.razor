@@ -1,10 +1,12 @@
 ﻿@page "/CreateContactos"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveAuto
 @inject ContactosServices contactosServices
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Contactos</PageTitle>
 

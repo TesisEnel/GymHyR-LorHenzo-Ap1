@@ -1,12 +1,14 @@
 ﻿@page "/EditProveedor/{Id:int}"
 @using GymHyR.Services
 @using Library
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveAuto
 @inject NavigationManager navigation
 @inject ContactosServices contactosServices
 @inject ProveedoresServices proveedorService
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 
 
 <PageTitle>Crear Nuevo Proveedor</PageTitle>

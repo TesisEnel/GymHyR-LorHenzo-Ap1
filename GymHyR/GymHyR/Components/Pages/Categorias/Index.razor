@@ -1,9 +1,11 @@
 ﻿@page "/CategoriaIndex"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject CategoriasServices CategoriasService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, Empleado")]
 <PageTitle> Categorías</PageTitle>
 
 <div class="container">

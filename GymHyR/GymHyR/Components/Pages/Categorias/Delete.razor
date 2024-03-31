@@ -1,10 +1,12 @@
 ﻿@page "/DeleteCategorias/{Id:int}"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject CategoriasServices CategoriasService
 @inject NavigationManager navigationManager
 @rendermode InteractiveAuto
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 <RadzenNotification />
 
 <PageTitle>Eliminar productos</PageTitle>

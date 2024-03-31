@@ -18,7 +18,7 @@
             </div> *@
             <div class="card-body">
                 @*Fila #1*@
-                <AuthorizeView Roles="Admin">
+                <AuthorizeView Roles="Admin, Empleado">
                     <Authorized>
 
                         <div class="row justify-content-center mb-5">
@@ -45,32 +45,34 @@
                             </div>
                         </div>
 
+
+                        @*Fila #2*@
+                        <div class="row justify-content-center mb-5">
+                            @*Ventas*@
+                            <div class="col-md-3 text-center">
+                                <button class="d-block mx-auto borde" @onclick="IrAVentas">
+                                    <h6><strong>Ventas</strong></h6>
+                                    <img src="Imagenes/bolsa-de-valores.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                            @*Categorias*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrACompra">
+                                    <h6><strong>Compras</strong></h6>
+                                    <img src="Imagenes/Compra.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                            @*Membresia*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrMembresia">
+                                    <h6><strong>Membresia</strong></h6>
+                                    <img src="Imagenes/Membresia.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                        </div>
+
                     </Authorized>
                 </AuthorizeView>
-                @*Fila #2*@
-                <div class="row justify-content-center mb-5">
-                    @*Ventas*@
-                    <div class="col-md-3 text-center">
-                        <button class="d-block mx-auto borde" @onclick="IrAVentas">
-                            <h6><strong>Ventas</strong></h6>
-                            <img src="Imagenes/bolsa-de-valores.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Categorias*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrACompra">
-                            <h6><strong>Compras</strong></h6>
-                            <img src="Imagenes/Compra.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Membresia*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrMembresia">
-                            <h6><strong>Membresia</strong></h6>
-                            <img src="Imagenes/Membresia.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                </div>
                 @*Fila #3*@
                 <div class="row justify-content-center mb-5">
                     @*Reportes*@

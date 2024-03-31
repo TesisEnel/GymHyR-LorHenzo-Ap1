@@ -1,5 +1,6 @@
 ﻿@page "/EditProducto/{Id:int}"
 @using Library
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using GymHyR.Services
 @inject CategoriasServices categoriasServices
@@ -7,6 +8,7 @@
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
 @rendermode InteractiveAuto
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Editar Producto</PageTitle>
 

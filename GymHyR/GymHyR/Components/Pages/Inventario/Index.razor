@@ -1,10 +1,12 @@
 ﻿@page "/InventarioIndex"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ProductosServices productoService
 @inject CategoriasServices categoriasServices
 @inject ProveedoresServices proveedoresServices
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Inventario</PageTitle>
 

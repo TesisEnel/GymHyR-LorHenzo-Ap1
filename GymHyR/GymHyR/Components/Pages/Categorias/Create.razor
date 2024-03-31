@@ -1,5 +1,6 @@
 ﻿@page "/CreateCategoria"
 @using Library
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 @using GymHyR.Services
@@ -7,6 +8,7 @@
 @inject CategoriasServices categoriasServices
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 <RadzenNotification />
 
 <PageTitle>Categorias</PageTitle>
