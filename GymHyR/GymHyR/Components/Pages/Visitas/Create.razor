@@ -3,7 +3,10 @@
 @inject MembresiasServices MembresiasServices
 @inject ClientesServices ClientesServices
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Registro de Visitas</PageTitle>
 

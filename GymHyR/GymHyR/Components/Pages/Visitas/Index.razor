@@ -1,8 +1,11 @@
 ﻿@page "/VisitasIndex"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject VisitasServices VisitasServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 <PageTitle>Índice de Visitas</PageTitle>
 
 <div class="card-header">
