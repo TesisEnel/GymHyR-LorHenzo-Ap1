@@ -14,7 +14,7 @@ Cómo empezar
 1.	Clonar el repositorio: Clona este repositorio en tu máquina local desde Visual Studio.
 2.	Configuración del entorno: Asegúrate de tener instalado Visual Studio con soporte para Blazor.
 3.	Ejecución: Una vez que hayas clonado el repositorio y configurado tu entorno, puedes ejecutar la aplicación directamente desde Visual Studio.
-4.	Explora la aplicación: Una vez que la aplicación esté en funcionamiento, abre tu navegador web y navega a la URL proporcionada para ver la aplicación en acción. ¡Explora todas las características y funcionalidades disponibles!.
+4.	Explora la aplicación: Una vez que la aplicación esté en funcionamiento, abre tu navegador web y navega a la URL proporcionada para ver la aplicación en acción. ¡Explora todas las características y funcionalidades disponibles! (http://www.gymhyr.somee.com/).
 
 Contribución
 ¡Las contribuciones son bienvenidas! Si encuentras errores, tienes ideas para nuevas características o mejoras, o simplemente quieres ayudar a mejorar el proyecto, no dudes en abrir un problema o enviar una solicitud de extracción en GitHub.
