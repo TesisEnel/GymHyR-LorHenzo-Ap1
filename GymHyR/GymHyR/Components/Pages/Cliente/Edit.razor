@@ -1,8 +1,11 @@
 ﻿@page "/EditClientes/{Cedula}"
 @inject ClientesServices ClientesServices
+@using Microsoft.AspNetCore.Authorization
 @using Services
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Editar Cliente</PageTitle>
 

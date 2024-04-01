@@ -37,12 +37,8 @@ namespace GymHyR.Migrations
 
             modelBuilder.Entity("Library.Clientes", b =>
                 {
-                    b.Property<int>("ClienteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Cedula")
-                        .IsRequired()
+                        .HasMaxLength(13)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Fecha")
@@ -59,20 +55,9 @@ namespace GymHyR.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ClienteId");
+                    b.HasKey("Cedula");
 
                     b.ToTable("Clientes");
-
-                    b.HasData(
-                        new
-                        {
-                            ClienteId = 1,
-                            Cedula = "123",
-                            Fecha = new DateTime(2024, 3, 30, 0, 0, 0, 0, DateTimeKind.Local),
-                            Gmail = "Vencida",
-                            Nombre = "Génerico",
-                            Telefono = "Diario"
-                        });
                 });
 
             modelBuilder.Entity("Library.Compra", b =>
@@ -168,8 +153,9 @@ namespace GymHyR.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Cedula")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("EstadoMembresiaId")
                         .HasColumnType("INTEGER");
@@ -183,9 +169,12 @@ namespace GymHyR.Migrations
                     b.Property<int>("TipoMembresiaId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("valor")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("MembresiaId");
 
-                    b.HasIndex("ClienteId");
+                    b.HasIndex("Cedula");
 
                     b.HasIndex("EstadoMembresiaId");
 
@@ -307,6 +296,9 @@ namespace GymHyR.Migrations
                     b.Property<int>("DiasDuracion")
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TipoMembresiaId");
 
                     b.ToTable("TipoMembresias");
@@ -316,20 +308,89 @@ namespace GymHyR.Migrations
                         {
                             TipoMembresiaId = 1,
                             Descripcion = "Mensual",
-                            DiasDuracion = 30
+                            DiasDuracion = 30,
+                            Precio = 0m
                         },
                         new
                         {
                             TipoMembresiaId = 2,
                             Descripcion = "Semanal",
-                            DiasDuracion = 5
+                            DiasDuracion = 5,
+                            Precio = 0m
                         },
                         new
                         {
                             TipoMembresiaId = 3,
                             Descripcion = "Diario",
-                            DiasDuracion = 1
+                            DiasDuracion = 1,
+                            Precio = 0m
                         });
+                });
+
+            modelBuilder.Entity("Library.VentaDetalle", b =>
+                {
+                    b.Property<int>("VentaDetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("PrecioVenta")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("VentaDetalleId");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("VentaDetalle");
+                });
+
+            modelBuilder.Entity("Library.Ventas", b =>
+                {
+                    b.Property<int>("VentaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Valor")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("VentaId");
+
+                    b.ToTable("Venta");
+                });
+
+            modelBuilder.Entity("Library.Visitas", b =>
+                {
+                    b.Property<int>("VisitaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Cedula")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("MembresiaId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("VisitaId");
+
+                    b.HasIndex("Cedula");
+
+                    b.HasIndex("MembresiaId");
+
+                    b.ToTable("Visitas");
                 });
 
             modelBuilder.Entity("Library.CompraDetalle", b =>
@@ -343,7 +404,7 @@ namespace GymHyR.Migrations
                 {
                     b.HasOne("Library.Clientes", null)
                         .WithMany("Membresias")
-                        .HasForeignKey("ClienteId")
+                        .HasForeignKey("Cedula")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -369,9 +430,31 @@ namespace GymHyR.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Library.VentaDetalle", b =>
+                {
+                    b.HasOne("Library.Ventas", null)
+                        .WithMany("VentaDetalle")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Library.Visitas", b =>
+                {
+                    b.HasOne("Library.Clientes", null)
+                        .WithMany("Visitas")
+                        .HasForeignKey("Cedula");
+
+                    b.HasOne("Library.Membresias", null)
+                        .WithMany("Visitas")
+                        .HasForeignKey("MembresiaId");
+                });
+
             modelBuilder.Entity("Library.Clientes", b =>
                 {
                     b.Navigation("Membresias");
+
+                    b.Navigation("Visitas");
                 });
 
             modelBuilder.Entity("Library.Compra", b =>
@@ -384,6 +467,11 @@ namespace GymHyR.Migrations
                     b.Navigation("Membresias");
                 });
 
+            modelBuilder.Entity("Library.Membresias", b =>
+                {
+                    b.Navigation("Visitas");
+                });
+
             modelBuilder.Entity("Library.Proveedores", b =>
                 {
                     b.Navigation("ProveedoresDetalle");
@@ -392,6 +480,11 @@ namespace GymHyR.Migrations
             modelBuilder.Entity("Library.TipoMembresias", b =>
                 {
                     b.Navigation("Membresias");
+                });
+
+            modelBuilder.Entity("Library.Ventas", b =>
+                {
+                    b.Navigation("VentaDetalle");
                 });
 #pragma warning restore 612, 618
         }

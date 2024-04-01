@@ -2,7 +2,7 @@
 @inject NavigationManager navigation
 @rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Inicio</PageTitle>
 
 
 <div class="d-flex justify-content-center">
@@ -52,7 +52,7 @@
                             <div class="col-md-3 text-center">
                                 <button class="d-block mx-auto borde" @onclick="IrAVentas">
                                     <h6><strong>Ventas</strong></h6>
-                                    <img src="Imagenes/bolsa-de-valores.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                    <img src="Imagenes/Ventas.png class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
                                 </button>
                             </div>
                             @*Categorias*@
@@ -70,32 +70,26 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="row justify-content-center mb-5">
+                            @*Acerca de*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
+                                    <h6><strong>Acerca de</strong></h6>
+                                    <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                        </div>
 
                     </Authorized>
                 </AuthorizeView>
                 @*Fila #3*@
                 <div class="row justify-content-center mb-5">
                     @*Reportes*@
-                    <div class="col-md-3 text-center">
-                        <button class="d-block mx-auto borde" @onclick="IrAVentas">
-                            <h6><strong>Reportes</strong></h6>
-                            <img src="Imagenes/reporte.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Acerca de*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrAAcercaDe">
-                            <h6><strong>Acerca de</strong></h6>
-                            <img src="Imagenes/acerca-de.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
-                    @*Vacio*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrMembresia">
-                            <h6><strong>Membresia</strong></h6>
-                            <img src="Imagenes/advertencia.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
-                    </div>
+                    <button class="d-block mx-auto borde" @onclick="IrACalculadora">
+                       <h6><strong>Calculadora</strong></h6>
+                       <img src="Imagenes/Calculadora.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                    </button>
+                   
                 </div>
             </div>
         </div>
@@ -106,7 +100,7 @@
 
     private void IrAClientes()
     {
-        navigation.NavigateTo("/CreateClientes");
+        navigation.NavigateTo("/ClientesIndex");
     }
 
     private void IrAProveedores()
@@ -119,22 +113,22 @@
     }
     private void IrAVentas()
     {
-        navigation.NavigateTo("/#");
+        navigation.NavigateTo("/VIndex");
     }
     private void IrAProductos()
     {
         navigation.NavigateTo("/InventarioIndex");
     }
-    private void IrAAcercaDe()
-    {
-        navigation.NavigateTo("/AcercaDe");
-    }
     private void IrMembresia()
     {
         navigation.NavigateTo("/IndexMembresia");
     }
-    private void IrACategorias()
+    private void IrACalculadora()
     {
-        navigation.NavigateTo("/Categorias");
+        navigation.NavigateTo("/Calculadora");
+    }
+    private void IrAVisitas()
+    {
+        navigation.NavigateTo("/VisitasIndex");
     }
 }

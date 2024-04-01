@@ -1,8 +1,11 @@
 ﻿@page "/ViewClientes/{Cedula}"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ClientesServices ClientesServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Detalle de Cliente</PageTitle>
 
