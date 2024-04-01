@@ -3,6 +3,9 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 
 <PageTitle>Eliminar Cliente</PageTitle>

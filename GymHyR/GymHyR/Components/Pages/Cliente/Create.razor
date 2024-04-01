@@ -1,8 +1,11 @@
 ﻿@page "/CreateClientes"
 @inject ClientesServices ClientesServices
 @inject NotificationService notificationServices
+@using Microsoft.AspNetCore.Authorization
 @using Services
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Registro de Clientes</PageTitle>
 <RadzenNotification />
