@@ -1,20 +1,18 @@
-﻿@page "/CreateVentas"
+﻿@page "/EditVenta/{Id:int}"
 @using GymHyR.Services
 @rendermode InteractiveServer
 @inject VentasServices VentasServices
 @inject ProductosServices productosServices
+@inject NotificationService notificationServices
+@inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
-@inject NotificationService notificationServices
-@inject NavigationManager navigationManager
 @inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "Admin")]
 
 
-<h3>Create</h3>
-
-<PageTitle>Ventas</PageTitle>
+<PageTitle>Editar Ventas</PageTitle>
 <RadzenNotification />
 
 <EditForm Model="@ventas" OnValidSubmit="Guardar" FormName="ventas">
@@ -23,7 +21,7 @@
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header">
-                <h3>Crear Venta</h3>
+                <h3>Editar venta</h3>
             </div>
 
             <div class="row card-body">
@@ -118,22 +116,28 @@
 </EditForm>
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
     public Ventas ventas = new Ventas();
     public int Producto { get; set; }
     public int Cantidad { get; set; }
     public float PrecioVenta { get; set; }
+    public int Borrar { get; set; }
     public IEnumerable<Productos> Productos = new List<Productos>();
 
     protected override async Task OnInitializedAsync()
     {
-        Productos = await productosServices.GetProductos();
-
+        if (Id > 0)
+        {
+            Productos = await productosServices.GetProductos();
+            ventas = await VentasServices.GetVenta(Id);
+        }
     }
 
 
     public async Task Guardar()
     {
-        // Agregar detalles de compra a la compra
         foreach (var detalle in ventas.VentaDetalle)
         {
             var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
@@ -170,7 +174,10 @@
                 };
             notificationServices.Notify(Mensaje);
         }
+
+
     }
+
 
     public string ObtenerProducto(int id)
     {
@@ -192,44 +199,60 @@
         {
             if (Cantidad <= productoSeleccionado.Cantidad)
             {
-                // Restante del producto después de agregar el detalle
-                int cantidadRestante = productoSeleccionado.Cantidad - Cantidad;
-
-                // Verificar si la cantidad restante es menor o igual a cero
-                if (cantidadRestante >= 0)
+                // Verificar si el detalle ya existe en la lista
+                var detalleExistente = ventas.VentaDetalle.FirstOrDefault(d => d.ProductoId == Producto);
+                if (detalleExistente != null)
                 {
-                    float precioVentaDetalle = Cantidad * productoSeleccionado.PrecioVenta;
-                    var nuevoDetalle = new VentaDetalle
-                        {
-                            ProductoId = Producto,
-                            Cantidad = Cantidad,
-                            PrecioVenta = precioVentaDetalle
-                        };
-
-                    ventas.VentaDetalle.Add(nuevoDetalle);
-                    ventas.Valor += precioVentaDetalle;
-
-                    var mensaje = new NotificationMessage
-                        {
-                            Severity = NotificationSeverity.Success,
-                            Summary = "Detalle agregado",
-                            Detail = "Se ha agregado un nuevo detalle a la venta",
-                            Duration = 3000
-                        };
-                    notificationServices.Notify(mensaje);
-
-                    StateHasChanged();
-                }
-                else
-                {
+                    // Mostrar mensaje de error porque el detalle ya existe
                     var mensajeError = new NotificationMessage
                         {
                             Severity = NotificationSeverity.Error,
                             Summary = "Error al agregar detalle",
-                            Detail = "La cantidad ingresada es mayor que la cantidad disponible del producto",
+                            Detail = "El producto seleccionado ya está presente en la lista de detalles",
                             Duration = 3000
                         };
                     notificationServices.Notify(mensajeError);
+                }
+                else
+                {
+
+                    int cantidadRestante = productoSeleccionado.Cantidad - Cantidad;
+
+                    if (cantidadRestante >= 0)
+                    {
+                        float precioVentaDetalle = Cantidad * productoSeleccionado.PrecioVenta;
+                        var nuevoDetalle = new VentaDetalle
+                            {
+                                ProductoId = Producto,
+                                Cantidad = Cantidad,
+                                PrecioVenta = precioVentaDetalle
+                            };
+
+                        ventas.VentaDetalle.Add(nuevoDetalle);
+                        ventas.Valor += precioVentaDetalle * Cantidad;
+
+                        var mensaje = new NotificationMessage
+                            {
+                                Severity = NotificationSeverity.Success,
+                                Summary = "Detalle agregado",
+                                Detail = "Se ha agregado un nuevo detalle a la venta",
+                                Duration = 3000
+                            };
+                        notificationServices.Notify(mensaje);
+
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        var mensajeError = new NotificationMessage
+                            {
+                                Severity = NotificationSeverity.Error,
+                                Summary = "Error al agregar detalle",
+                                Detail = "La cantidad ingresada es mayor que la cantidad disponible del producto",
+                                Duration = 3000
+                            };
+                        notificationServices.Notify(mensajeError);
+                    }
                 }
             }
             else
@@ -248,12 +271,11 @@
 
 
 
+
     public bool ValidarDetalleCompleto()
     {
-        // Verificar si el producto y la cantidad están seleccionados
         if (Producto == 0 || Cantidad == 0)
         {
-            // Mostrar mensaje de error
             var mensajeError = new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
@@ -271,16 +293,21 @@
 
     public async Task EliminarDetalle(VentaDetalle detalle)
     {
-        // Obtener el precio del detalle eliminado
         float precioDetalleEliminado = detalle.PrecioVenta;
 
-        // Remover el detalle de la lista de detalles de la venta
+        int cantidadDetalleEliminado = detalle.Cantidad;
+
         ventas.VentaDetalle.Remove(detalle);
 
-        // Restar el precio del detalle eliminado al valor total de la venta
-        ventas.Valor -= precioDetalleEliminado;
+        var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+        if (producto != null)
+        {
+            producto.Cantidad += cantidadDetalleEliminado;
+            await productosServices.PutProducto(producto.ProductoId, producto);
+        }
 
-        // Mostrar notificación de éxito
+        ventas.Valor -= precioDetalleEliminado * cantidadDetalleEliminado;
+
         var mensaje = new NotificationMessage
             {
                 Severity = NotificationSeverity.Info,
@@ -290,4 +317,21 @@
             };
         notificationServices.Notify(mensaje);
     }
+
+    public float CalcularTotalVentas()
+    {
+        float total = 0;
+        foreach (var detalle in ventas.VentaDetalle)
+        {
+            total += detalle.Cantidad * ObtenerProductoPrecio(detalle.ProductoId);
+        }
+        return total;
+    }
+    public float ObtenerProductoPrecio(int id)
+    {
+        var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+        return dato.PrecioVenta;
+    }
+
 }
