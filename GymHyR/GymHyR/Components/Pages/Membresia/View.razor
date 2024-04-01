@@ -1,11 +1,14 @@
 ﻿@page "/ViewMembresia/{MembresiaId:int}"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject MembresiasServices MembresiasServices
 @inject NavigationManager NavigationManager
 @inject ClientesServices ClientesServices
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Detalle de Membresía</PageTitle>
 
