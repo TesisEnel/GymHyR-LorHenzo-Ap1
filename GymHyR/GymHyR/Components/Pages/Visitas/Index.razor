@@ -8,52 +8,66 @@
 @attribute [Authorize(Roles = "Admin, Empleado")]
 <PageTitle>Índice de Visitas</PageTitle>
 
-<div class="card-header">
-    <h2>Filtrar Visitas</h2>
-    <div class='row'>
-        <div class='col-md-3'>
-            <label>Cédula</label>
-            <div class="input-group mb-3">
-                <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
-                <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search"></button>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <div>
+                <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                <a href="/Create_Visitas" class="btn btn-outline-primary">Registrar visita</a>
+            </div>
+            <h2>Filtrar Visitas</h2>
+            <div class='row'>
+                <div class='col-md-3'>
+                    <label>Cédula</label>
+                    <div class="input-group mb-3">
+                        <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
+                        <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search"></button>
+                    </div>
+                </div>
+                <div class='col-md-3'>
+                    <label>Desde</label>
+                    <InputDate @bind-Value="FechaInicial" class="form-control"></InputDate>
+                </div>
+                <div class='col-md-3'>
+                    <label>Hasta</label>
+                    <InputDate @bind-Value="FechaFinal" class="form-control"></InputDate>
+                </div>
+                <div class='col-md-3'>
+                    <label></label>
+                </div>
             </div>
         </div>
-        <div class='col-md-3'>
-            <label>Desde</label>
-            <InputDate @bind-Value="FechaInicial" class="form-control"></InputDate>
-        </div>
-        <div class='col-md-3'>
-            <label>Hasta</label>
-            <InputDate @bind-Value="FechaFinal" class="form-control"></InputDate>
-        </div>
-        <div class='col-md-3'>
-            <label></label>
+        <div class="row card-body">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Visita ID</th>
+                        <th>Cédula</th>
+                        <th>Fecha de Visita</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var visita in VisitasList)
+                    {
+                        <tr>
+                            <td>@visita.VisitaId</td>
+                            <td>@visita.Cedula</td>
+                            <td>@visita.Fecha.ToShortDateString()</td>
+                            <td>
+                                <a href="/ViewVisitas/@visita.VisitaId" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+                                <a href="/DeleteVisita/@visita.VisitaId" class="btn btn-outline-danger"><i class="bi bi-trash3"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div>
+                <button type="button" @onclick="LimpiarFiltros" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
+            </div>
         </div>
     </div>
 </div>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Visita ID</th>
-            <th>Cédula</th>
-            <th>Fecha de Visita</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var visita in VisitasList)
-        {
-            <tr>
-                <td>@visita.VisitaId</td>
-                <td>@visita.Cedula</td>
-                <td>@visita.Fecha.ToShortDateString()</td>
-                <td><a href="/DeleteVisita/@visita.VisitaId" class="btn btn-outline-danger"><i class="bi bi-file-earmark-x"></i></a></td>
-                <td><a href="/ViewVisitas/@visita.VisitaId" class="btn btn-outline-primary"><i class="bi bi-ticket-detailed"></i></a></td>
-            </tr>
-        }
-    </tbody>
-    <button type="button" @onclick="LimpiarFiltros" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
-</table>
 
 @code {
     public List<Visitas> VisitasList { get; set; } = new List<Visitas>();
