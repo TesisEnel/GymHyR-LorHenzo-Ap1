@@ -31,17 +31,15 @@ namespace GymHyR.Migrations
                 name: "Clientes",
                 columns: table => new
                 {
-                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Cedula = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Cedula = table.Column<string>(type: "TEXT", nullable: false),
                     Gmail = table.Column<string>(type: "TEXT", nullable: true),
                     Telefono = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.ClienteId);
+                    table.PrimaryKey("PK_Clientes", x => x.Cedula);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,11 +127,26 @@ namespace GymHyR.Migrations
                     TipoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: true),
-                    DiasDuracion = table.Column<int>(type: "INTEGER", nullable: false)
+                    DiasDuracion = table.Column<int>(type: "INTEGER", nullable: false),
+                    Precio = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TipoMembresias", x => x.TipoMembresiaId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Venta",
+                columns: table => new
+                {
+                    VentaId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Valor = table.Column<float>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Venta", x => x.VentaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,9 +199,10 @@ namespace GymHyR.Migrations
                 {
                     MembresiaId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Cedula = table.Column<string>(type: "TEXT", nullable: false),
                     TipoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false),
                     EstadoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    valor = table.Column<decimal>(type: "TEXT", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "TEXT", nullable: false),
                     FechaFechaFin = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -196,10 +210,10 @@ namespace GymHyR.Migrations
                 {
                     table.PrimaryKey("PK_Membresias", x => x.MembresiaId);
                     table.ForeignKey(
-                        name: "FK_Membresias_Clientes_ClienteId",
-                        column: x => x.ClienteId,
+                        name: "FK_Membresias_Clientes_Cedula",
+                        column: x => x.Cedula,
                         principalTable: "Clientes",
-                        principalColumn: "ClienteId",
+                        principalColumn: "Cedula",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Membresias_EstadoMembresias_EstadoMembresiaId",
@@ -215,10 +229,52 @@ namespace GymHyR.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Clientes",
-                columns: new[] { "ClienteId", "Cedula", "Fecha", "Gmail", "Nombre", "Telefono" },
-                values: new object[] { 1, "123", new DateTime(2024, 3, 30, 0, 0, 0, 0, DateTimeKind.Local), "Vencida", "Génerico", "Diario" });
+            migrationBuilder.CreateTable(
+                name: "VentaDetalle",
+                columns: table => new
+                {
+                    VentaDetalleId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    VentaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Cantidad = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrecioVenta = table.Column<float>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VentaDetalle", x => x.VentaDetalleId);
+                    table.ForeignKey(
+                        name: "FK_VentaDetalle_Venta_VentaId",
+                        column: x => x.VentaId,
+                        principalTable: "Venta",
+                        principalColumn: "VentaId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Visitas",
+                columns: table => new
+                {
+                    VisitaId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Cedula = table.Column<string>(type: "TEXT", nullable: true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    MembresiaId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Visitas", x => x.VisitaId);
+                    table.ForeignKey(
+                        name: "FK_Visitas_Clientes_Cedula",
+                        column: x => x.Cedula,
+                        principalTable: "Clientes",
+                        principalColumn: "Cedula");
+                    table.ForeignKey(
+                        name: "FK_Visitas_Membresias_MembresiaId",
+                        column: x => x.MembresiaId,
+                        principalTable: "Membresias",
+                        principalColumn: "MembresiaId");
+                });
 
             migrationBuilder.InsertData(
                 table: "EstadoMembresias",
@@ -231,12 +287,12 @@ namespace GymHyR.Migrations
 
             migrationBuilder.InsertData(
                 table: "TipoMembresias",
-                columns: new[] { "TipoMembresiaId", "Descripcion", "DiasDuracion" },
+                columns: new[] { "TipoMembresiaId", "Descripcion", "DiasDuracion", "Precio" },
                 values: new object[,]
                 {
-                    { 1, "Mensual", 30 },
-                    { 2, "Semanal", 5 },
-                    { 3, "Diario", 1 }
+                    { 1, "Mensual", 30, 0m },
+                    { 2, "Semanal", 5, 0m },
+                    { 3, "Diario", 1, 0m }
                 });
 
             migrationBuilder.CreateIndex(
@@ -245,9 +301,9 @@ namespace GymHyR.Migrations
                 column: "CompraId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Membresias_ClienteId",
+                name: "IX_Membresias_Cedula",
                 table: "Membresias",
-                column: "ClienteId");
+                column: "Cedula");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Membresias_EstadoMembresiaId",
@@ -263,6 +319,21 @@ namespace GymHyR.Migrations
                 name: "IX_ProveedorDetalle_ProveedorId",
                 table: "ProveedorDetalle",
                 column: "ProveedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VentaDetalle_VentaId",
+                table: "VentaDetalle",
+                column: "VentaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visitas_Cedula",
+                table: "Visitas",
+                column: "Cedula");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visitas_MembresiaId",
+                table: "Visitas",
+                column: "MembresiaId");
         }
 
         /// <inheritdoc />
@@ -278,16 +349,28 @@ namespace GymHyR.Migrations
                 name: "Contactos");
 
             migrationBuilder.DropTable(
-                name: "Membresias");
-
-            migrationBuilder.DropTable(
                 name: "Productos");
 
             migrationBuilder.DropTable(
                 name: "ProveedorDetalle");
 
             migrationBuilder.DropTable(
+                name: "VentaDetalle");
+
+            migrationBuilder.DropTable(
+                name: "Visitas");
+
+            migrationBuilder.DropTable(
                 name: "Compra");
+
+            migrationBuilder.DropTable(
+                name: "Proveedores");
+
+            migrationBuilder.DropTable(
+                name: "Venta");
+
+            migrationBuilder.DropTable(
+                name: "Membresias");
 
             migrationBuilder.DropTable(
                 name: "Clientes");
@@ -297,9 +380,6 @@ namespace GymHyR.Migrations
 
             migrationBuilder.DropTable(
                 name: "TipoMembresias");
-
-            migrationBuilder.DropTable(
-                name: "Proveedores");
         }
     }
 }

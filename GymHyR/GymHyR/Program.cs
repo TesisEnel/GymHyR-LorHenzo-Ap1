@@ -49,6 +49,8 @@ builder.Services.AddScoped<ClientesServices>();
 builder.Services.AddScoped<EstadoMembresiasServices>();
 builder.Services.AddScoped<MembresiasServices>();
 builder.Services.AddScoped<TipoMembresiasServices>();
+builder.Services.AddScoped<VentasServices>();
+builder.Services.AddScoped<VisitasServices>();
 
 
 
