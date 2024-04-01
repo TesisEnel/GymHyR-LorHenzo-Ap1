@@ -1,5 +1,6 @@
 ﻿@page "/DeleteCompra/{Id:int}"
 @using Library
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 @using GymHyR.Services
@@ -10,6 +11,7 @@
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <RadzenNotification />
 <PageTitle>Eliminar Proveedor</PageTitle>

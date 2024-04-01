@@ -1,9 +1,11 @@
 ﻿@page "/ViewProductos/{Id:int}"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ProductosServices productosService
 @inject NavigationManager navigationManager
 @rendermode InteractiveAuto
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Detalles del producto</PageTitle>
 <div class="container">

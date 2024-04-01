@@ -18,9 +18,20 @@
             </NavLink>
         </div>
 
+
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div class="nav-item px-0">
+                    <NavLink class="nav-link" href="ProductoIndex">
+                        <span aria-hidden="true"><i class="bi bi-journal"></i></span> Productos Admin
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="ProductoIndex">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Productos
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Productos No admin
             </NavLink>
         </div>
 

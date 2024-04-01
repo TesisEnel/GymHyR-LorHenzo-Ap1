@@ -1,5 +1,6 @@
 ﻿@page "/CreateProducto"
 @using Library
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 @using GymHyR.Services
@@ -9,6 +10,7 @@
 @inject ProductosServices productoService
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Productos</PageTitle>
 

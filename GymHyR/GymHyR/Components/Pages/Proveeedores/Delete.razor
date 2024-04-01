@@ -1,12 +1,14 @@
 ﻿@page "/DeleteProveedor/{Id:int}"
 @using Library
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ProveedoresServices ProveedoresServices
 @inject NavigationManager navigationManager
 @inject ContactosServices contactosServices
 @rendermode InteractiveAuto
 @inject NotificationService notificationServices
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 
 <RadzenNotification />
