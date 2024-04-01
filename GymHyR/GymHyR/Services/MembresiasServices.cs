@@ -1,4 +1,4 @@
-﻿using GymHyR.DAL;
+﻿using GymHyR.Data;
 using Library;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 namespace GymHyR.Services;
 public class MembresiasServices
 {
-    private readonly Context _context;
+    private readonly ApplicationDbContext _context;
 
-    public MembresiasServices(Context context)
+    public MembresiasServices(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -1,11 +1,11 @@
-﻿using GymHyR.DAL;
+﻿using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.Services;
 
-public class ProveedoresServices(Context context)
+public class ProveedoresServices(ApplicationDbContext context)
 {
     public async Task<IEnumerable<Proveedores>> GetProveedores()
     {

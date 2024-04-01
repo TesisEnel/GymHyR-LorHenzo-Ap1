@@ -17,10 +17,10 @@ namespace GymHyR.Migrations
                 name: "Categorias",
                 columns: table => new
                 {
-                    CategoriaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CategoriaNombre = table.Column<string>(type: "TEXT", nullable: false),
-                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CategoriaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoriaNombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,11 +31,11 @@ namespace GymHyR.Migrations
                 name: "Clientes",
                 columns: table => new
                 {
-                    Cedula = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Gmail = table.Column<string>(type: "TEXT", nullable: true),
-                    Telefono = table.Column<string>(type: "TEXT", nullable: false)
+                    Cedula = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,9 +46,9 @@ namespace GymHyR.Migrations
                 name: "Compra",
                 columns: table => new
                 {
-                    CompraId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FecheDeCompra = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CompraId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FecheDeCompra = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,9 +59,9 @@ namespace GymHyR.Migrations
                 name: "Contactos",
                 columns: table => new
                 {
-                    ContactoId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: false)
+                    ContactoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,9 +72,9 @@ namespace GymHyR.Migrations
                 name: "EstadoMembresias",
                 columns: table => new
                 {
-                    EstadoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: true)
+                    EstadoMembresiaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,17 +85,17 @@ namespace GymHyR.Migrations
                 name: "Productos",
                 columns: table => new
                 {
-                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Categoria = table.Column<string>(type: "TEXT", nullable: false),
-                    Proveedores = table.Column<string>(type: "TEXT", nullable: false),
-                    PrecioVenta = table.Column<float>(type: "REAL", nullable: false),
-                    PrecioCompra = table.Column<float>(type: "REAL", nullable: false),
-                    Cantidad = table.Column<int>(type: "INTEGER", nullable: false),
-                    Foto = table.Column<byte[]>(type: "BLOB", nullable: true)
+                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Proveedores = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrecioVenta = table.Column<float>(type: "real", nullable: false),
+                    PrecioCompra = table.Column<float>(type: "real", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    Foto = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -106,14 +106,14 @@ namespace GymHyR.Migrations
                 name: "Proveedores",
                 columns: table => new
                 {
-                    ProveedorId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FechaCreacion = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Foto = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    Nombre = table.Column<string>(type: "TEXT", maxLength: 15, nullable: false),
-                    Direccion = table.Column<string>(type: "TEXT", maxLength: 70, nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    RNC = table.Column<string>(type: "TEXT", nullable: false)
+                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Foto = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Nombre = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    RNC = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,11 +124,11 @@ namespace GymHyR.Migrations
                 name: "TipoMembresias",
                 columns: table => new
                 {
-                    TipoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: true),
-                    DiasDuracion = table.Column<int>(type: "INTEGER", nullable: false),
-                    Precio = table.Column<decimal>(type: "TEXT", nullable: false)
+                    TipoMembresiaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiasDuracion = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,10 +139,10 @@ namespace GymHyR.Migrations
                 name: "Venta",
                 columns: table => new
                 {
-                    VentaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Valor = table.Column<float>(type: "REAL", nullable: false)
+                    VentaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Valor = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,14 +153,14 @@ namespace GymHyR.Migrations
                 name: "CompraDetalle",
                 columns: table => new
                 {
-                    CompraDetalleId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    VentaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cantidad = table.Column<int>(type: "INTEGER", nullable: false),
-                    Proveedor = table.Column<string>(type: "TEXT", nullable: false),
-                    PrecioCompra = table.Column<float>(type: "REAL", nullable: false),
-                    CompraId = table.Column<int>(type: "INTEGER", nullable: true)
+                    CompraDetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VentaId = table.Column<int>(type: "int", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    Proveedor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrecioCompra = table.Column<float>(type: "real", nullable: false),
+                    CompraId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -176,11 +176,11 @@ namespace GymHyR.Migrations
                 name: "ProveedorDetalle",
                 columns: table => new
                 {
-                    DetalleId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ProveedorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ContactoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Contacto = table.Column<string>(type: "TEXT", nullable: false)
+                    DetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProveedorId = table.Column<int>(type: "int", nullable: false),
+                    ContactoId = table.Column<int>(type: "int", nullable: false),
+                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -197,14 +197,14 @@ namespace GymHyR.Migrations
                 name: "Membresias",
                 columns: table => new
                 {
-                    MembresiaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Cedula = table.Column<string>(type: "TEXT", nullable: false),
-                    TipoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EstadoMembresiaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    valor = table.Column<decimal>(type: "TEXT", nullable: false),
-                    FechaInicio = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    FechaFechaFin = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    MembresiaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Cedula = table.Column<string>(type: "nvarchar(13)", nullable: false),
+                    TipoMembresiaId = table.Column<int>(type: "int", nullable: false),
+                    EstadoMembresiaId = table.Column<int>(type: "int", nullable: false),
+                    valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaFechaFin = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,12 +233,12 @@ namespace GymHyR.Migrations
                 name: "VentaDetalle",
                 columns: table => new
                 {
-                    VentaDetalleId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    VentaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cantidad = table.Column<int>(type: "INTEGER", nullable: false),
-                    PrecioVenta = table.Column<float>(type: "REAL", nullable: false)
+                    VentaDetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VentaId = table.Column<int>(type: "int", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    PrecioVenta = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -255,11 +255,11 @@ namespace GymHyR.Migrations
                 name: "Visitas",
                 columns: table => new
                 {
-                    VisitaId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Cedula = table.Column<string>(type: "TEXT", nullable: true),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    MembresiaId = table.Column<int>(type: "INTEGER", nullable: true)
+                    VisitaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Cedula = table.Column<string>(type: "nvarchar(13)", nullable: true),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MembresiaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

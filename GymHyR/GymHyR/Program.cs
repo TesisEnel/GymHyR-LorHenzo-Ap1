@@ -1,7 +1,6 @@
 using GymHyR.Client.Pages;
 using GymHyR.Components;
 using GymHyR.Components.Account;
-using GymHyR.DAL;
 using GymHyR.Data;
 using GymHyR.Services;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -37,8 +36,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //Injeccion del conexion normal
 
-builder.Services.AddDbContextFactory<Context>
-    (o => o.UseSqlite(builder.Configuration.GetConnectionString("ConStr")));
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ProductosServices>();
 builder.Services.AddScoped<CategoriasServices>();

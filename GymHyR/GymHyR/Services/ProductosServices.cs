@@ -1,12 +1,11 @@
-﻿using GymHyR.DAL;
-using GymHyR.Data;
+﻿using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.Services;
 
-public class ProductosServices(Context context)
+public class ProductosServices(ApplicationDbContext context)
 {
     public async Task<IEnumerable<Productos>> GetProductos()
     {

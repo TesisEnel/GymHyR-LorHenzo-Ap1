@@ -1,11 +1,12 @@
-﻿using GymHyR.DAL;
+﻿
+using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.Services;
 
-public class CategoriasServices(Context context)
+public class CategoriasServices(ApplicationDbContext context)
 {
     public async Task<IEnumerable<Categorias>> GetCategorias()
     {

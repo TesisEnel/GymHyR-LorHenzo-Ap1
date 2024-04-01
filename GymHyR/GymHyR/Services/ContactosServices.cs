@@ -1,11 +1,11 @@
-﻿using GymHyR.DAL;
+﻿using GymHyR.Data;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymHyR.Services;
 
-public class ContactosServices(Context context)
+public class ContactosServices(ApplicationDbContext context)
 {
     public async Task<IEnumerable<Contactos>> GetContactos()
     {
