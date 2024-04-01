@@ -6,20 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
+namespace Library;
+
+public class TipoMembresias
 {
-	public class TipoMembresias
-	{
-		[Key]
-		public int TipoMembresiaId { get; set; }
+    [Key]
+    public int TipoMembresiaId { get; set; }
 
-		public string? Descripcion { get; set; }
+    public string? Descripcion { get; set; }
 
-		public int DiasDuracion { get; set; }
+    public int DiasDuracion { get; set; }
 
-		public decimal Precio { get; set; }
+    public decimal Precio { get; set; }
 
-		[ForeignKey("TipoMembresiaId")]
-		public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
-	}
+    [ForeignKey("TipoMembresiaId")]
+    public ICollection<Membresias> Membresias { get; set; } = new List<Membresias>();
 }

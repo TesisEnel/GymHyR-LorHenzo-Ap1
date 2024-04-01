@@ -9,12 +9,12 @@ namespace Library;
 
 public class Visitas
 {
-	[Key]
-	public int VisitaId { get; set; }
+    [Key]
+    public int VisitaId { get; set; }
 
-	public string? Cedula { get; set; }
+    public string? Cedula { get; set; }
 
-	[Required(ErrorMessage = "Este campo es requerido")]
-	public DateTime Fecha { get; set; } = DateTime.Today;
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public DateTime Fecha { get; set; } = DateTime.Today;
 
 }
