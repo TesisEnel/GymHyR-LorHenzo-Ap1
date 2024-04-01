@@ -1,4 +1,5 @@
 ¡Bienvenido a GymHyR!
+
 Esta aplicación web está diseñada utilizando Blazor en Visual Studio para ayudarte a administrar tu gimnasio de manera eficiente y efectiva. Aquí encontrarás una descripción general de las características principales y cómo utilizarlas.
 
 Características principales
