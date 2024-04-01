@@ -11,7 +11,7 @@ Randy1233.@gmail.com
 Randy1233.
 
 Lor1@gmail.com
-Lor123,
+Lor123.
 
 
 Nota:
