@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
-{
-    public class Contactos
-    {
-        [Key]
-        public int ContactoId { get; set; }
+namespace Library;
 
-        public string Descripcion { get; set; }
+public class Contactos
+{
+    [Key]
+    public int ContactoId { get; set; }
+
+    public string Descripcion { get; set; }
 
 	}
-}

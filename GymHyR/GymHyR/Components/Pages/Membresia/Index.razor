@@ -1,82 +1,93 @@
 ﻿@page "/IndexMembresia"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject MembresiasServices MembresiasServices
 @inject ClientesServices ClientesServices
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
-<div class="mt-4">
-    <h2>Filtrar Membresías</h2>
-    <div class='row'>
-        <div class='col-md-3'>
-            <label>Criterio de Búsqueda por ID</label>
-            <div class="input-group mb-3">
-                <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
-                <button type="button" @onclick="FiltrarPorId" class="btn btn-primary">Buscar por ID</button>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <div>
+                <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                <a href="/Create_Membresias" class="btn btn-outline-primary">Crear Membresia</a>
+            </div>
+            <div class="mt-4">
+                <h2>Filtrar Membresías</h2>
+                <div class='row'>
+                    <div class='col-md-3'>
+                        <label> ID</label>
+                        <div class="input-group mb-3">
+                            <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
+                            <button type="button" @onclick="FiltrarPorId" class="btn btn-outline-primary bi bi-search"></button>
+                        </div>
+                    </div>
+                    <div class='col-md-3'>
+                        <label>Inicio</label>
+                        <InputDate @bind-Value="fechaInicio" class="form-control"></InputDate>
+                    </div>
+                    <div class='col-md-3'>
+                        <label>Fin</label>
+                        <InputDate @bind-Value="fechaFin" class="form-control"></InputDate>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label> </label>
+                        <button type="button" @onclick="FiltrarPorFecha" class="btn btn-outline-primary bi bi-search"> Filtrar por fecha</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class='col-md-3'>
-            <label>Fecha de Inicio</label>
-            <InputDate @bind-Value="fechaInicio" class="form-control"></InputDate>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Membresía ID</th>
+                        <th>Cliente</th>
+                        <th>Tipo de Membresía</th>
+                        <th>Estado de Membresía</th>
+                        <th>Fecha de Inicio</th>
+                        <th>Fecha de Fin</th>
+                        <th>Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var membresia in L_MembresiasFiltradas)
+                    {
+                        <tr>
+                            <td>@membresia.MembresiaId</td>
+                            <td>@ObtenerNombreCliente(membresia.Cedula)</td>
+                            <td>@ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)</td>
+                            <td>@ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)</td>
+                            <td>@membresia.FechaInicio.ToShortDateString()</td>
+                            <td>@membresia.FechaFechaFin.ToShortDateString()</td>
+                            <td>@membresia.valor.ToString("N2")</td>
+                            @if (membresia.EstadoMembresiaId == 2)
+                            {
+                                <td><a href="/EditMembresias/@membresia.MembresiaId" class="btn btn-outline-success"><i class="bi bi-pencil-fill"></i></a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td><a href="/DeleteMembresia/@membresia.MembresiaId" class="btn btn-outline-danger"><i class="bi bi-trash3"></i></a></td>
+                            <td><a href="/ViewMembresia/@membresia.MembresiaId" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" @onclick="LimpiarFiltros" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
         </div>
-        <div class='col-md-3'>
-            <label>Fecha de Fin</label>
-            <InputDate @bind-Value="fechaFin" class="form-control"></InputDate>
-        </div>
-        <div class='col-md-3'>
-            <label></label>
-            <button type="button" @onclick="FiltrarPorFecha" class="btn btn-primary">Filtrar por Fecha</button>
-        </div>
+
+    </div>
+    <div class="mt-4">
+        <h3>Total Valor Membresías: @ObtenerTotalValorMembresias().ToString("N2")</h3>
     </div>
 </div>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Membresía ID</th>
-            <th>Cliente</th>
-            <th>Tipo de Membresía</th>
-            <th>Estado de Membresía</th>
-            <th>Fecha de Inicio</th>
-            <th>Fecha de Fin</th>
-            <th>Acumulado</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var membresia in L_MembresiasFiltradas)
-        {
-            <tr>
-                <td>@membresia.MembresiaId</td>
-                <td>@ObtenerNombreCliente(membresia.Cedula)</td>
-                <td>@ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)</td>
-                <td>@ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)</td>
-                <td>@membresia.FechaInicio.ToShortDateString()</td>
-                <td>@membresia.FechaFechaFin.ToShortDateString()</td>
-                <td>@membresia.valor.ToString("N2")</td>
-                @if (membresia.EstadoMembresiaId == 2)
-                {
-                    <td><a href="/Ed_Membresias/@membresia.MembresiaId" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a></td>
-                }
-                else
-                {
-                    <td></td>
-                }
-                <td><a href="/DeleteMembresia/@membresia.MembresiaId" class="btn btn-outline-danger"><i class="bi bi-file-earmark-x"></i></a></td>
-                <td><a href="/ViewMembresia/@membresia.MembresiaId" class="btn btn-outline-primary"><i class="bi bi-ticket-detailed"></i></a></td>
-            </tr>
-        }
-    </tbody>
-    <button type="button" @onclick="LimpiarFiltros" class="btn btn-outline-secondary bi bi-arrow-clockwise"> Reiniciar Filtro</button>
-</table>
-
-
-<div class="mt-4">
-    <h3>Total Valor Membresías: @ObtenerTotalValorMembresias().ToString("N2")</h3>
-</div>
-
 @code {
     public List<Membresias> L_Membresias { get; set; } = new List<Membresias>();
     public List<Clientes> ClientesList { get; set; } = new List<Clientes>();

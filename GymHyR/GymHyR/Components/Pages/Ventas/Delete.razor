@@ -1,0 +1,161 @@
+﻿@page "/DeleteVentas/{Id:int}"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject VentasServices ventasServices
+@inject ProductosServices productosServices
+@inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
+
+<RadzenNotification />
+<PageTitle>Eliminar Venta</PageTitle>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <!-- Header -->
+                <div class="card-header">
+                    <h3><strong>Eliminar Venta</strong></h3>
+                    <a href="/VIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+                <!-- Body -->
+                <div class="card-body">
+                    <!-- Datos de la venta -->
+                    <div class="col-md-11 mx-auto">
+                        <h3 class="text-center"><strong>Datos de la venta</strong></h3>
+                        <div class="border-primary border border-2">
+                            <div class="card-body">
+                                <ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+                                    <li><strong>VentaId:</strong> @Ventas.VentaId</li>
+                                    <li><strong>FechaCreacion:</strong> @Ventas.Fecha.ToShortDateString()</li>
+                                    <!-- Agrega más datos de la venta según tu modelo -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Productos -->
+                    <div class="col-md-11 mx-auto">
+                        <h3 class="text-center"><strong>Productos</strong></h3>
+                        @if (Ventas.VentaDetalle.Count > 0)
+                        {
+                            <table class="table table-bordered miTabla">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Venta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detalle in Ventas.VentaDetalle)
+                                    {
+                                        <tr>
+                                            <td>@ObtenerProducto(detalle.ProductoId)</td>
+                                            <td>@detalle.Cantidad</td>
+                                            <td>@ObtenerProductoPrecio(detalle.ProductoId)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <p><strong>Total de ventas: </strong>@Ventas.VentaDetalle.Count</p>
+                            <p><strong>Total : </strong>@CalcularTotalVentas()</p>
+                        }
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="card-footer d-flex justify-content-center mt-3">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private Ventas Ventas { get; set; } = new Ventas();
+    public IEnumerable<Productos> Productos { get; set; } = new List<Productos>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            Ventas = await ventasServices.GetVenta(Id);
+            Productos = await productosServices.GetProductos();
+        }
+    }
+
+    private async Task Eliminar()
+    {
+        if (Id != 0)
+        {
+            foreach (var detalle in Ventas.VentaDetalle)
+            {
+                var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+                if (producto != null)
+                {
+                    producto.Cantidad += detalle.Cantidad;
+                    await productosServices.PutProducto(producto.ProductoId, producto);
+                }
+            }
+
+            await ventasServices.DeleteVentas(Id);
+
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Eliminación exitosa",
+                    Detail = "Se ha eliminado la venta correctamente",
+                    Duration = 3000
+                };
+            notificationServices.Notify(mensaje);
+
+            await Task.Delay(3000);
+            navigationManager.NavigateTo("/VIndex");
+        }
+    }
+
+
+    private async Task ConfirmarEliminar()
+    {
+        bool confirmacion = await JSRuntime.InvokeAsync<bool>("confirm", "¿Estás seguro de que deseas eliminar esta venta?");
+        if (confirmacion)
+        {
+            await Eliminar();
+        }
+    }
+
+    public string ObtenerProducto(int id)
+    {
+        var producto = Productos.FirstOrDefault(p => p.ProductoId == id);
+        return producto != null ? producto.Nombre : "";
+    }
+
+    public float ObtenerProductoPrecio(int id)
+    {
+        var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+        return dato.PrecioVenta;
+    }
+
+    public float CalcularTotalVentas()
+    {
+        float total = 0;
+        foreach (var detalle in Ventas.VentaDetalle)
+        {
+            total += detalle.Cantidad * ObtenerProductoPrecio(detalle.ProductoId);
+        }
+        return total;
+    }
+}

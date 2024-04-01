@@ -1,45 +1,78 @@
 ﻿@page "/CreateClientes"
 @inject ClientesServices ClientesServices
+@inject NotificationService notificationServices
 @using Services
 @rendermode InteractiveServer
+
 <PageTitle>Registro de Clientes</PageTitle>
+<RadzenNotification />
 
 <EditForm Model="cliente" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header">
-            <h1>Registro de Clientes</h1>
-        </div>
-        <div class="card-body">
-            <!-- Para la fecha -->
-            <label class="form-label">Fecha</label>
-            <InputDate @bind-Value="cliente.Fecha" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Fecha)" />
 
-            <!-- Para el nombre -->
-            <label class="form-label">Nombre</label>
-            <InputText @bind-Value="cliente.Nombre" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Nombre)" />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <div>
+                    <a href="ClientesIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                </div>
+                <h1>Registro de Clientes</h1>
+            </div>
 
-            <!-- Para la cédula -->
-            <label class="form-label">Cédula</label>
-            <InputText @bind-Value="cliente.Cedula" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Cedula)" />
+            <div class="card-body">
 
-            <!-- Para el correo electrónico -->
-            <label class="form-label">Correo Electrónico</label>
-            <InputText @bind-Value="cliente.Gmail" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Gmail)" />
 
-            <!-- Para el teléfono -->
-            <label class="form-label">Teléfono</label>
-            <InputText @bind-Value="cliente.Telefono" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Telefono)" />
-        </div>
-        <div class="card-footer d-flex justify-content-center">
-            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <!-- Para el nombre -->
+                        <label class="form-label">Nombre</label>
+                        <InputText @bind-Value="cliente.Nombre" class="form-control" placeholder=" Nombre " />
+                        <ValidationMessage For="@(() => cliente.Nombre)" />
+                    </div>
+
+                    <div class="col-3">
+                        <!-- Para la cédula -->
+                        <label class="form-label">Cédula</label>
+                        <InputText @bind-Value="cliente.Cedula" class="form-control" placeholder=" Ejemplo: 402-0054023-0" />
+                        <ValidationMessage For="@(() => cliente.Cedula)" />
+                    </div>
+
+                    <div class="col-3">
+                        <!-- Para la fecha -->
+                        <label class="form-label">Fecha</label>
+                        <InputDate @bind-Value="cliente.Fecha" class="form-control" />
+                        <ValidationMessage For="@(() => cliente.Fecha)" />
+                    </div>
+
+
+                </div>
+
+                <div class="row mb-3">
+
+                    <div class="col-3">
+                        <!-- Para el correo electrónico -->
+                        <label class="form-label">Correo Electrónico</label>
+                        <InputText @bind-Value="cliente.Gmail" class="form-control" placeholder=" Ejemplo@gamil.com " />
+                        <ValidationMessage For="@(() => cliente.Gmail)" />
+                    </div>
+                    <div class="col-3">
+                        <!-- Para el teléfono -->
+                        <label class="form-label">Teléfono</label>
+                        <InputText @bind-Value="cliente.Telefono" class="form-control" placeholder="Ejemplo: 8496561914" />
+                        <ValidationMessage For="@(() => cliente.Telefono)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div>
+                    <a href="/ClientesIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+                </div>
+            </div>
         </div>
     </div>
+
 </EditForm>
 
 @code {
@@ -49,12 +82,31 @@
     {
         if (await ClientesServices.Existe(cliente.Cedula))
         {
-            // Aquí puedes manejar el mensaje de error si la cédula ya existe
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Ya existe un cliente con esa cédula",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+            await Task.Delay(1000);
         }
         else
         {
             if (await ClientesServices.Guardar(cliente))
             {
+
+                var Mensaje1 = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Guardado",
+                        Detail = "Cliente guardado con exito",
+                        Duration = 1000
+                    };
+                notificationServices.Notify(Mensaje1);
+                await Task.Delay(1000);
+
                 Nuevo();
             }
         }

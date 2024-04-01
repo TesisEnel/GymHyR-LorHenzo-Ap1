@@ -1,13 +1,17 @@
 ﻿@page "/ViewVisitas/{VisitaId:int}"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject VisitasServices VisitasServices
 @inject ClientesServices ClientesServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Detalle de Visita</PageTitle>
 
 <div class="card">
+    <RadzenNotification />
     <div class="card-header">
         <h2>Detalles</h2>
     </div>

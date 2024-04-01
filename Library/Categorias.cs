@@ -5,17 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
+namespace Library;
+
+public class Categorias
 {
-    public class Categorias
-    {
-        [Key]
-        public int CategoriaId { get; set; }
-        public string CategoriaNombre { get; set; }
-        public DateTime fecha { get; set; } = DateTime.Now;
+    [Key]
+    public int CategoriaId { get; set; }
+    public string CategoriaNombre { get; set; }
+    public DateTime fecha { get; set; } = DateTime.Now;
 
-
-        //[ForeignKey("ProductoId")]
-        //public ICollection<Categorias> categorias { get; set; } = new List<Categorias>();
-    }
 }

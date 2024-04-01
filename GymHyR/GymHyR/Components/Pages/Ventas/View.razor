@@ -1,0 +1,117 @@
+﻿@page "/ViewVenta/{Id:int}"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject VentasServices ventasServices
+@inject ClientesServices clientesServices
+@inject ProductosServices productosServices
+@inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
+
+<RadzenNotification />
+<PageTitle>View Venta</PageTitle>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <!-- Header -->
+                <div class="card-header">
+                    <h3><strong>View Venta</strong></h3>
+                    <a href="/VIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+                </div>
+                <!-- Body -->
+                <div class="card-body">
+                    <!-- Datos de la venta -->
+                    <div class="col-md-11 mx-auto">
+                        <h3 class="text-center"><strong>Datos de la venta</strong></h3>
+                        <div class="border-primmary border border-2 borde">
+                            <div class="card-body">
+                                <ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+                                    <li><strong>VentaId:</strong> @Ventas.VentaId</li>
+                                    <li><strong>FechaCreacion:</strong> @Ventas.Fecha.ToShortDateString()</li>
+                                    <!-- Agrega más datos de la venta según tu modelo -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Productos -->
+                    <div class="col-md-11 mx-auto">
+                        <h3 class="text-center"><strong>Productos</strong></h3>
+                        @if (Ventas.VentaDetalle.Count > 0)
+                        {
+                            <table class="table table-bordered miTabla">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Venta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detalle in Ventas.VentaDetalle)
+                                    {
+                                        <tr>
+                                            <td>@ObtenerProducto(detalle.ProductoId)</td>
+                                            <td>@detalle.Cantidad</td>
+                                            <td>@ObtenerProductoPrecio(detalle.ProductoId)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <p><strong>Total de ventas: </strong>@Ventas.VentaDetalle.Count</p>
+                            <p><strong>Total : </strong>@CalcularTotalVentas()</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private Ventas Ventas { get; set; } = new Ventas();
+    public IEnumerable<Productos> Productos = new List<Productos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id > 0)
+        {
+            Productos = await productosServices.GetProductos();
+            Ventas = await ventasServices.GetVenta(Id);
+        }
+    }
+
+    public string ObtenerProducto(int id)
+    {
+        var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+        return dato.Nombre;
+    }
+
+    public float ObtenerProductoPrecio(int id)
+    {
+        var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+        return dato.PrecioVenta;
+    }
+
+    public float CalcularTotalVentas()
+    {
+        float total = 0;
+        foreach (var detalle in Ventas.VentaDetalle)
+        {
+            total += detalle.Cantidad * ObtenerProductoPrecio(detalle.ProductoId);
+        }
+        return total;
+    }
+}

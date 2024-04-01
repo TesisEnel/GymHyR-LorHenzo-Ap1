@@ -3,53 +3,76 @@
 @inject ClientesServices ClientesServices
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
+@inject NotificationService notificationServices
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.Authorization
 @using Services
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Registro de Membresías</PageTitle>
-
+<RadzenNotification />
 <EditForm Model="membresia" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header">
-            <h1>Registro de Membresías</h1>
-        </div>
-        <div class="card-body">
-            <!-- Para el cliente -->
-            <label class="form-label">Cliente</label>
-            <select @bind="membresia.Cedula" class="form-control">
-                <option value="">Seleccione un cliente</option>
-                @foreach (var cliente in clientesList)
-                {
-                    <option value="@cliente.Cedula">@cliente.Nombre</option>
-                }
-            </select>
-            <ValidationMessage For="@(() => membresia.Cedula)" />
 
-            <!-- Para el tipo de membresía -->
-            <label class="form-label">Tipo de Membresía</label>
-            <select @bind="membresia.TipoMembresiaId" class="form-control">
-                <option value="">Seleccione un tipo de membresía</option>
-                @foreach (var tipoMembresia in tiposMembresiaList)
-                {
-                    <option value="@tipoMembresia.TipoMembresiaId">@tipoMembresia.Descripcion</option>
-                }
-            </select>
-            <ValidationMessage For="@(() => membresia.TipoMembresiaId)" />
+    <div class="container ">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <div>
+                    <a href="IndexMembresia" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                </div>
+                <h1>Registro de Membresías</h1>
+            </div>
 
-            <!-- Para el estado de membresía -->
-            <label class="form-label">Estado de Membresía</label>
-            <select @bind="membresia.EstadoMembresiaId" class="form-control">
-                <option value="">Seleccione un estado de membresía</option>
-                @foreach (var estadoMembresia in estadosMembresiaList)
-                {
-                    <option value="@estadoMembresia.EstadoMembresiaId">@estadoMembresia.Descripcion</option>
-                }
-            </select>
-            <ValidationMessage For="@(() => membresia.EstadoMembresiaId)" />
-        </div>
-        <div class="card-footer d-flex justify-content-center">
-            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+            <div class="card-body">
+                <div class=" justify-content-center">
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <!-- Para el cliente -->
+                            <label class="form-label">Cliente</label>
+                            <select @bind="membresia.Cedula" class="form-control">
+                                <option value="">Seleccione un cliente</option>
+                                @foreach (var cliente in clientesList)
+                                {
+                                    <option value="@cliente.Cedula">@cliente.Nombre</option>
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => membresia.Cedula)" />
+                        </div>
+
+                        <div class="col-3">
+                            <!-- Para el tipo de membresía -->
+                            <label class="form-label">Tipo de Membresía</label>
+                            <select @bind="membresia.TipoMembresiaId" class="form-control">
+                                <option value="">Seleccione tipo de membresía</option>
+                                @foreach (var tipoMembresia in tiposMembresiaList)
+                                {
+                                    <option value="@tipoMembresia.TipoMembresiaId">@tipoMembresia.Descripcion</option>
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => membresia.TipoMembresiaId)" />
+                        </div>
+
+                        <div class="col-3">
+                            <!-- Para el estado de membresía -->
+                            <label class="form-label">Estado de Membresía</label>
+                            <select @bind="membresia.EstadoMembresiaId" class="form-control">
+                                <option value="">Seleccione estado de membresía</option>
+                                @foreach (var estadoMembresia in estadosMembresiaList)
+                                {
+                                    <option value="@estadoMembresia.EstadoMembresiaId">@estadoMembresia.Descripcion</option>
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => membresia.EstadoMembresiaId)" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+            </div>
         </div>
     </div>
 </EditForm>
@@ -72,7 +95,14 @@
     {
         if (!EsClienteGenerico(membresia.Cedula) && await MembresiasServices.ClienteTieneMembresia(membresia.Cedula))
         {
-            MostrarMensajeError("El cliente ya tiene una membresía asociada y no es el cliente genérico.");
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Menbresia existente",
+                    Detail = "El cliente ta tiene una menbresia",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
         }
         else
         {
@@ -84,6 +114,17 @@
             await MembresiasServices.Guardar(membresia);
             Nuevo();
         }
+
+        var Mensaje1 = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Guardado",
+                Detail = " Membresia guardada con exito",
+                Duration = 1000
+            };
+        notificationServices.Notify(Mensaje1);
+        await Task.Delay(1000);
+
     }
 
 
@@ -124,7 +165,6 @@
 
     void MostrarMensajeError(string mensaje)
     {
-        // Implementa aquí la lógica para mostrar el mensaje de error
-        // Puede ser mediante una ventana emergente, un mensaje en la página, etc.
+
     }
 }

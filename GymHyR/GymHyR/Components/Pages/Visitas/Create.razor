@@ -2,16 +2,23 @@
 @inject VisitasServices VisitasServices
 @inject MembresiasServices MembresiasServices
 @inject ClientesServices ClientesServices
+@inject NotificationService notificationServices
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin, Empleado")]
 
 <PageTitle>Registro de Visitas</PageTitle>
-
+<RadzenNotification />
 <EditForm Model="visita" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="card">
         <div class="card-header">
+            <div>
+                <a href="VisitasIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+            </div>
             <h1>Registro de Visitas</h1>
         </div>
         <div class="card-body">
@@ -39,11 +46,18 @@
     {
         if (string.IsNullOrEmpty(visita.Cedula))
         {
-            MostrarError("Debe ingresar la cédula del cliente.");
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Debe ingresar una cédula ",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+            await Task.Delay(1000);
             return;
         }
 
-        // Obtener la membresía activa del cliente por su cédula
         var clienteEncontrado = await ClientesServices.BuscarPorCedula(visita.Cedula);
         if (clienteEncontrado != null)
         {
@@ -51,10 +65,20 @@
 
             if (membresiaCliente.Any())
             {
-                // La membresía del cliente está activa, guardar la visita
-                visita.Cedula = clienteEncontrado.Cedula; // Asignar la cédula como ID del cliente en la visita
+
+                visita.Cedula = clienteEncontrado.Cedula;
                 if (await VisitasServices.Guardar(visita))
                 {
+                    var Mensaje1 = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Success,
+                            Summary = "Guardado",
+                            Detail = "Visita registrada",
+                            Duration = 1000
+                        };
+                    notificationServices.Notify(Mensaje1);
+                    await Task.Delay(1000);
+
                     Nuevo();
                 }
                 else
@@ -64,12 +88,30 @@
             }
             else
             {
-                MostrarError("No se puede registrar una visita si la membresía del cliente no está activa.");
+
+                var Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Membresia no activa.",
+                        Detail = "Ha ocurrido un error",
+                        Duration = 1_000
+                    };
+                notificationServices.Notify(Mensaje);
+                await Task.Delay(1000);
+                return;
             }
         }
         else
         {
-            MostrarError("Cliente no encontrado.");
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Cliente no encontrado",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+            return;
         }
     }
 
@@ -80,7 +122,6 @@
 
     void MostrarError(string mensaje)
     {
-        // Actualizar la propiedad MensajeError con el mensaje recibido
         MensajeError = mensaje;
     }
 }

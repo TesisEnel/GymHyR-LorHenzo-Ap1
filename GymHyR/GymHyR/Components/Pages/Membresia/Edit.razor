@@ -1,11 +1,14 @@
 ﻿@page "/EditMembresias/{MembresiaId:int}"
 @using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject MembresiasServices MembresiasServices
 @inject ClientesServices ClientesServices
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Editar Membresía</PageTitle>
 

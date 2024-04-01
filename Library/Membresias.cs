@@ -6,26 +6,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
+namespace Library;
+
+public class Membresias
 {
-	public class Membresias
-	{
-		[Key]
-		public int MembresiaId { get; set; }
+    [Key]
+    public int MembresiaId { get; set; }
 
-		public string? Cedula { get; set; }
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public string? Cedula { get; set; }
 
-		public int TipoMembresiaId { get; set; }
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public int TipoMembresiaId { get; set; }
 
-		public int EstadoMembresiaId { get; set; }
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public int EstadoMembresiaId { get; set; }
 
-		public decimal valor { get; set; }
+    public decimal valor { get; set; }
 
-		[Required(ErrorMessage = "Este campo es requerido")]
-		public DateTime FechaInicio { get; set; } = DateTime.Today;
-		public DateTime FechaFechaFin { get; set; } = DateTime.Today;
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public DateTime FechaInicio { get; set; } = DateTime.Today;
+    public DateTime FechaFechaFin { get; set; } = DateTime.Today;
 
-		[ForeignKey("MembresiaId")]
-		public ICollection<Visitas> Visitas { get; set; } = new List<Visitas>();
-	}
+    [ForeignKey("MembresiaId")]
+    public ICollection<Visitas> Visitas { get; set; } = new List<Visitas>();
 }

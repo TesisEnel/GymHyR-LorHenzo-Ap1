@@ -5,17 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
+namespace Library;
+
+public class ProveedorDetalle
 {
-    public class ProveedorDetalle
-    {
-        [Key]
-        public int DetalleId { get; set; }
+    [Key]
+    public int DetalleId { get; set; }
 
-        public int ProveedorId { get; set; }
+    public int ProveedorId { get; set; }
 
-        public int ContactoId { get; set; }
+    public int ContactoId { get; set; }
 
-        public string Contacto { get; set; }
-    }
+    public string Contacto { get; set; }
 }

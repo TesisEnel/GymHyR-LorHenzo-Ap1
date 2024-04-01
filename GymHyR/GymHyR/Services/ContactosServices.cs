@@ -3,72 +3,71 @@ using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GymHyR.Services
+namespace GymHyR.Services;
+
+public class ContactosServices(Context context)
 {
-    public class ContactosServices(Context context)
+    public async Task<IEnumerable<Contactos>> GetContactos()
     {
-        public async Task<IEnumerable<Contactos>> GetContactos()
+        return await context.Contactos
+        .Select(d => new Contactos()
         {
-            return await context.Contactos
-            .Select(d => new Contactos()
-            {
-                ContactoId = d.ContactoId,
-                Descripcion = d.Descripcion
-            }).ToListAsync();
+            ContactoId = d.ContactoId,
+            Descripcion = d.Descripcion
+        }).ToListAsync();
+    }
+
+    public async Task<Contactos?> GetContacto(int id)
+    {
+        return await context.Contactos.FindAsync(id);
+    }
+
+    public async Task<Contactos> PostContactos(Contactos Contactos)
+    {
+        context.Contactos.Add(Contactos);
+        await context.SaveChangesAsync();
+        return Contactos;
+    }
+    public async Task<IActionResult> PutContactos(int id, Contactos Contactos)
+    {
+        if (id != Contactos.ContactoId)
+        {
+            return new BadRequestResult();
         }
 
-        public async Task<Contactos?> GetContacto(int id)
-        {
-            return await context.Contactos.FindAsync(id);
-        }
+        context.Entry(Contactos).State = EntityState.Modified;
 
-        public async Task<Contactos> PostContactos(Contactos Contactos)
+        try
         {
-            context.Contactos.Add(Contactos);
             await context.SaveChangesAsync();
-            return Contactos;
         }
-        public async Task<IActionResult> PutContactos(int id, Contactos Contactos)
+        catch (DbUpdateConcurrencyException)
         {
-            if (id != Contactos.ContactoId)
+            if (!ContactosExists(id))
             {
-                return new BadRequestResult();
+                return new NotFoundResult();
             }
-
-            context.Entry(Contactos).State = EntityState.Modified;
-
-            try
+            else
             {
-                await context.SaveChangesAsync();
+                throw;
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ContactosExists(id))
-                {
-                    return new NotFoundResult();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return new NoContentResult();
         }
+        return new NoContentResult();
+    }
 
-        public async Task DeleteContactos(int id)
+    public async Task DeleteContactos(int id)
+    {
+        var Contactos = await context.Contactos
+            .FirstOrDefaultAsync(p => p.ContactoId == id);
+
+        if (Contactos != null)
         {
-            var Contactos = await context.Contactos
-                .FirstOrDefaultAsync(p => p.ContactoId == id);
-
-            if (Contactos != null)
-            {
-                context.Contactos.Remove(Contactos);
-                await context.SaveChangesAsync();
-            }
+            context.Contactos.Remove(Contactos);
+            await context.SaveChangesAsync();
         }
-        public bool ContactosExists(int id)
-        {
-            return context.Contactos.Any(e => e.ContactoId == id);
-        }
+    }
+    public bool ContactosExists(int id)
+    {
+        return context.Contactos.Any(e => e.ContactoId == id);
     }
 }
