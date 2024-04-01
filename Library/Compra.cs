@@ -6,16 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library
+namespace Library;
+
+public class Compra
 {
-    public class Compra
-    {
-        [Key]
-        public int CompraId { get; set; }
-        public DateTime FecheDeCompra { get; set; } = DateTime.Now;
+    [Key]
+    public int CompraId { get; set; }
+    public DateTime FecheDeCompra { get; set; } = DateTime.Now;
 
-
-		[ForeignKey("CompraId")]
-		public ICollection<CompraDetalle> CompraDetalles { get; set; } = new List<CompraDetalle>();
-	}
+	[ForeignKey("CompraId")]
+	public ICollection<CompraDetalle> CompraDetalles { get; set; } = new List<CompraDetalle>();
 }
