@@ -1,56 +1,52 @@
 ﻿@page "/DeleteClientes/{Cedula}"
+@using GymHyR.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ClientesServices ClientesServices
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-@using GymHyR.Services
-@using Microsoft.AspNetCore.Authorization
 @inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "Admin")]
 
-
 <PageTitle>Eliminar Cliente</PageTitle>
 
-<EditForm Model="cliente">
-    <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header bg-danger text-white">
-            <h2>¿Estás seguro de que quieres eliminar el cliente?</h2>
+<div class="card">
+    <div class="card-header">
+        <h2>Eliminar Cliente</h2>
+    </div>
+    <div class="card-body">
+        <div>
+            <strong>Cédula:</strong> @ClienteSeleccionado.Cedula
         </div>
-        <div class="card-body">
-            <div>
-                <strong>Cédula:</strong> @cliente.Cedula
-            </div>
-            <div>
-                <strong>Nombre:</strong> @cliente.Nombre
-            </div>
-            <div>
-                <strong>Fecha de Registro:</strong> @cliente.Fecha.ToShortDateString()
-            </div>
-            <div>
-                <strong>Correo Electrónico:</strong> @cliente.Gmail
-            </div>
-            <div>
-                <strong>Teléfono:</strong> @cliente.Telefono
-            </div>
+        <div>
+            <strong>Nombre:</strong> @ClienteSeleccionado.Nombre
         </div>
-        <div class="card-footer d-flex justify-content-center mt-3">
-            <div class="btn-group">
-                <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
-                <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
-            </div>
+        <div>
+            <strong>Fecha de Registro:</strong> @ClienteSeleccionado.Fecha.ToShortDateString()
+        </div>
+        <div>
+            <strong>Correo Electrónico:</strong> @ClienteSeleccionado.Gmail
+        </div>
+        <div>
+            <strong>Teléfono:</strong> @ClienteSeleccionado.Telefono
         </div>
     </div>
-</EditForm>
+    <div class="card-footer d-flex justify-content-center mt-3">
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left me-1"></i> Volver</button>
+            <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+        </div>
+    </div>
+</div>
 
 @code {
-
     [Parameter]
     public string Cedula { get; set; }
-    private Clientes cliente;
+
+    public Clientes ClienteSeleccionado { get; set; } = new Clientes();
 
     protected override async Task OnInitializedAsync()
     {
-        cliente = await ClientesServices.BuscarPorCedula(Cedula);
+        ClienteSeleccionado = await ClientesServices.Buscar(Cedula);
     }
 
     void Volver()
@@ -58,9 +54,10 @@
         NavigationManager.NavigateTo("/ClientesIndex");
     }
 
+
     async Task Eliminar()
     {
-        var resultado = await ClientesServices.Eliminar(cliente);
+        var resultado = await ClientesServices.Eliminar(ClienteSeleccionado);
         if (resultado)
         {
             Volver();
