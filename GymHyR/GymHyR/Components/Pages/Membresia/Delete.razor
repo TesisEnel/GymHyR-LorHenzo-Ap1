@@ -6,64 +6,76 @@
 @inject TipoMembresiasServices TipoMembresiasServices
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @inject NavigationManager NavigationManager
-@rendermode InteractiveServer
-@inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
 
 <PageTitle>Eliminar Membresía</PageTitle>
 
-<EditForm Model="membresia">
-    <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header bg-danger text-white">
-            <h2>¿Estás seguro de que quieres eliminar la membresía?</h2>
-        </div>
-        <div class="card-body">
-            <div>
-                <strong>Membresía ID:</strong> @membresia.MembresiaId
+@if (MembresiaSeleccionada != null)
+{
+    <RadzenNotification />
+    <PageTitle>Eliminar Membresía</PageTitle>
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <!-- Header -->
+            <div class="card-header">
+                <h3><strong>Eliminar Membresía</strong></h3>
+                <a href="/IndexMembresia" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
             </div>
-            <div>
+            <!-- Body -->
+            <div class="card-body">
+                <!-- Datos de la membresía -->
+                <div class="col-md-5 mx-auto">
+                    <h3 class="text-center"><strong>Datos de la membresía</strong></h3>
+                    <div class="border-primmary border border-2 borde d-flex justify-content-center align-items-center">
+                        <div>
+                            <ul class="list-unstyled">
+                                <li><strong>Membresía ID:</strong> @MembresiaSeleccionada.MembresiaId</li>
+                                <li><strong>Nombre del Cliente:</strong> @NombreCliente</li>
+                                <li><strong>Tipo de Membresía:</strong> @TipoMembresia</li>
+                                <li><strong>Estado de Membresía:</strong> @EstadoMembresia</li>
+                                <li><strong>Fecha de Inicio:</strong> @MembresiaSeleccionada.FechaInicio.ToShortDateString()</li>
+                                <li><strong>Fecha de Fin:</strong> @MembresiaSeleccionada.FechaFechaFin.ToShortDateString()</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <strong>Tipo de Membresía:</strong> @ObtenerDescripcionTipoMembresia(membresia.TipoMembresiaId)
-            </div>
-            <div>
-                <strong>Estado de Membresía:</strong> @ObtenerDescripcionEstadoMembresia(membresia.EstadoMembresiaId)
-            </div>
-            <div>
-                <strong>Fecha de Inicio:</strong> @membresia.FechaInicio.ToShortDateString()
-            </div>
-            <div>
-                <strong>Fecha de Fin:</strong> @membresia.FechaFechaFin.ToShortDateString()
-            </div>
-        </div>
-        <div class="card-footer d-flex justify-content-center mt-3">
-            <div class="btn-group">
-                <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
-                <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+            <!-- Footer con botones de acción -->
+            <div class="card-footer d-flex justify-content-center mt-3">
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                    <button type="submit" class="btn btn-outline-danger ms-2" @onclick="Eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+                </div>
             </div>
         </div>
     </div>
-</EditForm>
+
+   
+
+}
+else
+{
+    <p>Cargando...</p>
+}
+
 
 @code {
-
     [Parameter]
     public int MembresiaId { get; set; }
-    private Membresias membresia;
-    private Clientes cliente;
-    private TipoMembresias tipoMembresia;
-    private EstadoMembresias estadoMembresia;
+
+    public Membresias MembresiaSeleccionada { get; set; }
+    public string NombreCliente { get; set; }
+    public string TipoMembresia { get; set; }
+    public string EstadoMembresia { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        membresia = await MembresiasServices.Buscar(MembresiaId);
-        if (membresia != null)
-        {
-            cliente = await ClientesServices.BuscarPorCedula(membresia.Cedula);
-            tipoMembresia = await TipoMembresiasServices.Buscar(membresia.TipoMembresiaId);
-            estadoMembresia = await EstadoMembresiasServices.Buscar(membresia.EstadoMembresiaId);
-        }
+        MembresiaSeleccionada = await MembresiasServices.Buscar(MembresiaId);
+        NombreCliente = await ObtenerNombreCliente(MembresiaSeleccionada.Cedula);
+        TipoMembresia = await ObtenerDescripcionTipoMembresia(MembresiaSeleccionada.TipoMembresiaId);
+        EstadoMembresia = await ObtenerDescripcionEstadoMembresia(MembresiaSeleccionada.EstadoMembresiaId);
     }
 
     void Volver()
@@ -73,29 +85,29 @@
 
     async Task Eliminar()
     {
-        var resultado = await MembresiasServices.Eliminar(membresia);
+        var resultado = await MembresiasServices.Eliminar(MembresiaSeleccionada);
         if (resultado)
         {
-            NavigationManager.NavigateTo("/IndexMembresia");
+            Volver();
         }
-        else
-        {
-            // Manejar el error o mostrar un mensaje al usuario
-        }
+ 
     }
 
-    string ObtenerNombreCliente(string cedula)
+    async Task<string> ObtenerNombreCliente(string cedula)
     {
+        var cliente = await ClientesServices.Buscar(cedula);
         return cliente != null ? cliente.Nombre : "Cliente no encontrado";
     }
 
-    string ObtenerDescripcionTipoMembresia(int tipoMembresiaId)
+    async Task<string> ObtenerDescripcionTipoMembresia(int tipoMembresiaId)
     {
+        var tipoMembresia = await TipoMembresiasServices.Buscar(tipoMembresiaId);
         return tipoMembresia != null ? tipoMembresia.Descripcion : "Tipo de membresía no encontrado";
     }
 
-    string ObtenerDescripcionEstadoMembresia(int estadoMembresiaId)
+    async Task<string> ObtenerDescripcionEstadoMembresia(int estadoMembresiaId)
     {
+        var estadoMembresia = await EstadoMembresiasServices.Buscar(estadoMembresiaId);
         return estadoMembresia != null ? estadoMembresia.Descripcion : "Estado de membresía no encontrado";
     }
 }
