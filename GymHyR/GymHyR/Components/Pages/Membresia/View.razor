@@ -10,48 +10,52 @@
 @inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "Admin, Empleado")]
 
-<PageTitle>Detalle de Membresía</PageTitle>
 
-<div class="card">
-    <div class="card-header">
-        <h2>Detalles</h2>
-    </div>
-    <div class="card-body">
-        @if (MembresiaSeleccionada != null)
-        {
-            <div>
-                <strong>ID de Membresía:</strong> @MembresiaSeleccionada.MembresiaId
+
+@if (MembresiaSeleccionada != null)
+{
+    <RadzenNotification />
+    <PageTitle>Detalle de Membresía</PageTitle>
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <!-- Header -->
+            <div class="card-header">
+                <a href="/IndexMembresia" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                <h3><strong>Detalle de Membresía</strong></h3>
             </div>
-            <div>
-                <strong>Nombre del Cliente:</strong> @NombreCliente
+            <!-- Body -->
+            <div class="card-body">
+                <!-- Datos de la membresía -->
+                <div class="col-md-5 mx-auto">
+                    <h3 class="text-center"><strong>Datos de la membresía</strong></h3>
+                    <div class="border-primmary border border-2 borde d-flex justify-content-center align-items-center">
+                        <div>
+                            <ul class="list-unstyled">
+                                <li><strong>Membresía ID:</strong> @MembresiaSeleccionada.MembresiaId</li>
+                                <li><strong>Nombre del Cliente:</strong> @NombreCliente</li>
+                                <li><strong>Tipo de Membresía:</strong> @TipoMembresia</li>
+                                <li><strong>Estado de Membresía:</strong> @EstadoMembresia</li>
+                                <li><strong>Fecha de Inicio:</strong> @MembresiaSeleccionada.FechaInicio.ToShortDateString()</li>
+                                <li><strong>Fecha de Fin:</strong> @MembresiaSeleccionada.FechaFechaFin.ToShortDateString()</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <strong>Tipo de Membresía:</strong> @TipoMembresia
+            <!-- Footer con botones de acción -->
+            <div class="card-footer d-flex justify-content-center mt-3">
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                </div>
             </div>
-            <div>
-                <strong>Estado de Membresía:</strong> @EstadoMembresia
-            </div>
-            <div>
-                <strong>Valor:</strong> @MembresiaSeleccionada.valor
-            </div>
-            <div>
-                <strong>Fecha de Inicio:</strong> @MembresiaSeleccionada.FechaInicio.ToShortDateString()
-            </div>
-            <div>
-                <strong>Fecha de Fin:</strong> @MembresiaSeleccionada.FechaFechaFin.ToShortDateString()
-            </div>
-        }
-        else
-        {
-            <p>La membresía seleccionada no se encontró o no está disponible.</p>
-        }
-    </div>
-    <div class="card-footer d-flex justify-content-center mt-3">
-        <div class="btn-group">
-            <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left me-1"></i> Volver</button>
         </div>
     </div>
-</div>
+}
+else
+{
+    <p>Cargando...</p>
+}
 
 @code {
     [Parameter]
