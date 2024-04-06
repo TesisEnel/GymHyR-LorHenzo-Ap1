@@ -23,10 +23,10 @@
                 <h2>Filtrar Membresías</h2>
                 <div class='row'>
                     <div class='col-md-3'>
-                        <label> ID</label>
+                        <label>C&eacute;dula </label>
                         <div class="input-group mb-3">
                             <input id="criterioBusqueda" type="text" class="form-control" @bind="criterio" />
-                            <button type="button" @onclick="FiltrarPorId" class="btn btn-outline-primary bi bi-search"></button>
+                            <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search"></button>
                         </div>
                     </div>
                     <div class='col-md-3'>
@@ -37,9 +37,8 @@
                         <label>Fin</label>
                         <InputDate @bind-Value="fechaFin" class="form-control"></InputDate>
                     </div>
-                    <div class="input-group mb-3">
+                    <div class="col-md-3">
                         <label> </label>
-                        <button type="button" @onclick="FiltrarPorFecha" class="btn btn-outline-primary bi bi-search"> Filtrar por fecha</button>
                     </div>
                 </div>
             </div>
@@ -105,7 +104,7 @@
     protected override async Task OnInitializedAsync()
     {
         await CargarListas();
-        FiltrarTodo();
+        Filtrar();
     }
 
     async Task CargarListas()
@@ -118,20 +117,17 @@
         L_MembresiasFiltradas.AddRange(L_Membresias);
     }
 
-    void FiltrarTodo()
-    {
-        L_MembresiasFiltradas.Clear();
-        L_MembresiasFiltradas.AddRange(L_Membresias);
-    }
-
-    void FiltrarPorId()
-    {
-        L_MembresiasFiltradas = L_Membresias.Where(m => m.MembresiaId.ToString().Contains(criterio)).ToList();
-    }
-
-    void FiltrarPorFecha()
+    /*void Filtrar()
     {
         L_MembresiasFiltradas = L_Membresias.Where(m =>
+            (string.IsNullOrEmpty(criterio) || m.MembresiaId.ToString().Contains(criterio)) &&
+            m.FechaInicio >= fechaInicio && m.FechaInicio <= fechaFin).ToList();
+    }*/
+
+    void Filtrar()
+    {
+        L_MembresiasFiltradas = L_Membresias.Where(m =>
+            (string.IsNullOrEmpty(criterio) || m.Cedula.Contains(criterio)) &&
             m.FechaInicio >= fechaInicio && m.FechaInicio <= fechaFin).ToList();
     }
 
@@ -140,7 +136,7 @@
         criterio = string.Empty;
         fechaInicio = DateTime.Today.AddMonths(-1);
         fechaFin = DateTime.Today;
-        FiltrarTodo();
+        Filtrar();
     }
 
     string ObtenerNombreCliente(string cedula)
