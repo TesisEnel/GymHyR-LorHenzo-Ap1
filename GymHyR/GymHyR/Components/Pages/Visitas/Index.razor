@@ -75,16 +75,21 @@
     public DateTime FechaInicial { get; set; } = DateTime.Today.AddDays(-7); // Default: 7 días atrás
     public DateTime FechaFinal { get; set; } = DateTime.Today;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Filtrar(); // Filtrar al cargar la página
+        await CargarVisitas();
     }
 
-    async Task Filtrar()
+    async Task CargarVisitas()
     {
         VisitasList = await VisitasServices.GetList(visita =>
             (string.IsNullOrEmpty(criterio) || visita.Cedula.Contains(criterio)) &&
             (visita.Fecha >= FechaInicial && visita.Fecha <= FechaFinal));
+    }
+
+    async Task Filtrar()
+    {
+        await CargarVisitas();
     }
 
     void LimpiarFiltros()
