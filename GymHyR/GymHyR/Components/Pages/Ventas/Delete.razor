@@ -1,16 +1,14 @@
 ﻿@page "/DeleteVentas/{Id:int}"
 @using Library
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Web
 @using GymHyR.Services
-@rendermode InteractiveServer
 @inject VentasServices ventasServices
 @inject ProductosServices productosServices
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
-@inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
 
 <RadzenNotification />
 <PageTitle>Eliminar Venta</PageTitle>
@@ -71,7 +69,7 @@
                 <!-- Footer -->
                 <div class="card-footer d-flex justify-content-center mt-3">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -106,6 +104,7 @@
                 if (producto != null)
                 {
                     producto.Cantidad += detalle.Cantidad;
+
                     await productosServices.PutProducto(producto.ProductoId, producto);
                 }
             }
@@ -127,14 +126,14 @@
     }
 
 
-    private async Task ConfirmarEliminar()
+   /* private async Task ConfirmarEliminar()
     {
         bool confirmacion = await JSRuntime.InvokeAsync<bool>("confirm", "¿Estás seguro de que deseas eliminar esta venta?");
         if (confirmacion)
         {
             await Eliminar();
         }
-    }
+    }*/
 
     public string ObtenerProducto(int id)
     {
