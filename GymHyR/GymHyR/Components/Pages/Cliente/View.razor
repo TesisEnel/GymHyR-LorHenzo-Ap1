@@ -9,30 +9,45 @@
 
 <PageTitle>Detalle de Cliente</PageTitle>
 
-<div class="card">
-    <div class="card-header">
-        <h2>Detalles</h2>
-    </div>
-    <div class="card-body">
-        <div>
-            <strong>Cédula:</strong> @ClienteSeleccionado.Cedula
+<RadzenNotification />
+<div class="container">
+    <div class="card shadow-lg">
+        <!-- Header -->
+        <div class="card-header">
+            <h3><strong>Cliente</strong></h3>
         </div>
-        <div>
-            <strong>Nombre:</strong> @ClienteSeleccionado.Nombre
-        </div>
-        <div>
-            <strong>Fecha de Registro:</strong> @ClienteSeleccionado.Fecha.ToShortDateString()
-        </div>
-        <div>
-            <strong>Correo Electrónico:</strong> @ClienteSeleccionado.Gmail
-        </div>
-        <div>
-            <strong>Teléfono:</strong> @ClienteSeleccionado.Telefono
-        </div>
-    </div>
-    <div class="card-footer d-flex justify-content-center mt-3">
-        <div class="btn-group">
-            <button class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left me-1"></i> Volver</button>
+        <!-- Cuerpo -->
+        <div class="card-body justify-content-center">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="col-md-11 justify-content-center">
+                        <h3 class="text-center"><strong>Datos del Cliente</strong></h3>
+                        <div class="border-primmary border border-2 border-primary">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Datos del cliente -->
+                                    <div class="col-12">
+                                        <ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+                                            <li><strong>Fecha:</strong> @ClienteSeleccionado.Fecha.ToShortDateString()</li>
+                                            <li><strong>Nombre:</strong> @ClienteSeleccionado.Nombre</li>
+                                            <li><strong>Cédula:</strong> @ClienteSeleccionado.Cedula</li>
+                                            <li><strong>Correo Electrónico:</strong> @ClienteSeleccionado.Gmail</li>
+                                            <li><strong>Teléfono:</strong> @ClienteSeleccionado.Telefono</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Botones -->
+                                </div>
+                                <div class="card-footer d-flex justify-content-center mt-3">
+                                    <div class="btn-group">
+                                        <a href="/ClientesIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i>Volver</a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
