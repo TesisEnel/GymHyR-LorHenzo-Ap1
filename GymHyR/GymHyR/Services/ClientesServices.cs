@@ -53,6 +53,20 @@ public class ClientesServices
         return await _context.SaveChangesAsync() > 0;
     }
 
+    public async Task DeleteCliente(string cedula)
+    {
+        var cliente = await _context.Clientes
+            .FirstOrDefaultAsync(c => c.Cedula == cedula);
+
+        if (cliente != null)
+        {
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+
+
     public async Task<Clientes?> Buscar(string cedula)
     {
         return await _context.Clientes
@@ -69,12 +83,12 @@ public class ClientesServices
             .ToListAsync();
     }
 
-    public async Task<Clientes?> BuscarPorCedula(string cedula)
+   /* public async Task<Clientes?> BuscarPorCedula(string cedula)
     {
         return await _context.Clientes
             .Where(c => c.Cedula == cedula)
             .AsNoTracking()
             .FirstOrDefaultAsync();
-    }
+    }*/
 
 }
