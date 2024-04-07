@@ -18,6 +18,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<EstadoMembresias> EstadoMembresias { get; set; }
     public DbSet<Visitas> Visitas { get; set; }
     public DbSet<Ventas> Venta { get; set; }
+    public DbSet<CitasEntrenamiento> CitasEntrenamiento { get; set; }
+    public DbSet<HorarioEntrenador> HorarioEntrenador { get; set; }
+    public DbSet<Entrenador> Entrenador { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -27,5 +30,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         modelBuilder.Entity<EstadoMembresias>().HasData(new EstadoMembresias() { EstadoMembresiaId = 1, Descripcion = "Activa" });
         modelBuilder.Entity<EstadoMembresias>().HasData(new EstadoMembresias() { EstadoMembresiaId = 2, Descripcion = "Vencida" });
+
+        modelBuilder.Entity<HorarioEntrenador>().HasData(new HorarioEntrenador() { HorarioEntrenadorId = 1, Descripcion = "Mañana" });
+        modelBuilder.Entity<HorarioEntrenador>().HasData(new HorarioEntrenador() { HorarioEntrenadorId = 2, Descripcion = "Tarde" });
+        modelBuilder.Entity<HorarioEntrenador>().HasData(new HorarioEntrenador() { HorarioEntrenadorId = 3, Descripcion = "Noche" });
     }
 }
