@@ -4,6 +4,7 @@ using GymHyR.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymHyR.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240407020416_Inicial")]
+    partial class Inicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,6 +108,35 @@ namespace GymHyR.Migrations
                     b.HasKey("CategoriaId");
 
                     b.ToTable("Categorias");
+                });
+
+            modelBuilder.Entity("Library.CitasEntrenamiento", b =>
+                {
+                    b.Property<int>("CitasEntrenamientoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CitasEntrenamientoId"));
+
+                    b.Property<int>("EntrenadorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCita")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("HoraCita")
+                        .HasColumnType("time");
+
+                    b.Property<int?>("HorarioEntrenadorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CitasEntrenamientoId");
+
+                    b.HasIndex("EntrenadorId");
+
+                    b.HasIndex("HorarioEntrenadorId");
+
+                    b.ToTable("CitasEntrenamiento");
                 });
 
             modelBuilder.Entity("Library.Clientes", b =>
@@ -199,6 +231,42 @@ namespace GymHyR.Migrations
                     b.ToTable("Contactos");
                 });
 
+            modelBuilder.Entity("Library.Entrenador", b =>
+                {
+                    b.Property<int>("EntrenadorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EntrenadorId"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HorarioEntrenadorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EntrenadorId");
+
+                    b.HasIndex("HorarioEntrenadorId");
+
+                    b.ToTable("Entrenador");
+                });
+
             modelBuilder.Entity("Library.EstadoMembresias", b =>
                 {
                     b.Property<int>("EstadoMembresiaId")
@@ -227,6 +295,41 @@ namespace GymHyR.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Library.HorarioEntrenador", b =>
+                {
+                    b.Property<int>("HorarioEntrenadorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HorarioEntrenadorId"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("HorarioEntrenadorId");
+
+                    b.ToTable("HorarioEntrenador");
+
+                    b.HasData(
+                        new
+                        {
+                            HorarioEntrenadorId = 1,
+                            Descripcion = "Mañana"
+                        },
+                        new
+                        {
+                            HorarioEntrenadorId = 2,
+                            Descripcion = "Tarde"
+                        },
+                        new
+                        {
+                            HorarioEntrenadorId = 3,
+                            Descripcion = "Noche"
+                        });
+                });
+
             modelBuilder.Entity("Library.Membresias", b =>
                 {
                     b.Property<int>("MembresiaId")
@@ -238,6 +341,10 @@ namespace GymHyR.Migrations
                     b.Property<string>("Cedula")
                         .IsRequired()
                         .HasColumnType("nvarchar(13)");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EstadoMembresiaId")
                         .HasColumnType("int");
@@ -622,11 +729,33 @@ namespace GymHyR.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Library.CitasEntrenamiento", b =>
+                {
+                    b.HasOne("Library.Entrenador", null)
+                        .WithMany("CitasEntretamiento")
+                        .HasForeignKey("EntrenadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.HorarioEntrenador", null)
+                        .WithMany("CitasEntretamiento")
+                        .HasForeignKey("HorarioEntrenadorId");
+                });
+
             modelBuilder.Entity("Library.CompraDetalle", b =>
                 {
                     b.HasOne("Library.Compra", null)
                         .WithMany("CompraDetalles")
                         .HasForeignKey("CompraId");
+                });
+
+            modelBuilder.Entity("Library.Entrenador", b =>
+                {
+                    b.HasOne("Library.HorarioEntrenador", null)
+                        .WithMany("Entrenador")
+                        .HasForeignKey("HorarioEntrenadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Library.Membresias", b =>
@@ -742,9 +871,21 @@ namespace GymHyR.Migrations
                     b.Navigation("CompraDetalles");
                 });
 
+            modelBuilder.Entity("Library.Entrenador", b =>
+                {
+                    b.Navigation("CitasEntretamiento");
+                });
+
             modelBuilder.Entity("Library.EstadoMembresias", b =>
                 {
                     b.Navigation("Membresias");
+                });
+
+            modelBuilder.Entity("Library.HorarioEntrenador", b =>
+                {
+                    b.Navigation("CitasEntretamiento");
+
+                    b.Navigation("Entrenador");
                 });
 
             modelBuilder.Entity("Library.Membresias", b =>
