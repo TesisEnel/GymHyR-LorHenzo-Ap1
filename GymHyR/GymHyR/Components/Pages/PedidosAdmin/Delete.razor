@@ -1,0 +1,161 @@
+﻿@page "/DeletePedidosAdmin/{Id:int}"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject ProductosServices productosServices
+@inject PedidosServices pedidosServices
+@inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+
+
+<RadzenNotification />
+<PageTitle>Eliminar Proveedor</PageTitle>
+
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow-lg">
+				<!-- Header -->
+				<div class="card-header">
+					<h3><strong>Eliminar Compra</strong></h3>
+					<a href="/CompraIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+				</div>
+				<!-- Body -->
+				<div class="card-body">
+					<!-- Datos de la compra -->
+					<div class="col-md-11 mx-auto">
+						<h3 class="text-center"><strong>Datos de la compra</strong></h3>
+						<div class="border-primmary border border-2 borde">
+							<div class="card-body">
+								<ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+									<li><strong>ProveedorId:</strong> @pedido.PedidoId</li>
+									<li><strong>FechaCreacion:</strong> @pedido.FechaPedido.ToShortDateString()</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- Productos -->
+					<div class="col-md-11 mx-auto">
+						<h3 class="text-center"><strong>Productos</strong></h3>
+						@if (pedido.Detalles.Count > 0)
+						{
+							<table class="table table-bordered miTabla">
+								<thead>
+									<tr>
+										<th>Producto</th>
+										<th>Cantidad</th>
+										<th>Precio Compra</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var detalle in pedido.Detalles)
+									{
+										<tr>
+											<td>@ObtenerProducto(detalle.ProductoId)</td>
+											<td>@detalle.Cantidad</td>
+											<td>@detalle.PrecioUnitario</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+							<p><strong>Total de Productos: </strong>@pedido.Detalles.Count</p>
+						}
+					</div>
+					<div class="card-footer d-flex justify-content-center mt-3">
+						<div class="btn-group">
+							<a href="/PedidoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left" />Volver</a>
+							<button type="button" class="btn btn-outline-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill" /> Eliminar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	private Pedidos pedido = new Pedidos();
+	public IEnumerable<Productos> Productos = new List<Productos>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Productos = await productosServices.GetProductos();
+		pedido = await pedidosServices.GetPedido(Id);
+	}
+
+	private async Task Eliminar()
+	{
+		if (Id != 0)
+		{
+			Dictionary<int, float> preciosOriginales = new Dictionary<int, float>();
+			foreach (var detalle in pedido.Detalles)
+			{
+				var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+				if (producto != null)
+				{
+					preciosOriginales.Add(detalle.ProductoId, producto.PrecioCompra);
+				}
+			}
+
+			foreach (var detalle in pedido.Detalles)
+			{
+				var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+				if (producto != null)
+				{
+					producto.Cantidad -= detalle.Cantidad;
+					await productosServices.PutProducto(producto.ProductoId, producto);
+				}
+			}
+
+			foreach (var detalle in pedido.Detalles)
+			{
+				if (preciosOriginales.TryGetValue(detalle.ProductoId, out float precioOriginal))
+				{
+					var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+					if (producto != null)
+					{
+						producto.PrecioCompra = precioOriginal;
+						await productosServices.PutProducto(producto.ProductoId, producto);
+					}
+				}
+			}
+
+			// Eliminar la compra
+			await pedidosServices.DeletePedidos(Id);
+
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Eliminación exitosa",
+					Detail = "Se ha eliminado la compra",
+					Duration = 1_000
+				};
+			notificationServices.Notify(Mensaje);
+			await Task.Delay(1000);
+			navigationManager.NavigateTo("/CompraIndex");
+		}
+	}
+
+	private async Task ConfirmarEliminar()
+	{
+		bool confirmacion = await JSRuntime.InvokeAsync<bool>("confirm", "¿Está seguro de que desea eliminar esta compra?");
+		if (confirmacion)
+		{
+			await Eliminar();
+		}
+	}
+
+	public string ObtenerProducto(int id)
+	{
+		var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+		return dato.Nombre;
+	}
+}
