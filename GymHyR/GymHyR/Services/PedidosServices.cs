@@ -1,7 +1,9 @@
 ﻿using GymHyR.Data;
+using GymHyR.Migrations;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pedidos = Library.Pedidos;
 
 namespace GymHyR.Services;
 
@@ -73,4 +75,11 @@ public class PedidosServices(ApplicationDbContext context)
     {
         return context.Pedidos.Any(e => e.PedidoId == id);
     }
+
+    public List<Pedidos> ObtenerPedidosCliente(int userId)
+    {
+        // Lógica para obtener los pedidos del cliente con el userId proporcionado
+        return context.Pedidos.Where(p => p.PedidoId == userId).ToList();
+    }
+
 }
