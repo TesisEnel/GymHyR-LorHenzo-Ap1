@@ -21,6 +21,6 @@ namespace Library
         public ICollection<Entrenador> Entrenador { get; set; } = new List<Entrenador>();
 
         [ForeignKey("HorarioEntrenadorId")]
-        public ICollection<CitasEntretamiento> CitasEntretamiento { get; set; } = new List<CitasEntretamiento>();
+        public ICollection<CitasEntrenamiento> CitasEntretamiento { get; set; } = new List<CitasEntrenamiento>();
     }
 }
