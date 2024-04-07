@@ -1,0 +1,131 @@
+﻿@page "/CreatePedidos"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@using System.Security.Claims
+@inject ProductosServices productosServices
+@inject PedidosServices pedidosServices
+@inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+
+
+<PageTitle>Pedidos</PageTitle>
+<RadzenNotification />
+
+<EditForm Model="@pedido" OnValidSubmit="Guardar" FormName="PedidoForm">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Crear Pedido</h3>
+            </div>
+
+            <div class="row card-body">
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label class="form-label"><strong>PedidoId:</strong></label>
+                        <InputNumber class="form-control" @bind-Value="pedido.PedidoId" readonly></InputNumber>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label"><strong>Fecha de Pedido:</strong></label>
+                        <InputDate class="form-control" @bind-Value="pedido.FechaPedido" readonly></InputDate>
+                    </div>
+                </div>
+
+                @* Aquí deberías agregar los campos necesarios para el cliente para que pueda agregar detalles de pedido, como productos, cantidades, etc. *@
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
+                    <a href="/PedidoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private Pedidos pedido = new Pedidos();
+    public IEnumerable<Productos> Productos = new List<Productos>();
+
+    [Inject]
+    private NotificationService notificationService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        pedido.FechaPedido = DateTime.Now;
+    }
+    public async Task Guardar()
+    {
+        if (pedido.Detalles.Count == 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "No se han agregado detalles del pedido",
+                    Duration = 4000
+                };
+            notificationServices.Notify(mensaje);
+            return;
+        }
+
+        if (pedido.Detalles.Any(detalle =>
+            detalle.ProductoId == 0 || string.IsNullOrEmpty(detalle.ProductoNombre) || detalle.Cantidad <= 0 || detalle.PrecioUnitario <= 0))
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Se han ingresado detalles de compra incompletos o inválidos",
+                    Duration = 1000
+                };
+            notificationServices.Notify(mensaje);
+            return;
+        }
+
+        foreach (var detalle in pedido.Detalles)
+        {
+            var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
+            if (producto != null)
+            {
+                producto.Cantidad -= detalle.Cantidad;
+                producto.PrecioVenta = detalle.PrecioUnitario;
+                await productosServices.PutProducto(producto.ProductoId, producto);
+            }
+        }
+
+        var response = await pedidosServices.PostPedidos(pedido);
+        if (response != null)
+        {
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = "Contacto guardado con exito",
+                    Duration = 1000
+                };
+            notificationServices.Notify(Mensaje1);
+            await Task.Delay(1000);
+            navigationManager.NavigateTo("/CompraIndex");
+        }
+        else
+        {
+            var Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Ha ocurrido un error",
+                    Duration = 1_000
+                };
+            notificationServices.Notify(Mensaje);
+        }
+    }
+
+}
