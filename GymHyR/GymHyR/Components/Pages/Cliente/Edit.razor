@@ -9,39 +9,74 @@
 
 <PageTitle>Editar Cliente</PageTitle>
 
-<EditForm Model="cliente" FormName="EditClienteForm">
+<RadzenNotification />
+
+<EditForm Model="cliente" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="card">
-        <div class="card-header">
-            <h1>Editar Cliente</h1>
-        </div>
-        <div class="card-body">
-            <!-- Para la fecha -->
-            <label class="form-label">Fecha</label>
-            <InputDate @bind-Value="cliente.Fecha" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Fecha)" />
 
-            <!-- Para el nombre -->
-            <label class="form-label">Nombre</label>
-            <InputText @bind-Value="cliente.Nombre" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Nombre)" />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <div>
+                    <a href="ClientesIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
+                </div>
+                <h1>Editar Cliente</h1>
+            </div>
 
-            <!-- Para el correo electrónico -->
-            <label class="form-label">Correo Electrónico</label>
-            <InputText @bind-Value="cliente.Gmail" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Gmail)" />
+            <div class="card-body">
 
-            <!-- Para el teléfono -->
-            <label class="form-label">Teléfono</label>
-            <InputText @bind-Value="cliente.Telefono" class="form-control" />
-            <ValidationMessage For="@(() => cliente.Telefono)" />
-        </div>
-        <div class="card-footer d-flex justify-content-center">
-            <button type="submit" @onclick="Guardar" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i> Guardar Cambios</button>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <!-- Para el nombre -->
+                        <label class="form-label">Nombre</label>
+                        <InputText @bind-Value="cliente.Nombre" class="form-control" placeholder=" Nombre " />
+                        <ValidationMessage For="@(() => cliente.Nombre)" />
+                    </div>
+
+                    <div class="col-3">
+                        <!-- Para la cédula -->
+                        <label class="form-label">Cédula</label>
+                        <InputText @bind-Value="cliente.Cedula" class="form-control" placeholder=" Ejemplo: 402-0054023-0" />
+                        <ValidationMessage For="@(() => cliente.Cedula)" />
+                    </div>
+
+                    <div class="col-3">
+                        <!-- Para la fecha -->
+                        <label class="form-label">Fecha</label>
+                        <InputDate @bind-Value="cliente.Fecha" class="form-control" />
+                        <ValidationMessage For="@(() => cliente.Fecha)" />
+                    </div>
+
+
+                </div>
+
+                <div class="row mb-3">
+
+                    <div class="col-3">
+                        <!-- Para el correo electrónico -->
+                        <label class="form-label">Correo Electrónico</label>
+                        <InputText @bind-Value="cliente.Gmail" class="form-control" placeholder=" Ejemplo@gamil.com " />
+                        <ValidationMessage For="@(() => cliente.Gmail)" />
+                    </div>
+                    <div class="col-3">
+                        <!-- Para el teléfono -->
+                        <label class="form-label">Teléfono</label>
+                        <InputText @bind-Value="cliente.Telefono" class="form-control" placeholder="Ejemplo: 8496561914" />
+                        <ValidationMessage For="@(() => cliente.Telefono)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div>
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Editar</button>
+                </div>
+            </div>
         </div>
     </div>
-</EditForm>
 
+</EditForm>
 @code {
     [Parameter]
     public string Cedula { get; set; }
@@ -50,7 +85,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        cliente = await ClientesServices.BuscarPorCedula(Cedula);
+        cliente = await ClientesServices.Buscar(Cedula);
     }
 
     public async Task Guardar()

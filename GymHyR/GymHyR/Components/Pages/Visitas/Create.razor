@@ -11,7 +11,7 @@
 
 <PageTitle>Registro de Visitas</PageTitle>
 <RadzenNotification />
-<EditForm Model="visita" OnValidSubmit="Guardar">
+<EditForm Model="visita" >
     <DataAnnotationsValidator />
 
     <div class="card">
@@ -29,12 +29,10 @@
         </div> <!-- Cierre de card-body -->
 
         <div class="card-footer d-flex justify-content-center">
-            <!-- Botón de guardar siempre activo, verificación al intentar guardar -->
-            <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+            <button type="submit" class="btn btn-outline-success" @onclick="Guardar"><i class="bi bi-floppy"></i> Crear</button>
         </div>
     </div>
 
-    <!-- Elemento HTML para mostrar el mensaje de error -->
     <p class="text-danger">@MensajeError</p>
 </EditForm>
 
@@ -58,7 +56,7 @@
             return;
         }
 
-        var clienteEncontrado = await ClientesServices.BuscarPorCedula(visita.Cedula);
+        var clienteEncontrado = await ClientesServices.Buscar(visita.Cedula);
         if (clienteEncontrado != null)
         {
             var membresiaCliente = await MembresiasServices.GetList(m => m.Cedula == clienteEncontrado.Cedula && m.EstadoMembresiaId == 1);

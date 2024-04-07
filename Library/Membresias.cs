@@ -22,7 +22,11 @@ public class Membresias
     [Required(ErrorMessage = "Este campo es requerido")]
     public int EstadoMembresiaId { get; set; }
 
+    [Required(ErrorMessage = "Este campo es requerido")]
     public decimal valor { get; set; }
+
+    [Required(ErrorMessage = "Este campo es requerido")]
+    public string Codigo { get; set; }
 
     [Required(ErrorMessage = "Este campo es requerido")]
     public DateTime FechaInicio { get; set; } = DateTime.Today;
