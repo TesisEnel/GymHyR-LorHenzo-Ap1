@@ -18,7 +18,7 @@
             <h3>Historial de Pedidos</h3>
             <div>
                 <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> </a>
-                <a href="/CreateCompras" class="btn btn-outline-primary">Crear Compra</a>
+                <a href="/CreatePedidos" class="btn btn-outline-primary">Crear Pedidos</a>
             </div>
 
             <div class="row justify-content-end">
@@ -94,7 +94,7 @@
                                     <td>@Pedidos.FechaPedido.ToShortDateString()</td>
                                     <td>
                                         <div>
-                                            @*  <a href="/EditCompra/@compra.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a> *@
+                                            <a href="/EditPedidos/@Pedidos.PedidoId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a> }
                                             <a href="/ViewPedidos/@Pedidos.PedidoId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
                                             <a href="/DeletePedidos/@Pedidos.PedidoId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
                                         </div>

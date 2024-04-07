@@ -1,7 +1,7 @@
 ﻿@page "/EditPedidos/{Id:int}"
 @using GymHyR.Services
 @rendermode InteractiveServer
-@inject VentasServices VentasServices
+@inject PedidosServices pedidosServices
 @inject ProductosServices productosServices
 @inject NotificationService notificationServices
 @inject NavigationManager navigationManager
@@ -102,7 +102,7 @@
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
                     <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Guardar</button>
-                    <a href="/PedidoIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <a href="/PedidosIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
                 </div>
             </div>
         </div>
