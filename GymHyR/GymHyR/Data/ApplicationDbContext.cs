@@ -21,6 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<CitasEntrenamiento> CitasEntrenamiento { get; set; }
     public DbSet<HorarioEntrenador> HorarioEntrenador { get; set; }
     public DbSet<Entrenador> Entrenador { get; set; }
+    public DbSet<Pedidos> Pedidos { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
