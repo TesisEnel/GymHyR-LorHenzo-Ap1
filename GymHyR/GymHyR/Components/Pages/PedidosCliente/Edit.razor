@@ -1,14 +1,16 @@
-﻿@page "/CreatePedidos"
-@using Library
+﻿@page "/EditPedidos/{Id:int}"
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject VentasServices VentasServices
+@inject ProductosServices productosServices
+@inject NotificationService notificationServices
+@inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
-@using GymHyR.Services
-@using System.Security.Claims
-@inject ProductosServices productosServices
-@inject PedidosServices pedidosServices
-@inject NavigationManager navigationManager
-@inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+@* @attribute [Authorize(Roles = "Admin")]*@
+
 
 
 <PageTitle>Pedidos</PageTitle>
@@ -37,7 +39,7 @@
                 </div>
 
 
-                @*Detalles de la Venta*@
+                @*Detalles de los pedidos*@
                 <fieldset class="border-primmary border border-2">
                     @*Body*@
                     <div class="card-body">
@@ -108,6 +110,9 @@
 </EditForm>
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
     private Pedidos pedido = new Pedidos();
     public IEnumerable<Productos> Productos = new List<Productos>();
     public int Producto { get; set; }
@@ -115,12 +120,13 @@
     public float PrecioVenta { get; set; }
     public int Borrar { get; set; }
 
-
     protected override async Task OnInitializedAsync()
     {
         Productos = await productosServices.GetProductos();
         pedido.FechaPedido = DateTime.Now;
+        pedido = await pedidosServices.Getpedidos(Id);
     }
+
     public async Task Guardar()
     {
         if (pedido.Detalles.Count == 0)
@@ -338,5 +344,6 @@
 
         return dato.PrecioVenta;
     }
+
 
 }
