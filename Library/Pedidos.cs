@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library;
 
-public class Pedido
+public class Pedidos
 {
     public int PedidoId { get; set; }
     public DateTime FechaPedido { get; set; }
