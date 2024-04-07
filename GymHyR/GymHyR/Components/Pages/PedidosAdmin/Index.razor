@@ -1,0 +1,46 @@
+﻿@page "/PedidosIndexAdmin"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using GymHyR.Services
+@inject PedidosServices pedidosServices
+@inject NotificationService notificationServices
+
+<h1>Pedidos (Administrador)</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Pedido</th>
+            <th>Fecha</th>@* 
+            <th>Pagado</th> *@
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pedido in pedidos)
+        {
+            <tr>
+                <td>@pedido.PedidoId</td>
+                <td>@pedido.FechaPedido.ToShortDateString()</td>@*
+                <td>@pedido.Pagado</td> *@
+                <td>
+                    <div>
+                        @*  <a href="/EditCompra/@compra.CompraId" class="btn btn-outline-primary"><i class="bi bi-pencil-fill" /> Editar</a> *@
+                        <a href="/ViewPedidos/@pedido.PedidoId" class="btn btn-outline-primary"><i class="bi bi-eyes" /> View</a>
+                        <a href="/DeletePedidos/@pedido.PedidoId" class="btn btn-outline-danger"><i class="bi bi-trash-fill" /> Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Pedidos> pedidos = new List<Pedidos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pedidos = (await pedidosServices.GetPedidos()).ToList();
+    }
+
+}
