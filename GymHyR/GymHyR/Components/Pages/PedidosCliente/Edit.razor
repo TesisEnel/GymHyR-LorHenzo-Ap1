@@ -124,7 +124,7 @@
     {
         Productos = await productosServices.GetProductos();
         pedido.FechaPedido = DateTime.Now;
-        pedido = await pedidosServices.Getpedidos(Id);
+        pedido = await pedidosServices.GetPedido(Id);
     }
 
     public async Task Guardar()
