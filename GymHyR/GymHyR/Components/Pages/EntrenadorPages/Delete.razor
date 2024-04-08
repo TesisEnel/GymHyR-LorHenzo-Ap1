@@ -1,0 +1,90 @@
+﻿@page "/DeleteEntrenador/{EntrenadorId}"
+@using Microsoft.AspNetCore.Authorization
+@using Library
+@using GymHyR.Services
+@inject EntrenadorServices EntrenadorServices
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@rendermode InteractiveServer
+
+<RadzenNotification />
+
+<PageTitle>Eliminar Entrenador</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <!-- Header -->
+        <div class="card-header">
+            <h3><strong>Eliminar Entrenador</strong></h3>
+            <a href="/EntrenadorIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+        </div>
+
+        <!-- Cuerpo -->
+        <div class="card-body justify-content-center">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="col-md-11 justify-content-center">
+                        <h3 class="text-center"><strong>Datos del Entrenador</strong></h3>
+                        <div class="border-primmary border border-2 border-primary">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Datos del entrenador -->
+                                    <div class="col-12">
+                                        <ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+                                            <li><strong>Nombre:</strong> @entrenador.Nombre</li>
+                                            <li><strong>Fecha de creaci&oacute;n:</strong> @entrenador.Fecha.ToShortDateString()</li>
+                                            <li><strong>Email:</strong> @entrenador.Email</li>
+                                            <li><strong>Teléfono:</strong> @entrenador.Telefono</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                </div>
+                                <!-- Botones -->
+                                <div class="card-footer d-flex justify-content-center mt-3">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-danger" @onclick="ConfirmarEliminar"><i class="bi bi-trash-fill"></i> Confirmar Eliminar</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+
+    public string EntrenadorId { get; set; } // Cambiado a string
+
+    public Entrenador entrenador = new Entrenador();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        entrenador = await EntrenadorServices.GetEntrenador(Convert.ToInt32(EntrenadorId)); // Convertir a int si es necesario
+    }
+
+    async Task EliminarEntrenador()
+    {
+        await EntrenadorServices.DeleteEntrenador(Convert.ToInt32(EntrenadorId)); // Convertir a int si es necesario
+        Volver();
+    }
+
+    private async Task ConfirmarEliminar()
+    {
+        bool confirmacion = await JSRuntime.InvokeAsync<bool>("confirm", "¿Está seguro de que desea eliminar este entrenador?");
+        if (confirmacion)
+        {
+            await EliminarEntrenador();
+        }
+    }
+
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("/IndexEntrenador");
+    }
+}
