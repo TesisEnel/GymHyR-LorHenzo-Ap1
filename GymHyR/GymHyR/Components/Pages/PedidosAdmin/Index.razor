@@ -4,6 +4,7 @@
 @using GymHyR.Services
 @inject PedidosServices pedidosServices
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Pedidos</PageTitle>
 

@@ -10,6 +10,7 @@
 @using Services
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 
 <PageTitle>Registro de Membresías</PageTitle>

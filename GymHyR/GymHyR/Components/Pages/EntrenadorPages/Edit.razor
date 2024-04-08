@@ -9,6 +9,7 @@
 @inject HorarioEntrenadorService horarioEntrenadorService
 @inject EntrenadorServices EntrenadorServices
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Admin")]
 
 
 <PageTitle>Entrenadores</PageTitle>

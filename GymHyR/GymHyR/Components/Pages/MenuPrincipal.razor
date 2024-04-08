@@ -18,7 +18,7 @@
             </div> *@
             <div class="card-body">
                 @*Fila #1*@
-                @* <AuthorizeView Roles="Admin, Empleado"> *@
+                <AuthorizeView Roles="Admin">
                     <Authorized>
 
                         <div class="row justify-content-center mb-5">
@@ -87,24 +87,38 @@
 
                                 </button>
                             </div>
-                                </div>
-                                <div class="row justify-content-center mb-5">
-                                    @*Acerca de*@
-                                    <div class="col-md-3 text-center">
-                                        <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
-                                            <h6><strong>Visitas</strong></h6>
-                                            <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                                        </button>
-                                    </div>
-                                </div>
+                        </div>
 
-                                <button class="d-block mx-auto borde" @onclick="IrAPedidosC">
-                                    <h6><strong>Pedidos</strong></h6>
-                                    <img src="Imagenes/Pedidos.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                        <div class="row justify-content-center mb-5">
+                                    @*Visitas*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
+                                    <h6><strong>Visitas</strong></h6>
+                                    <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
                                 </button>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
+                                    <h6><strong>Visitas</strong></h6>
+                                    <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
+                            </div>
+                        </div>
+
 
                     </Authorized>
-                @* </AuthorizeView> *@
+                </AuthorizeView> 
+                
+                <AuthorizeView Roles="Cliente">
+                    <Authorized>
+                        <div class="row justify-content-center mb-5">
+                            <button class="d-block mx-auto borde" @onclick="IrAPedidosC">
+                                <h6><strong>Pedidos</strong></h6>
+                                <img src="Imagenes/Pedidos.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                            </button>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
 
                 @*Fila #3*@
                 <div class="row justify-content-center mb-5">
@@ -113,7 +127,6 @@
                         <h6><strong>Calculadora</strong></h6>
                         <img src="Imagenes/Calculadora.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
                     </button>
-
                 </div>
             </div>
         </div>
@@ -154,6 +167,10 @@
     private void IrAPedidosC()
     {
         navigation.NavigateTo("/PedidosIndex");
+    }
+    private void IrAPedidosA()
+    {
+        navigation.NavigateTo("/PedidosIndexAdmin");
     }
     private void IrAVisitas()
     {
