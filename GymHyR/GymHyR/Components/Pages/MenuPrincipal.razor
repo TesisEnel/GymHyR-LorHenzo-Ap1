@@ -70,36 +70,38 @@
                                 </button>
                             </div>
 
-                    @*Entrenadores*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrAEntrenadores">
-                            <h6><strong>Entrenadores</strong></h6>
-
-                        </button>
-                    </div>
-
-                    @*Confirmar*@
-                    <div class="col-md-3 text-center">
-                        <button type="button" class="d-block mx-auto borde" @onclick="IrAConfirmar">
-                            <h6><strong>Confirmar</strong></h6>
-
-                        </button>
-                    </div>
-                        </div>
-                        <div class="row justify-content-center mb-5">
-                            @*Acerca de*@
+                            @*Entrenadores*@
                             <div class="col-md-3 text-center">
-                                <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
-                                    <h6><strong>Visitas</strong></h6>
-                                    <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAEntrenadores">
+                                <h6><strong>Entrenadores</strong></h6>
+                                <img src="Imagenes/Entrenador.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+
                                 </button>
                             </div>
-                        </div>
 
-                        <button class="d-block mx-auto borde" @onclick="IrAPedidosC">
-                            <h6><strong>Pedidos</strong></h6>
-                            <img src="Imagenes/Calculadora.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
-                        </button>
+                            @*Confirmar*@
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="d-block mx-auto borde" @onclick="IrAConfirmar">
+                                    <h6><strong>Confirmar</strong></h6>
+                                    <img src="Imagenes/Confirmar.jpg" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" /> 
+
+                                </button>
+                            </div>
+                                </div>
+                                <div class="row justify-content-center mb-5">
+                                    @*Acerca de*@
+                                    <div class="col-md-3 text-center">
+                                        <button type="button" class="d-block mx-auto borde" @onclick="IrAVisitas">
+                                            <h6><strong>Visitas</strong></h6>
+                                            <img src="Imagenes/Visitas.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button class="d-block mx-auto borde" @onclick="IrAPedidosC">
+                                    <h6><strong>Pedidos</strong></h6>
+                                    <img src="Imagenes/Pedidos.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                                </button>
 
                     </Authorized>
                 @* </AuthorizeView> *@
