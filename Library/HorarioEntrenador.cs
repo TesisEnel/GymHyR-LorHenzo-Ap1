@@ -22,5 +22,6 @@ namespace Library
 
         [ForeignKey("HorarioEntrenadorId")]
         public ICollection<CitasEntrenamiento> CitasEntretamiento { get; set; } = new List<CitasEntrenamiento>();
+
     }
 }
