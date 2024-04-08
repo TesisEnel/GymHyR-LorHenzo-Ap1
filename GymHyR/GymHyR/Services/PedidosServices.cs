@@ -1,5 +1,4 @@
 ﻿using GymHyR.Data;
-using GymHyR.Migrations;
 using Library;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

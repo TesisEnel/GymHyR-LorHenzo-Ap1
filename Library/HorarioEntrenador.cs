@@ -19,9 +19,5 @@ namespace Library
 
         [ForeignKey("HorarioEntrenadorId")]
         public ICollection<Entrenador> Entrenador { get; set; } = new List<Entrenador>();
-
-        [ForeignKey("HorarioEntrenadorId")]
-        public ICollection<CitasEntrenamiento> CitasEntretamiento { get; set; } = new List<CitasEntrenamiento>();
-
     }
 }

@@ -55,7 +55,7 @@
                         <tr>
                             <td>@entrenador.EntrenadorId</td>
                             <td>@entrenador.Nombre</td>
-                            <td>@entrenador.Fecha.ToShortDateString()</td>
+                            <td>@entrenador.FechaCreacion.ToShortDateString()</td>
                             <td>@entrenador.Email</td>
                             <td>@entrenador.Telefono</td>
                             <td>@ObtenerDescripcionHorario(entrenador.HorarioEntrenadorId)</td>
@@ -78,8 +78,8 @@
     public List<Entrenador> entrenadores { get; set; } = new List<Entrenador>();
     public List<Entrenador> entrenadoresFiltrados { get; set; } = new List<Entrenador>();
     public string criterioNombre { get; set; } = string.Empty;
-    public DateTime fechaInicio { get; set; } = DateTime.Today.AddDays(-7); // Fecha inicial predeterminada: hace una semana
-    public DateTime fechaFin { get; set; } = DateTime.Today; // Fecha final predeterminada: hoy
+    public DateTime fechaInicio { get; set; } = DateTime.Today.AddDays(-7); // FechaCreacion inicial predeterminada: hace una semana
+    public DateTime fechaFin { get; set; } = DateTime.Today; // FechaCreacion final predeterminada: hoy
     public IEnumerable<HorarioEntrenador> horariosEntrenador; // Cambiado a IEnumerable<HorarioEntrenador>
 
     protected override async Task OnInitializedAsync()
@@ -104,7 +104,7 @@
     {
         entrenadoresFiltrados = entrenadores.Where(e =>
             (string.IsNullOrEmpty(criterioNombre) || e.Nombre.ToLower().Contains(criterioNombre.ToLower())) &&
-            e.Fecha.Date >= fechaInicio.Date && e.Fecha.Date <= fechaFin.Date).ToList();
+            e.FechaCreacion.Date >= fechaInicio.Date && e.FechaCreacion.Date <= fechaFin.Date).ToList();
     }
 
     string ObtenerDescripcionHorario(int horarioEntrenadorId)

@@ -18,7 +18,7 @@ namespace Library
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "Este campo es requerido")]
-        public DateTime Fecha { get; set; } = DateTime.Today;
+        public DateTime FechaCreacion { get; set; } = DateTime.Today;
 
         [StringLength(200)]
         public string Descripcion { get; set; }

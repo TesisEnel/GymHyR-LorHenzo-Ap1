@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymHyR.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240407023447_Pedidos")]
-    partial class Pedidos
+    [Migration("20240408151710_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,17 +124,12 @@ namespace GymHyR.Migrations
                     b.Property<DateTime>("FechaCita")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan>("HoraCita")
-                        .HasColumnType("time");
-
-                    b.Property<int?>("HorarioEntrenadorId")
+                    b.Property<int>("HorarioEntrenadorId")
                         .HasColumnType("int");
 
                     b.HasKey("CitasEntrenamientoId");
 
                     b.HasIndex("EntrenadorId");
-
-                    b.HasIndex("HorarioEntrenadorId");
 
                     b.ToTable("CitasEntrenamiento");
                 });
@@ -248,6 +243,9 @@ namespace GymHyR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("HorarioEntrenadorId")
                         .HasColumnType("int");
 
@@ -340,6 +338,7 @@ namespace GymHyR.Migrations
 
                     b.Property<string>("Cedula")
                         .IsRequired()
+                        .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Codigo")
@@ -787,10 +786,6 @@ namespace GymHyR.Migrations
                         .HasForeignKey("EntrenadorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Library.HorarioEntrenador", null)
-                        .WithMany("CitasEntretamiento")
-                        .HasForeignKey("HorarioEntrenadorId");
                 });
 
             modelBuilder.Entity("Library.CompraDetalle", b =>
@@ -941,8 +936,6 @@ namespace GymHyR.Migrations
 
             modelBuilder.Entity("Library.HorarioEntrenador", b =>
                 {
-                    b.Navigation("CitasEntretamiento");
-
                     b.Navigation("Entrenador");
                 });
 

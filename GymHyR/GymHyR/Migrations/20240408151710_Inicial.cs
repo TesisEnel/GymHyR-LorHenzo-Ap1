@@ -134,6 +134,20 @@ namespace GymHyR.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pedidos",
+                columns: table => new
+                {
+                    PedidoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaPedido = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClienteNombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pedidos", x => x.PedidoId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Productos",
                 columns: table => new
                 {
@@ -337,6 +351,7 @@ namespace GymHyR.Migrations
                     EntrenadorId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -351,6 +366,28 @@ namespace GymHyR.Migrations
                         principalTable: "HorarioEntrenador",
                         principalColumn: "HorarioEntrenadorId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PedidoDetalle",
+                columns: table => new
+                {
+                    PedidoDetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    ProductoNombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrecioUnitario = table.Column<float>(type: "real", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    PedidoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PedidoDetalle", x => x.PedidoDetalleId);
+                    table.ForeignKey(
+                        name: "FK_PedidoDetalle_Pedidos_PedidoId",
+                        column: x => x.PedidoId,
+                        principalTable: "Pedidos",
+                        principalColumn: "PedidoId");
                 });
 
             migrationBuilder.CreateTable(
@@ -380,7 +417,7 @@ namespace GymHyR.Migrations
                 {
                     MembresiaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Cedula = table.Column<string>(type: "nvarchar(13)", nullable: false),
+                    Cedula = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
                     TipoMembresiaId = table.Column<int>(type: "int", nullable: false),
                     EstadoMembresiaId = table.Column<int>(type: "int", nullable: false),
                     valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -440,9 +477,8 @@ namespace GymHyR.Migrations
                     CitasEntrenamientoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EntrenadorId = table.Column<int>(type: "int", nullable: false),
-                    FechaCita = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HoraCita = table.Column<TimeSpan>(type: "time", nullable: false),
-                    HorarioEntrenadorId = table.Column<int>(type: "int", nullable: true)
+                    HorarioEntrenadorId = table.Column<int>(type: "int", nullable: false),
+                    FechaCita = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -453,11 +489,6 @@ namespace GymHyR.Migrations
                         principalTable: "Entrenador",
                         principalColumn: "EntrenadorId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CitasEntrenamiento_HorarioEntrenador_HorarioEntrenadorId",
-                        column: x => x.HorarioEntrenadorId,
-                        principalTable: "HorarioEntrenador",
-                        principalColumn: "HorarioEntrenadorId");
                 });
 
             migrationBuilder.CreateTable(
@@ -559,11 +590,6 @@ namespace GymHyR.Migrations
                 column: "EntrenadorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CitasEntrenamiento_HorarioEntrenadorId",
-                table: "CitasEntrenamiento",
-                column: "HorarioEntrenadorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CompraDetalle_CompraId",
                 table: "CompraDetalle",
                 column: "CompraId");
@@ -587,6 +613,11 @@ namespace GymHyR.Migrations
                 name: "IX_Membresias_TipoMembresiaId",
                 table: "Membresias",
                 column: "TipoMembresiaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PedidoDetalle_PedidoId",
+                table: "PedidoDetalle",
+                column: "PedidoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProveedorDetalle_ProveedorId",
@@ -640,6 +671,9 @@ namespace GymHyR.Migrations
                 name: "Contactos");
 
             migrationBuilder.DropTable(
+                name: "PedidoDetalle");
+
+            migrationBuilder.DropTable(
                 name: "Productos");
 
             migrationBuilder.DropTable(
@@ -662,6 +696,9 @@ namespace GymHyR.Migrations
 
             migrationBuilder.DropTable(
                 name: "Compra");
+
+            migrationBuilder.DropTable(
+                name: "Pedidos");
 
             migrationBuilder.DropTable(
                 name: "Proveedores");
