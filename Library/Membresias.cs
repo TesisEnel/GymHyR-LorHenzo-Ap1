@@ -14,6 +14,8 @@ public class Membresias
     public int MembresiaId { get; set; }
 
     [Required(ErrorMessage = "Este campo es requerido")]
+    [StringLength(13, MinimumLength = 13, ErrorMessage = "La cédula debe tener 13 caracteres")]
+    [RegularExpression(@"^\d{3}-\d{7}-\d{1}$", ErrorMessage = "El formato de la cédula debe ser XXX-XXXXXXX-X")]
     public string? Cedula { get; set; }
 
     [Required(ErrorMessage = "Este campo es requerido")]

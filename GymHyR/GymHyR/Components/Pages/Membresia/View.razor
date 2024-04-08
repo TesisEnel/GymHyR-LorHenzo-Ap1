@@ -8,7 +8,7 @@
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
-@attribute [Authorize(Roles = "Admin, Empleado")]
+
 
 
 
@@ -38,6 +38,7 @@
                                 <li><strong>Estado de Membresía:</strong> @EstadoMembresia</li>
                                 <li><strong>Fecha de Inicio:</strong> @MembresiaSeleccionada.FechaInicio.ToShortDateString()</li>
                                 <li><strong>Fecha de Fin:</strong> @MembresiaSeleccionada.FechaFechaFin.ToShortDateString()</li>
+                                <li><strong>Codigo:</strong> @MembresiaSeleccionada.Codigo</li>
                             </ul>
                         </div>
                     </div>

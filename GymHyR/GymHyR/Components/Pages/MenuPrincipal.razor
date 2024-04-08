@@ -69,6 +69,22 @@
                                     <img src="Imagenes/Membresia.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
                                 </button>
                             </div>
+
+                    @*Entrenadores*@
+                    <div class="col-md-3 text-center">
+                        <button type="button" class="d-block mx-auto borde" @onclick="IrAEntrenadores">
+                            <h6><strong>Entrenadores</strong></h6>
+
+                        </button>
+                    </div>
+
+                    @*Confirmar*@
+                    <div class="col-md-3 text-center">
+                        <button type="button" class="d-block mx-auto borde" @onclick="IrAConfirmar">
+                            <h6><strong>Confirmar</strong></h6>
+
+                        </button>
+                    </div>
                         </div>
                         <div class="row justify-content-center mb-5">
                             @*Acerca de*@
@@ -87,6 +103,7 @@
 
                     </Authorized>
                 @* </AuthorizeView> *@
+
                 @*Fila #3*@
                 <div class="row justify-content-center mb-5">
                     @*Calculadora*@
@@ -139,5 +156,15 @@
     private void IrAVisitas()
     {
         navigation.NavigateTo("/VisitasIndex");
+    }
+
+    private void IrAEntrenadores()
+    {
+        navigation.NavigateTo("/IndexEntrenador");
+    }
+
+    private void IrAConfirmar()
+    {
+        navigation.NavigateTo("/Create_Cita");
     }
 }
