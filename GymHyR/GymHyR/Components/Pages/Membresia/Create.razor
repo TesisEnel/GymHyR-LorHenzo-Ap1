@@ -5,11 +5,12 @@
 @inject EstadoMembresiasServices EstadoMembresiasServices
 @inject NotificationService notificationServices
 @inject NavigationManager navigationManager
+@using System.Text
 @using Microsoft.AspNetCore.Authorization
 @using Services
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
-@attribute [Authorize(Roles = "Admin, Empleado")]
+
 
 <PageTitle>Registro de Membresías</PageTitle>
 <RadzenNotification />
@@ -66,13 +67,23 @@
                             </select>
                             <ValidationMessage For="@(() => membresia.EstadoMembresiaId)" />
                         </div>
+
+                        <div class="col-3">
+                            <!-- Para la cédula -->
+                            <label class="form-label">C&oacute;digo</label>
+                            <InputText @bind-Value="membresia.Codigo" class="form-control" disabled />
+                            <ValidationMessage For="@(() => membresia.Codigo)" />
+                        </div>
                     </div>
                 </div>
 
             </div>
-            <div class="card-footer d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
-            </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <div>
+                        <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy"></i> Crear</button>
+                        <button type="button" class="btn btn-outline-primary" @onclick="GenerarCodigo">Generar c&oacute;digo</button>
+                    </div>
+                </div>
         </div>
     </div>
 </EditForm>
@@ -83,6 +94,7 @@
     public List<TipoMembresias> tiposMembresiaList { get; set; } = new List<TipoMembresias>();
     public List<EstadoMembresias> estadosMembresiaList { get; set; } = new List<EstadoMembresias>();
     public decimal valorMembresia { get; set; }
+    private static int contadorCodigos = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,20 +122,22 @@
 
             membresia.valor += CalcularValorMembresia(tipoMembresiaSeleccionado);
             membresia.FechaFechaFin = membresia.FechaInicio.AddDays(tipoMembresiaSeleccionado.DiasDuracion);
+            membresia.Codigo = GenerarCodigoAleatorio();
+            
 
             await MembresiasServices.Guardar(membresia);
             Nuevo();
+            var Mensaje1 = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = " Membresia guardada con exito",
+                    Duration = 1000
+                };
+            notificationServices.Notify(Mensaje1);
+            await Task.Delay(1000);
         }
 
-        var Mensaje1 = new NotificationMessage
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "Guardado",
-                Detail = " Membresia guardada con exito",
-                Duration = 1000
-            };
-        notificationServices.Notify(Mensaje1);
-        await Task.Delay(1000);
 
     }
 
@@ -163,8 +177,42 @@
         return cedula == "402-0054036-0";
     }
 
-    void MostrarMensajeError(string mensaje)
+    /*string GenerarCodigoAleatorio()
+    {
+        const string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder codigoAleatorio = new StringBuilder();
+
+        int longitud = random.Next(8, 12);
+
+        for (int i = 0; i < longitud; i++)
+        {
+            int indiceCaracter = random.Next(caracteresPermitidos.Length);
+            codigoAleatorio.Append(caracteresPermitidos[indiceCaracter]);
+        }
+
+        string codigoGenerado = codigoAleatorio.ToString();
+        return codigoGenerado;
+    }*/
+
+    string GenerarCodigoAleatorio()
     {
 
+        int añoActual = DateTime.Now.Year;
+        Random random = new Random();
+        int numeroAleatorio = random.Next(1000, 10000); 
+        string codigoAleatorio = $"{añoActual}-{numeroAleatorio}";
+
+        return codigoAleatorio;
     }
+
+
+  
+    void GenerarCodigo()
+    {
+        membresia.Codigo = GenerarCodigoAleatorio();
+    }
+
+
+    //@attribute [Authorize(Roles = "Admin, Empleado")]
 }
