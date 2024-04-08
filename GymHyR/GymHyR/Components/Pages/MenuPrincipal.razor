@@ -18,7 +18,7 @@
             </div> *@
             <div class="card-body">
                 @*Fila #1*@
-                <AuthorizeView Roles="Admin, Empleado">
+                @* <AuthorizeView Roles="Admin, Empleado"> *@
                     <Authorized>
 
                         <div class="row justify-content-center mb-5">
@@ -80,15 +80,21 @@
                             </div>
                         </div>
 
+                        <button class="d-block mx-auto borde" @onclick="IrAPedidosC">
+                            <h6><strong>Pedidos</strong></h6>
+                            <img src="Imagenes/Calculadora.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
+                        </button>
+
                     </Authorized>
-                </AuthorizeView>
+                @* </AuthorizeView> *@
                 @*Fila #3*@
                 <div class="row justify-content-center mb-5">
-                    @*Reportes*@
+                    @*Calculadora*@
                     <button class="d-block mx-auto borde" @onclick="IrACalculadora">
                         <h6><strong>Calculadora</strong></h6>
                         <img src="Imagenes/Calculadora.png" class="icon" style="width: 150px; height: 150px; margin-right: 10px;" />
                     </button>
+
                 </div>
             </div>
         </div>
@@ -125,6 +131,10 @@
     private void IrACalculadora()
     {
         navigation.NavigateTo("/Calculadora");
+    }
+    private void IrAPedidosC()
+    {
+        navigation.NavigateTo("/PedidosIndex");
     }
     private void IrAVisitas()
     {

@@ -205,15 +205,15 @@
         else
         {
             var Mensaje = new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Error,
-                    Summary = "Error al guardar",
-                    Detail = "Ha ocurrido un error",
-                    Duration = 1_000
-                };
-            notificationServices.Notify(Mensaje);
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                        Detail = "Ha ocurrido un error",
+                        Duration = 1_000
+                    };
+                notificationServices.Notify(Mensaje);
+            }
         }
-    }
 
     public string ObtenerProducto(int id)
     {

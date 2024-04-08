@@ -1,0 +1,98 @@
+﻿@page "/ViewPedidosAdmin/{Id:int}"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject ProductosServices productosServices
+@inject PedidosServices pedidosServices
+@inject NavigationManager navigationManager
+@inject NotificationService notificationServices
+@inject IJSRuntime JSRuntime
+
+
+<RadzenNotification />
+<PageTitle>Ver Pedido</PageTitle>
+
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow-lg">
+				<!-- Header -->
+				<div class="card-header">
+					<h3><strong>Ver Pedido</strong></h3>
+					<a href="/PedidosIndexAdmin" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+				</div>
+				<!-- Body -->
+				<div class="card-body">
+					<!-- Datos de la compra -->
+					<div class="col-md-11 mx-auto">
+						<h3 class="text-center"><strong>Datos de la compra</strong></h3>
+						<div class="border-primmary border border-2 borde">
+							<div class="card-body">
+								<ul class="list-unstyled" style="margin-top: 20px; margin-bottom: 20px;">
+									<li><strong>ProveedorId:</strong> @pedido.PedidoId</li>
+									<li><strong>FechaCreacion:</strong> @pedido.FechaPedido.ToShortDateString()</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- Productos -->
+					<div class="col-md-11 mx-auto">
+						<h3 class="text-center"><strong>Productos</strong></h3>
+						@if (pedido.Detalles.Count > 0)
+						{
+							<table class="table table-bordered miTabla">
+								<thead>
+									<tr>
+										<th>Producto</th>
+										<th>Cantidad</th>
+										<th>Precio Compra</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var detalle in pedido.Detalles)
+									{
+										<tr>
+											<td>@ObtenerProducto(detalle.ProductoId)</td>
+											<td>@detalle.Cantidad</td>
+											<td>@detalle.PrecioUnitario</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+							<p><strong>Total de Productos: </strong>@pedido.Detalles.Count</p>
+						}
+					</div>
+					<div class="card-footer d-flex justify-content-center mt-3">
+						<div class="btn-group">
+							<a href="/PedidosIndexAdmin" class="btn btn-outline-primary"><i class="bi bi-arrow-left" />Volver</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	private Pedidos pedido = new Pedidos();
+	public IEnumerable<Productos> Productos = new List<Productos>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Productos = await productosServices.GetProductos();
+		pedido = await pedidosServices.GetPedido(Id);
+	}
+
+	public string ObtenerProducto(int id)
+	{
+		var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
+
+		return dato.Nombre;
+	}
+}
