@@ -10,6 +10,7 @@
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
 @attribute [Authorize(Roles = "Cliente")]
+@rendermode InteractiveServer
 
 
 <PageTitle>Pedidos</PageTitle>
@@ -115,13 +116,16 @@
     public int Cantidad { get; set; }
     public float PrecioVenta { get; set; }
     public int Borrar { get; set; }
+    public string Nombre = "Cliente";
 
 
     protected override async Task OnInitializedAsync()
     {
         Productos = await productosServices.GetProductos();
         pedido.FechaPedido = DateTime.Now;
+        pedido.ClienteNombre = Nombre;
     }
+
     public async Task Guardar()
     {
         if (pedido.Detalles.Count == 0)
@@ -137,145 +141,55 @@
             return;
         }
 
-        if (pedido.Detalles.Any(detalle =>
-            detalle.ProductoId == 0 || string.IsNullOrEmpty(detalle.ProductoNombre) || detalle.Cantidad <= 0 || detalle.PrecioUnitario <= 0))
+        // Validar detalles del pedido
+        if (pedido.Detalles.Any(detalle => detalle.Cantidad <= 0))
         {
             var mensaje = new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = "Error al guardar",
-                    Detail = "Se han ingresado detalles de compra incompletos o inválidos",
-                    Duration = 1000
+                    Detail = "Se han ingresado detalles de compra con cantidad inválida",
+                    Duration = 4000
                 };
             notificationServices.Notify(mensaje);
             return;
         }
 
-        foreach (var detalle in pedido.Detalles)
-        {
-            var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
-            if (producto != null)
-            {
-                producto.Cantidad -= detalle.Cantidad;
-                producto.PrecioVenta = detalle.PrecioUnitario;
-                await productosServices.PutProducto(producto.ProductoId, producto);
-            }
-        }
-
+        // Guardar pedido y detalles
         var response = await pedidosServices.PostPedidos(pedido);
         if (response != null)
         {
-            var Mensaje1 = new NotificationMessage
+            var mensaje = new NotificationMessage
                 {
                     Severity = NotificationSeverity.Success,
                     Summary = "Guardado",
-                    Detail = "Contacto guardado con exito",
+                    Detail = "Pedido guardado con éxito",
                     Duration = 1000
                 };
-            notificationServices.Notify(Mensaje1);
+            notificationServices.Notify(mensaje);
+
             await Task.Delay(1000);
-            navigationManager.NavigateTo("/CompraIndex");
+            navigationManager.NavigateTo("/PedidosIndex");
         }
         else
         {
-            var Mensaje = new NotificationMessage
+            var mensaje = new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = "Error al guardar",
-                    Detail = "Ha ocurrido un error",
-                    Duration = 1_000
+                    Detail = "Ha ocurrido un error al guardar el pedido",
+                    Duration = 4000
                 };
-            notificationServices.Notify(Mensaje);
+            notificationServices.Notify(mensaje);
         }
-
-
     }
+
 
     public string ObtenerProducto(int id)
     {
         var dato = Productos.FirstOrDefault(c => c.ProductoId == id);
 
         return dato.Nombre;
-    }
-    public async Task AgregarDetalle()
-    {
-        if (!ValidarDetalleCompleto())
-        {
-            return;
-        }
-
-        var productoSeleccionado = Productos.FirstOrDefault(p => p.ProductoId == Producto);
-        if (productoSeleccionado != null)
-        {
-            if (Cantidad <= productoSeleccionado.Cantidad)
-            {
-                // Verificar si el detalle ya existe en la lista
-                var detalleExistente = pedido.Detalles.FirstOrDefault(d => d.ProductoId == Producto);
-                if (detalleExistente != null)
-                {
-                    // Mostrar mensaje de error porque el detalle ya existe
-                    var mensajeError = new NotificationMessage
-                        {
-                            Severity = NotificationSeverity.Error,
-                            Summary = "Error al agregar detalle",
-                            Detail = "El producto seleccionado ya está presente en la lista de detalles",
-                            Duration = 3000
-                        };
-                    notificationServices.Notify(mensajeError);
-                }
-                else
-                {
-
-                    int cantidadRestante = productoSeleccionado.Cantidad - Cantidad;
-
-                    if (cantidadRestante >= 0)
-                    {
-                        float precioVentaDetalle = Cantidad * productoSeleccionado.PrecioVenta;
-                        var nuevoDetalle = new PedidoDetalle
-                            {
-                                ProductoId = Producto,
-                                Cantidad = Cantidad,
-                                PrecioUnitario = precioVentaDetalle
-                            };
-
-                        pedido.Detalles.Add(nuevoDetalle);
-
-                        var mensaje = new NotificationMessage
-                            {
-                                Severity = NotificationSeverity.Success,
-                                Summary = "Detalle agregado",
-                                Detail = "Se ha agregado un nuevo detalle a la venta",
-                                Duration = 3000
-                            };
-                        notificationServices.Notify(mensaje);
-
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        var mensajeError = new NotificationMessage
-                            {
-                                Severity = NotificationSeverity.Error,
-                                Summary = "Error al agregar detalle",
-                                Detail = "La cantidad ingresada es mayor que la cantidad disponible del producto",
-                                Duration = 3000
-                            };
-                        notificationServices.Notify(mensajeError);
-                    }
-                }
-            }
-            else
-            {
-                var mensajeError = new NotificationMessage
-                    {
-                        Severity = NotificationSeverity.Error,
-                        Summary = "Error al agregar detalle",
-                        Detail = "La cantidad ingresada es mayor que la cantidad disponible del producto",
-                        Duration = 3000
-                    };
-                notificationServices.Notify(mensajeError);
-            }
-        }
     }
 
 
@@ -297,32 +211,80 @@
         return true;
     }
 
+    public async Task AgregarDetalle()
+    {
+        if (!ValidarDetalleCompleto())
+        {
+            return;
+        }
+
+        var productoSeleccionado = Productos.FirstOrDefault(p => p.ProductoId == Producto);
+        if (productoSeleccionado != null)
+        {
+
+            var detalleExistente = pedido.Detalles.FirstOrDefault(d => d.ProductoId == Producto);
+            if (detalleExistente != null)
+            {
+
+                var mensajeError = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al agregar detalle",
+                        Detail = "El producto seleccionado ya está presente en la lista de detalles",
+                        Duration = 3000
+                    };
+                notificationServices.Notify(mensajeError);
+            }
+            else
+            {
+
+                float precioVentaDetalle = Cantidad * productoSeleccionado.PrecioVenta;
+
+
+                var nuevoDetalle = new PedidoDetalle
+                    {
+                        ProductoId = Producto,
+                        Cantidad = Cantidad,
+                        PrecioUnitario = precioVentaDetalle,
+                        ProductoNombre = ObtenerProducto(Producto)
+                    };
+
+
+                pedido.Detalles.Add(nuevoDetalle);
+
+
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Detalle agregado",
+                        Detail = "Se ha agregado un nuevo detalle al pedido",
+                        Duration = 3000
+                    };
+                notificationServices.Notify(mensaje);
+
+
+                Producto = 0;
+                Cantidad = 0;
+            }
+        }
+    }
 
     public async Task EliminarDetalle(PedidoDetalle detalle)
     {
-        float precioDetalleEliminado = detalle.PrecioUnitario;
-
-        int cantidadDetalleEliminado = detalle.Cantidad;
 
         pedido.Detalles.Remove(detalle);
-
-        var producto = Productos.FirstOrDefault(p => p.ProductoId == detalle.ProductoId);
-        if (producto != null)
-        {
-            producto.Cantidad += cantidadDetalleEliminado;
-            await productosServices.PutProducto(producto.ProductoId, producto);
-        }
 
 
         var mensaje = new NotificationMessage
             {
                 Severity = NotificationSeverity.Info,
                 Summary = "Detalle eliminado",
-                Detail = "Detalle eliminado",
-                Duration = 1_000
+                Detail = "Detalle eliminado del pedido",
+                Duration = 1000
             };
         notificationServices.Notify(mensaje);
     }
+
 
     public float CalcularTotalVentas()
     {

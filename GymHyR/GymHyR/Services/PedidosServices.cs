@@ -22,7 +22,8 @@ public class PedidosServices(ApplicationDbContext context)
 
     public async Task<Pedidos?> GetPedido(int id)
     {
-        return await context.Pedidos.FindAsync(id);
+        return await context.Pedidos.Include(p => p.Detalles)
+            .Where(c => c.PedidoId == id).FirstOrDefaultAsync();
     }
 
     public async Task<Pedidos> PostPedidos(Pedidos pedidos)
