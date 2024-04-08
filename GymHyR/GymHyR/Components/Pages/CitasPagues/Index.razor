@@ -1,0 +1,70 @@
+﻿@page "/CitasEntrenamiento"
+@inject CitasEntrenamientoService CitasEntrenamientoService
+@inject NavigationManager NavigationManager
+@using Library
+@using Services
+@rendermode InteractiveServer
+
+<PageTitle>Lista de Citas de Entrenamiento</PageTitle>
+
+<div class="container mt-4">
+    <h2>Lista de Citas de Entrenamiento</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Entrenador</th>
+                <th>Fecha</th>
+                <th>Horario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Citas != null)
+            {
+                @foreach (var cita in Citas)
+                {
+                    <tr>
+                        <td>@cita.CitaId</td>
+                        <td>@cita.Entrenador</td>
+                        <td>@cita.Fecha.ToShortDateString()</td>
+                        <td>@cita.Horario</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">No se encontraron citas de entrenamiento.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    public List<CitaEntrenamientoViewModel> Citas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var citasEntrenamiento = await CitasEntrenamientoService.GetCitasEntrenamiento();
+
+        if (citasEntrenamiento != null)
+        {
+            Citas = citasEntrenamiento.Select(c => new CitaEntrenamientoViewModel
+                {
+                    CitaId = c.CitasEntrenamientoId,
+                    Entrenador = c.EntrenadorId.ToString(),
+                    Fecha = c.FechaCita,
+                    Horario = c.HorarioEntrenadorId.ToString()
+                }).ToList();
+        }
+    }
+
+    public class CitaEntrenamientoViewModel
+    {
+        public int CitaId { get; set; }
+        public string Entrenador { get; set; }
+        public DateTime Fecha { get; set; }
+        public string Horario { get; set; }
+    }
+}
