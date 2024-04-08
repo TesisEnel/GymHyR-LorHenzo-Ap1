@@ -9,6 +9,7 @@
 @inject PedidosServices pedidosServices
 @inject NavigationManager navigationManager
 @inject NotificationService notificationServices
+@attribute [Authorize(Roles = "Cliente")]
 
 
 <PageTitle>Pedidos</PageTitle>

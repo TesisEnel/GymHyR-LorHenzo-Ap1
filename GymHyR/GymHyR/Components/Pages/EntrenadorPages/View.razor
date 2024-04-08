@@ -5,6 +5,7 @@
 @inject EntrenadorServices EntrenadorServices
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 @rendermode InteractiveServer
 

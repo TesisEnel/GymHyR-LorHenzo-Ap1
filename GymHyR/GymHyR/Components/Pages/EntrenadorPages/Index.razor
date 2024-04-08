@@ -6,6 +6,7 @@
 @inject HorarioEntrenadorService horarioEntrenadorService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Entrenadores</PageTitle>
 
