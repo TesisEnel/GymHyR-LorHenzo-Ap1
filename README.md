@@ -7,11 +7,20 @@
 Esta aplicación web está diseñada utilizando Blazor en Visual Studio para ayudarte a administrar tu gimnasio de manera eficiente y efectiva. Aquí encontrarás una descripción general de las características principales y cómo utilizarlas.
 
 Características principales
-1. Gestión de productos: Puedes agregar, editar y eliminar productos disponibles en tu gimnasio, como suplementos, accesorios de entrenamiento, etc.
+1. Gestión de productos: Puedes agregar, editar y eliminar productos disponibles en tu gimnasio, como suplementos, accesorios de entrenamiento, etc.   
+![image](https://github.com/HenzoWTF/GymHyR/assets/75818301/f44b515d-4959-4415-814f-41d32f0cca1f)
+
 2. Registro de ventas y compras: Lleva un registro detallado de todas las ventas realizadas a los clientes y las compras realizadas para el inventario del gimnasio.
+![image](https://github.com/HenzoWTF/GymHyR/assets/75818301/a217351b-f8ca-4d23-8208-835209a421e1)
+
 3. Calculadora de peso: Utiliza nuestra calculadora de peso para calcular fácilmente el peso que debes levantar según tus objetivos de entrenamiento y tu capacidad física.
+![image](https://github.com/HenzoWTF/GymHyR/assets/75818301/5fd52524-582f-470b-8bbe-293f6263f163)
+
 4. Manejo de membresías: Administra las membresías de los clientes, incluyendo el registro de nuevas membresías, renovaciones y cancelaciones.
+![image](https://github.com/HenzoWTF/GymHyR/assets/75818301/bbbd6079-85dd-41f7-bbb2-b9579b22de07)
+
 5. Gestión de clientes: Lleva un registro de tus clientes.
+
 6. Gestión de visitas: Lleva un registro de las personas que van de visita a tu gimnasio.
 
 Cómo empezar
