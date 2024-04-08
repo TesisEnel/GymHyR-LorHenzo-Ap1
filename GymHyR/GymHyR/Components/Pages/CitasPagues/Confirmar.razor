@@ -1,0 +1,114 @@
+﻿@page "/Confirmar"
+@inject MembresiasServices MembresiasServices
+@inject NotificationService notificationServices
+@inject NavigationManager navigationManager
+@inject ClientesServices ClientesServices
+@using System.ComponentModel.DataAnnotations
+@using Services
+@rendermode InteractiveServer
+
+<PageTitle>Confirmación de Membresía</PageTitle>
+<RadzenNotification />
+
+<EditForm Model="membresia" OnValidSubmit="ConfirmarMembresia">
+    <DataAnnotationsValidator />
+
+    <div class="col-md-4 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h1>Confirmación de Membresía</h1>
+                </div>
+            
+                <div class="card-body">
+                <div class="col-md-4 mx-auto">
+                    <div class="row mb-3">
+                        <div class="col-40">
+                            <!-- Para la cédula -->
+                            <label class="form-label">Cédula del Cliente</label>
+                            <InputText @bind-Value="membresia.Cedula" class="form-control" placeholder=" Ej:402-0054023-0" />
+                            <ValidationMessage For="@(() => membresia.Cedula)" />
+                        </div>
+
+                </div>
+                    <div class="row mb-3">
+                        <div class="col-40">
+                            <!-- Para el código de membresía -->
+                            <label class="form-label">Código de Membresía</label>
+                            <InputText @bind-Value="membresia.Codigo" class="form-control" />
+                            <ValidationMessage For="@(() => membresia.Codigo)" />
+                        </div>
+                    </div>
+                </div>
+                </div>
+            
+                <div class="card-footer d-flex justify-content-center">
+                    <div>
+                        <button type="submit" class="btn btn-outline-primary">Confirmar Membresía</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</EditForm>
+
+@code {
+    public Membresias membresia { get; set; } = new Membresias();
+
+    async Task ConfirmarMembresia()
+    {
+        // Validar el formulario automáticamente
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(membresia);
+        bool isValid = Validator.TryValidateObject(membresia, validationContext, validationResults, true);
+
+        if (isValid)
+        {
+            var membresiaBuscada = await MembresiasServices.BuscarPorCedula(membresia.Cedula);
+
+            if (membresiaBuscada.Count == 0)
+            {
+                var mensajeError = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "No se encontró ninguna membresía asociada a la cédula ingresada.",
+                        Duration = 5000
+                    };
+                notificationServices.Notify(mensajeError);
+                return; 
+            }
+
+            var membresiaCodigo = await MembresiasServices.BuscarPorCedula(membresia.Cedula);
+
+            if (membresiaBuscada.Count > 0 && membresiaCodigo[0].EstadoMembresiaId == 1)
+            {
+                if (membresiaCodigo.Count > 0 && membresiaCodigo[0].Codigo == membresia.Codigo)
+                {
+                    navigationManager.NavigateTo("/Create_Cita");
+                    return;
+                }
+                else
+                {
+                    var mensajeCodigoInvalido = new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Error",
+                            Detail = "El código de membresía proporcionado no es válido o no corresponde a una membresía activa para este cliente.",
+                            Duration = 5000
+                        };
+                    notificationServices.Notify(mensajeCodigoInvalido);
+                }
+            }
+            else
+            {
+                var mensajeCedulaInvalida = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "El código o la Cédula de membresía proporcionado no es válido o no corresponde a una membresía activa para este cliente.",
+                        Duration = 5000
+                    };
+                notificationServices.Notify(mensajeCedulaInvalida);
+            }
+        }
+    }
+}
