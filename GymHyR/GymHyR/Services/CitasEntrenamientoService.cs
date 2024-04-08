@@ -35,6 +35,12 @@ namespace GymHyR.Services
             return cita;
         }
 
+        public async Task<bool> ExisteCitaConFechaYEntrenador(DateTime fechaCita, int entrenadorId)
+        {
+            return await _context.CitasEntrenamiento
+                .AnyAsync(c => c.FechaCita.Date == fechaCita.Date && c.EntrenadorId == entrenadorId);
+        }
+
         public async Task<IActionResult> PutCitaEntrenamiento(int id, CitasEntrenamiento cita)
         {
             if (id != cita.CitasEntrenamientoId)
@@ -78,5 +84,13 @@ namespace GymHyR.Services
         {
             return _context.CitasEntrenamiento.Any(e => e.CitasEntrenamientoId == id);
         }
+
+        public async Task<IEnumerable<CitasEntrenamiento>> GetCitasEntrenamientoPorDiaYEntrenador(DateTime fechaCita, int entrenadorId)
+        {
+            return await _context.CitasEntrenamiento
+                .Where(c => c.FechaCita.Date == fechaCita.Date && c.EntrenadorId == entrenadorId)
+                .ToListAsync();
+        }
+
     }
 }
