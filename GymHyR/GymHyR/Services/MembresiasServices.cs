@@ -58,4 +58,19 @@ public class MembresiasServices
     {
         return await _context.Membresias.AnyAsync(m => m.Cedula == cedula);
     }
+
+    public async Task<bool> ClienteTieneMembresia(string cedula, string codigo)
+    {
+        return await _context.Membresias.AnyAsync(m => m.Cedula == cedula &&
+                                                        m.Codigo == codigo &&
+                                                        m.EstadoMembresiaId == 1);
+    }
+
+    public async Task<List<Membresias>> BuscarPorCedula(string cedula)
+    {
+        return await _context.Membresias.Where(m => m.Cedula == cedula).ToListAsync();
+    }
+
+
+
 }
