@@ -1,0 +1,108 @@
+﻿@page "/Create_Cita"
+@inject CitasEntrenamientoService CitasEntrenamientoService
+@inject NotificationService notificationService
+@inject HorarioEntrenadorService horarioEntrenadorService
+@inject EntrenadorServices EntrenadorServices
+@inject NavigationManager NavigationManager
+@using Library
+@using Services
+@rendermode InteractiveServer
+
+<PageTitle>Crear Cita de Entrenamiento</PageTitle>
+<RadzenNotification />
+
+<EditForm Model="cita">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h1>Crear Cita de Entrenamiento</h1>
+            </div>
+
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <!-- Para el ID del entrenador -->
+                        <label class="form-label">ID del Entrenador</label>
+                        <select @bind="cita.EntrenadorId" class="form-select">
+                            <option value="">Seleccione un entrenador</option>
+                            @foreach (var entrenador in Entrenadores.Where(e => e.HorarioEntrenadorId == HorarioSeleccionadoId))
+                            {
+                                <option value="@entrenador.EntrenadorId">@entrenador.Nombre</option>
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => cita.EntrenadorId)" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <!-- Horario Entrenador -->
+                        <label class="form-label" for="horarioEntrenadorId">Horario:</label>
+                        <select id="horarioEntrenadorId" class="form-select" @bind="HorarioSeleccionadoId">
+                            <option value="">Seleccione un horario de entrenador</option>
+                            @foreach (var horario in horariosEntrenador)
+                            {
+                                <option value="@horario.HorarioEntrenadorId">@horario.Descripcion</option>
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => cita.HorarioEntrenadorId)" />
+                    </div>
+
+                    <div class="col-4">
+                        @*FechaCreacion*@
+                        <label class="form-label" for="fechaCreacion"><strong>Fecha de la cita :</strong></label>
+                        <InputDate id="FechaCita" class="form-control" @bind-Value="cita.FechaCita"></InputDate>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div>
+                    <button type="submit" class="btn btn-outline-primary" @onclick="GuardarCita">Guardar Cita</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public CitasEntrenamiento cita { get; set; } = new CitasEntrenamiento();
+    public IEnumerable<HorarioEntrenador> horariosEntrenador = new List<HorarioEntrenador>();
+    public IEnumerable<Entrenador> Entrenadores = new List<Entrenador>();
+    public int HorarioSeleccionadoId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        horariosEntrenador = await horarioEntrenadorService.GetHorariosEntrenador();
+        Entrenadores = await EntrenadorServices.GetEntrenadores();
+    }
+
+    async Task GuardarCita()
+    {
+        var resultado = await CitasEntrenamientoService.PostCitaEntrenamiento(cita);
+
+        if (resultado != null)
+        {
+            notificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Éxito",
+                    Detail = "Cita de entrenamiento creada correctamente.",
+                    Duration = 3000
+                });
+
+            NavigationManager.NavigateTo("/CitasEntrenamiento");
+        }
+        else
+        {
+            notificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Ha ocurrido un error al crear la cita de entrenamiento.",
+                    Duration = 3000
+                });
+        }
+    }
+}
