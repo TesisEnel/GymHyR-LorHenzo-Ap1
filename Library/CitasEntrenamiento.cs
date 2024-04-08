@@ -15,7 +15,7 @@ namespace Library
         [Required(ErrorMessage = "Este campo es requerido")]
         public int EntrenadorId { get; set; }
         [Required(ErrorMessage = "Este campo es requerido")]
-        public int HorarioEntrenadorId { get; set; }
+        public string HorarioEntrenadorId { get; set; }
         [Required(ErrorMessage = "Este campo es requerido")]
         public DateTime FechaCita { get; set; }
 
