@@ -1,0 +1,141 @@
+﻿@page "/Edit/{EntrenadorId}"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using GymHyR.Services
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject HorarioEntrenadorService horarioEntrenadorService
+@inject EntrenadorServices EntrenadorServices
+@inject NotificationService notificationServices
+
+
+<PageTitle>Entrenadores</PageTitle>
+
+<RadzenNotification />
+<EditForm Model="@entrenador" OnValidSubmit="Guardar" FormName="Entrenadores">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Crear de Entrenadores</h3>
+            </div>
+
+            <div class="row card-body">
+                <div class="col-md-4">
+                    <!-- Nombre -->
+                    <label class="form-label" for="nombre">Nombre:</label>
+                    <InputText id="nombre" class="form-control" @bind-Value="entrenador.Nombre"></InputText>
+                    <ValidationMessage For="@(() => entrenador.Nombre)"></ValidationMessage>
+                </div>
+                <div class="col-md-6">
+                    <!-- Descripcion -->
+                    <label class="form-label" for="descripcion">Descripción:</label>
+                    <InputTextArea id="descripcion" class="form-control" @bind-Value="entrenador.Descripcion"></InputTextArea>
+                    <ValidationMessage For="@(() => entrenador.Descripcion)"></ValidationMessage>
+                </div>
+
+                <div class="col-md-3">
+                    <!-- Fecha -->
+                    <label class="form-label" for="descripcion">Fecha :</label>
+                    <InputDate id="Fecha" class="form-control" @bind-Value="entrenador.Fecha"></InputDate>
+                    <ValidationMessage For="@(() => entrenador.Fecha)"></ValidationMessage>
+                </div>
+
+                <div class="col-md-3">
+                    <!-- Email -->
+                    <label class="form-label" for="email">Email:</label>
+                    <InputText id="email" class="form-control" @bind-Value="entrenador.Email"></InputText>
+                    <ValidationMessage For="@(() => entrenador.Email)"></ValidationMessage>
+                </div>
+                <div class="col-md-3">
+                    <!-- Telefono -->
+                    <label class="form-label" for="telefono">Teléfono:</label>
+                    <InputText id="telefono" class="form-control" @bind-Value="entrenador.Telefono"></InputText>
+                    <ValidationMessage For="@(() => entrenador.Telefono)"></ValidationMessage>
+                </div>
+
+                <div class="col-md-3">
+                    <!-- Horario Entrenador -->
+                    <label class="form-label" for="horarioEntrenadorId">Horario:</label>
+                    <select id="horarioEntrenadorId" class="form-select" @bind="entrenador.HorarioEntrenadorId">
+                        <option value="">Seleccione un horario de entrenador</option>
+                        @foreach (var horario in horariosEntrenador)
+                        {
+                            <option value="@horario.HorarioEntrenadorId">@horario.Descripcion</option>
+                        }
+                    </select>
+                    <ValidationMessage For="@(() => entrenador.HorarioEntrenadorId)" />
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <a href="/EntrenadoresIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill"></i> Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+
+    public string EntrenadorId { get; set; } 
+
+    public Entrenador entrenador = new Entrenador();
+
+    public IEnumerable<HorarioEntrenador> horariosEntrenador = new List<HorarioEntrenador>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        horariosEntrenador = await horarioEntrenadorService.GetHorariosEntrenador();
+        entrenador = await EntrenadorServices.GetEntrenador(Convert.ToInt32(EntrenadorId));
+    }
+
+    public async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(entrenador.Nombre) || string.IsNullOrEmpty(entrenador.Email) || string.IsNullOrEmpty(entrenador.Telefono) || entrenador.HorarioEntrenadorId == 0)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al guardar",
+                    Detail = "Debe llenar todos los campos y seleccionar un horario de entrenador.",
+                    Duration = 5000
+                };
+            notificationServices.Notify(mensaje);
+            return;
+        }
+
+        var response = await EntrenadorServices.PutEntrenador(entrenador.EntrenadorId, entrenador);
+        if (response != null)
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Editado",
+                    Detail = "Entrenador se editó con exito.",
+                    Duration = 3000
+                };
+            notificationServices.Notify(mensaje);
+            await Task.Delay(3000);
+            navigationManager.NavigateTo("/IndexEntrenador");
+        }
+        else
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al editar",
+                    Detail = "Ha ocurrido un error al editar el entrenador.",
+                    Duration = 5000
+                };
+            notificationServices.Notify(mensaje);
+        }
+    }
+}
