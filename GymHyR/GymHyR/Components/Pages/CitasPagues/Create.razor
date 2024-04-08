@@ -23,18 +23,6 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-6">
-                        <!-- Para el ID del entrenador -->
-                        <label class="form-label">ID del Entrenador</label>
-                        <select @bind="cita.EntrenadorId" class="form-select">
-                            <option value="">Seleccione un entrenador</option>
-                            @foreach (var entrenador in Entrenadores.Where(e => e.HorarioEntrenadorId == HorarioSeleccionadoId))
-                            {
-                                <option value="@entrenador.EntrenadorId">@entrenador.Nombre</option>
-                            }
-                        </select>
-                        <ValidationMessage For="@(() => cita.EntrenadorId)" />
-                    </div>
-
                     <div class="col-md-3">
                         <!-- Horario Entrenador -->
                         <label class="form-label" for="horarioEntrenadorId">Horario:</label>
@@ -47,13 +35,24 @@
                         </select>
                         <ValidationMessage For="@(() => cita.HorarioEntrenadorId)" />
                     </div>
-
-                    <div class="col-4">
-                        @*FechaCreacion*@
-                        <label class="form-label" for="fechaCreacion"><strong>Fecha de la cita :</strong></label>
-                        <InputDate id="FechaCita" class="form-control" @bind-Value="cita.FechaCita"></InputDate>
+                        <!-- Para el ID del entrenador -->
+                        <label class="form-label">ID del Entrenador</label>
+                        <select @bind="cita.EntrenadorId" class="form-select">
+                            <option value="">Seleccione un entrenador</option>
+                            @foreach (var entrenador in Entrenadores.Where(e => e.HorarioEntrenadorId == HorarioSeleccionadoId))
+                            {
+                                <option value="@entrenador.EntrenadorId">@entrenador.Nombre</option>
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => cita.EntrenadorId)" />
                     </div>
 
+
+                    <div class="col-4">
+                        <!-- Fecha de la cita -->
+                        <label class="form-label" for="fechaCreacion"><strong>Fecha de la cita:</strong></label>
+                        <InputDate id="FechaCita" class="form-control" @bind-Value="cita.FechaCita"></InputDate>
+                    </div>
                 </div>
             </div>
 
@@ -80,29 +79,50 @@
 
     async Task GuardarCita()
     {
-        var resultado = await CitasEntrenamientoService.PostCitaEntrenamiento(cita);
-
-        if (resultado != null)
+        var horarioSeleccionado = horariosEntrenador.FirstOrDefault(h => h.HorarioEntrenadorId == HorarioSeleccionadoId);
+        if (horarioSeleccionado != null)
         {
-            notificationService.Notify(new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "Éxito",
-                    Detail = "Cita de entrenamiento creada correctamente.",
-                    Duration = 3000
-                });
-
-            NavigationManager.NavigateTo("/CitasEntrenamiento");
+            cita.HorarioEntrenadorId = horarioSeleccionado.Descripcion;
         }
-        else
+
+        // Verificar si ya existe una cita para el mismo día con el mismo entrenador
+        var citasMismoDia = await CitasEntrenamientoService.GetCitasEntrenamientoPorDiaYEntrenador(cita.FechaCita, cita.EntrenadorId);
+        if (citasMismoDia.Any())
         {
             notificationService.Notify(new NotificationMessage
                 {
                     Severity = NotificationSeverity.Error,
                     Summary = "Error",
-                    Detail = "Ha ocurrido un error al crear la cita de entrenamiento.",
+                    Detail = "El entrenador ya tiene una cita programada para este día.",
                     Duration = 3000
                 });
+        }
+        else
+        {
+            var resultado = await CitasEntrenamientoService.PostCitaEntrenamiento(cita);
+
+            if (resultado != null)
+            {
+                notificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Éxito",
+                        Detail = "Cita de entrenamiento creada correctamente.",
+                        Duration = 3000
+                    });
+
+                // NavigationManager.NavigateTo("/CitasEntrenamiento");
+            }
+            else
+            {
+                notificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error",
+                        Detail = "Ha ocurrido un error al crear la cita de entrenamiento.",
+                        Duration = 3000
+                    });
+            }
         }
     }
 }
