@@ -1,0 +1,123 @@
+﻿@page "/IndexEntrenador"
+@using Library
+@using Microsoft.AspNetCore.Authorization
+@using GymHyR.Services
+@inject EntrenadorServices EntrenadorServices
+@inject HorarioEntrenadorService horarioEntrenadorService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Entrenadores</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <div>
+                <a href="/" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Volver</a>
+                <a href="/CreateEntrenador" class="btn btn-outline-primary">Crear Entrenador</a>
+            </div>
+            <div class='mt-4'>
+                <h2>Filtrar Entrenadores</h2>
+                <div class='row'>
+                    <div class='col-md-3'>
+                        <label>Nombre</label>
+                        <input id="criterioNombre" type="text" class="form-control" @bind="criterioNombre" />
+                    </div>
+                    <div class='col-md-3'>
+                        <label>Fecha Inicial</label>
+                        <InputDate @bind-Value="fechaInicio" class="form-control"></InputDate>
+                    </div>
+                    <div class='col-md-3'>
+                        <label>Fecha Final</label>
+                        <InputDate @bind-Value="fechaFin" class="form-control"></InputDate>
+                    </div>
+                    <div class='col-md-3 d-flex align-items-end'>
+                        <button type="button" @onclick="Filtrar" class="btn btn-outline-primary bi bi-search mt-4"> Filtrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Entrenador ID</th>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Horario de entrenador</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entrenador in entrenadoresFiltrados)
+                    {
+                        <tr>
+                            <td>@entrenador.EntrenadorId</td>
+                            <td>@entrenador.Nombre</td>
+                            <td>@entrenador.Fecha.ToShortDateString()</td>
+                            <td>@entrenador.Email</td>
+                            <td>@entrenador.Telefono</td>
+                            <td>@ObtenerDescripcionHorario(entrenador.HorarioEntrenadorId)</td>
+                            <td>
+                                <a href="/Edit/@entrenador.EntrenadorId" class="btn btn-outline-success"><i class="bi bi-pencil-fill"></i> Editar</a>
+                                <a href="/DeleteEntrenador/@entrenador.EntrenadorId" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Eliminar</a>
+                                <a href="/View/@entrenador.EntrenadorId" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+                            </td>
+                           
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" @onclick="ReiniciarFiltro" class="btn btn-outline-danger bi bi-arrow-repeat ms-2 mt-4"> Reiniciar Filtro</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Entrenador> entrenadores { get; set; } = new List<Entrenador>();
+    public List<Entrenador> entrenadoresFiltrados { get; set; } = new List<Entrenador>();
+    public string criterioNombre { get; set; } = string.Empty;
+    public DateTime fechaInicio { get; set; } = DateTime.Today.AddDays(-7); // Fecha inicial predeterminada: hace una semana
+    public DateTime fechaFin { get; set; } = DateTime.Today; // Fecha final predeterminada: hoy
+    public IEnumerable<HorarioEntrenador> horariosEntrenador; // Cambiado a IEnumerable<HorarioEntrenador>
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEntrenadores();
+        await CargarHorarios();
+        Filtrar();
+    }
+
+    async Task CargarEntrenadores()
+    {
+        var listaEntrenadores = await EntrenadorServices.GetEntrenadores();
+        entrenadores = listaEntrenadores.ToList();
+    }
+
+    async Task CargarHorarios() // Nuevo método para cargar los horarios de entrenador
+    {
+        horariosEntrenador = await horarioEntrenadorService.GetHorariosEntrenador();
+    }
+
+    void Filtrar()
+    {
+        entrenadoresFiltrados = entrenadores.Where(e =>
+            (string.IsNullOrEmpty(criterioNombre) || e.Nombre.ToLower().Contains(criterioNombre.ToLower())) &&
+            e.Fecha.Date >= fechaInicio.Date && e.Fecha.Date <= fechaFin.Date).ToList();
+    }
+
+    string ObtenerDescripcionHorario(int horarioEntrenadorId)
+    {
+        var horario = horariosEntrenador?.FirstOrDefault(h => h.HorarioEntrenadorId == horarioEntrenadorId);
+        return horario?.Descripcion ?? "Horario no encontrado";
+    }
+
+    void ReiniciarFiltro()
+    {
+        criterioNombre = string.Empty;
+        fechaInicio = DateTime.Today.AddDays(-7);
+        fechaFin = DateTime.Today;
+        Filtrar();
+    }
+}
