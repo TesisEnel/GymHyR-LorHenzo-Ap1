@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace GymHyR.Services
 {
-    public class EntrenadorService
+    public class EntrenadorServices
     {
         private readonly ApplicationDbContext _context;
 
-        public EntrenadorService(ApplicationDbContext context)
+        public EntrenadorServices(ApplicationDbContext context)
         {
             _context = context;
         }
